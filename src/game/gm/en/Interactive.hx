@@ -43,7 +43,7 @@ class Interactive extends Entity {
 	override function fixedUpdate() {
 		super.fixedUpdate();
 
-		if( canBeTriggered(hero) && !hero.controlsLocked() )
-			fx.markerEntity(this,true);
+		// if( canBeTriggered(hero) && !hero.controlsLocked() )
+		// 	fx.markerEntity(this,true);
 	}
 }
