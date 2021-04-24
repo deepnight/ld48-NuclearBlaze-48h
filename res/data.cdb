@@ -54,9 +54,12 @@
 				{
 					"constId": "FireTick",
 					"desc1": "fire update frequency (sec)",
-					"value1": 1,
-					"desc2": "ratio increase per tick",
-					"value2": 0.3
+					"value1": 0.6
+				},
+				{
+					"constId": "FireIncPerTick",
+					"value1": 0.25,
+					"desc1": "ratio increase per tick"
 				},
 				{
 					"constId": "FirePropagation",
@@ -64,6 +67,19 @@
 					"value1": 0.7,
 					"desc2": "cooldown (sec) if success ",
 					"value2": 5
+				},
+				{
+					"constId": "FirePropagationRange",
+					"value1": 2
+				},
+				{
+					"constId": "WetDuration",
+					"value1": 15
+				},
+				{
+					"constId": "WaterFireDecrease",
+					"value1": 0.3,
+					"desc1": "Fire loss on watering"
 				}
 			],
 			"separators": [],

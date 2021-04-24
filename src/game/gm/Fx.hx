@@ -227,7 +227,7 @@ class Fx extends dn.Process {
 			p.setFadeS(rnd(0.7,0.8), rnd(0.2,0.4), 0.3);
 			p.colorAnimS( C.interpolateInt(0xff0000, 0xffcc00, rnd(0,1)), 0xb71919, rnd(0.2,0.4) );
 			p.setScale(rnd(0.9,2) * compressUp(pow,0.7));
-			p.scaleX *= rnd(0.7,1.2,true);
+			p.scaleX *= rnd(0.7,1.4,true);
 			p.rotation = -rnd(0.1,0.2);
 			p.scaleMul = rnd(0.94,0.96);
 			p.dsY = rnd(0.01,0.02);
@@ -245,7 +245,7 @@ class Fx extends dn.Process {
 
 
 	public function flame(x:Float,y:Float) {
-		for(i in 0...4) {
+		for(i in 0...9) {
 			var p = allocTopAdd( getTile(dict.fxFlame), x+rnd(0,3,true), y+rnd(0,7,true) );
 			p.setFadeS(rnd(0.3,0.5), 0.1, 0.2);
 			p.colorAnimS( C.interpolateInt(0xff5500, 0xffcc00, rnd(0,1)), 0x9e62f1, rnd(0.2,0.4) );

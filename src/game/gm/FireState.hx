@@ -7,6 +7,7 @@ class FireState {
 	public var lr(default,null) = 0.; // level ratio
 
 	public var propgationCdS = 0.;
+	public var wetnessS = 0.;
 
 	public inline function new() {}
 

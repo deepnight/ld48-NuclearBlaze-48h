@@ -141,7 +141,7 @@ class Level extends dn.Process {
 	}
 
 	public inline function ignite(cx,cy, startLevel=0) {
-		if( hasFireState(cx,cy) )
+		if( hasFireState(cx,cy) && !hasCollision(cx,cy) )
 			getFireState(cx,cy).ignite(startLevel);
 	}
 
@@ -170,8 +170,16 @@ class Level extends dn.Process {
 		}
 	}
 
+	function canSeeThrough(cx,cy) {
+		return isValid(cx,cy) && !hasCollision(cx,cy);
+	}
+	inline function sighCheck(x1,y1,x2,y2) {
+		return dn.Bresenham.checkThinLine(x1,y1, x2,y2, canSeeThrough);
+	}
+
 	function updateFire() {
 		var fs : FireState = null;
+		var range = Std.int(Const.db.FirePropagationRange_1);
 
 		for(cy in 0...data.l_Collisions.cHei)
 		for(cx in 0...data.l_Collisions.cWid) {
@@ -179,19 +187,24 @@ class Level extends dn.Process {
 				fs = getFireState(cx,cy);
 
 				// Increase
-				if( fs.isBurning() )
-					fs.increase( Const.db.FireTick_2);
+				if( fs.isBurning() && fs.wetnessS<=0 )
+					fs.increase( Const.db.FireIncPerTick_1);
 
 				// Update cooldown
 				if( fs.propgationCdS>0 )
 					fs.propgationCdS -= Const.db.FireTick_1;
 
+				// Update wetness
+				if( fs.wetnessS>0 )
+					fs.wetnessS -= Const.db.FireTick_1;
+
 				// Try to propagate
-				if( fs.isMaxed() && fs.propgationCdS<=0 && Std.random(100) < Const.db.FirePropagation_1*100 ) {
+				if( fs.wetnessS<=0 && fs.isMaxed() && fs.propgationCdS<=0 && Std.random(100) < Const.db.FirePropagation_1*100 ) {
 					fs.propgationCdS = Const.db.FirePropagation_2;
-					for(ox in -2...3)
-					for(oy in -3...3)
-						ignite(cx+ox, cy+oy);
+					for(y in cy-range...cy+range+1)
+					for(x in cx-range...cx+range+1)
+						if( sighCheck(cx,cy, x,y) )
+							ignite(x,y);
 				}
 			}
 		}

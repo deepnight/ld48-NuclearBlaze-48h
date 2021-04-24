@@ -1,18 +1,28 @@
 package gm.en.int;
 
 class Door extends Interactive {
+	public static var ALL : Array<Door> = [];
 	public var closed(default,null) = true;
 	var cHei = 0;
 
 	public function new(d:Entity_Door) {
 		super(d.cx,d.cy);
+		ALL.push(this);
 		cHei = M.round(d.height / Const.GRID);
 		closed = !d.f_opened;
 		updateCollisions();
 	}
 
+	public static function getAt(cx,cy) {
+		for(e in ALL)
+			if( e.isAlive() && cx==e.cx && cy>e.cy-e.cHei && cy<=e.cy )
+				return e;
+		return null;
+	}
+
 	override function dispose() {
 		super.dispose();
+		ALL.remove(this);
 		updateCollisions();
 	}
 
@@ -30,8 +40,9 @@ class Door extends Interactive {
 			level.setCollisionOverride(cx, cy-i, set);
 	}
 
-	public function open() {
+	public function open(openDir=1) {
 		closed = false;
+		dir = openDir;
 		updateCollisions();
 	}
 
