@@ -214,6 +214,7 @@ class Entity {
 		blinkColor = new h3d.Vector();
 		spr.colorMatrix = colorMatrix = h3d.Matrix.I();
 		spr.setCenterRatio(pivotX, pivotY);
+		spr.set(Assets.tiles);
 
 		if( ui.Console.ME.hasFlag("bounds") )
 			enableDebugBounds();

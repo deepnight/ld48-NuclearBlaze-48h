@@ -17,8 +17,9 @@ class Level extends dn.Process {
 	public var pxHei(get,never) : Int; inline function get_pxHei() return cHei*Const.GRID;
 
 	public var data : World_Level;
-	// var tilesetSource : h2d.Tile;
+	var tilesetSource : h2d.Tile;
 
+	var collOverride : Map<Int,Bool> = new Map();
 	var marks : Map< LevelMark, Map<Int,Bool> > = new Map();
 	var invalidated = true;
 
@@ -27,13 +28,13 @@ class Level extends dn.Process {
 
 		createRootInLayers(Game.ME.scroller, Const.DP_BG);
 		data = ldtkLevel;
-		// tilesetSource = hxd.Res.levels.sampleWorldTiles.toAseprite().toTile();
+		tilesetSource = hxd.Res.atlas.world.toAseprite().toTile();
 	}
 
 	override function onDispose() {
 		super.onDispose();
 		data = null;
-		// tilesetSource = null;
+		tilesetSource = null;
 		marks = null;
 	}
 
@@ -68,31 +69,43 @@ class Level extends dn.Process {
 			marks.get(mark).remove( coordId(cx,cy) );
 	}
 
+	public function setCollisionOverride(cx,cy, coll:Null<Bool>) {
+		if( isValid(cx,cy) )
+			if( coll!=null )
+				collOverride.set( coordId(cx,cy), coll );
+			else
+				collOverride.remove( coordId(cx,cy) );
+	}
+
 	/** Return TRUE if "Collisions" layer contains a collision value **/
 	public inline function hasCollision(cx,cy) : Bool {
-		return !isValid(cx,cy) ? true : data.l_Collisions.getInt(cx,cy)==1;
+		return !isValid(cx,cy)
+			? true
+			: collOverride.exists(coordId(cx,cy))
+				? collOverride.get(coordId(cx,cy))
+				: data.l_Collisions.getInt(cx,cy)==1;
 	}
 
 	/** Render current level**/
 	function render() {
-		// Placeholder level render
 		root.removeChildren();
 
-		// var tg = new h2d.TileGroup(tilesetSource, root);
-
 		var layer = data.l_Collisions;
-		var g = new h2d.Graphics(root);
-		for(cy in 0...layer.cHei)
-		for(cx in 0...layer.cWid) {
-			if( !layer.hasValue(cx,cy) )
-				continue;
-			g.beginFill(0xffffff);
-			g.drawRect( layer.gridSize*cx, layer.gridSize*cy, layer.gridSize, layer.gridSize);
-		}
-		// for( autoTile in layer.autoTiles ) {
-		// 	var tile = layer.tileset.getAutoLayerTile(autoTile);
-		// 	tg.add(autoTile.renderX, autoTile.renderY, tile);
+
+		// var g = new h2d.Graphics(root);
+		// for(cy in 0...layer.cHei)
+		// for(cx in 0...layer.cWid) {
+		// 	if( !layer.hasValue(cx,cy) )
+		// 		continue;
+		// 	g.beginFill(0xffffff);
+		// 	g.drawRect( layer.gridSize*cx, layer.gridSize*cy, layer.gridSize, layer.gridSize);
 		// }
+
+		var tg = new h2d.TileGroup(tilesetSource, root);
+		for( autoTile in layer.autoTiles ) {
+			var tile = layer.tileset.getAutoLayerTile(autoTile);
+			tg.add(autoTile.renderX, autoTile.renderY, tile);
+		}
 	}
 
 	override function postUpdate() {

@@ -2,6 +2,7 @@ package gm.en;
 
 enum CtrlCommand {
 	Jump;
+	Trigger;
 }
 
 class Hero extends gm.Entity {
@@ -47,7 +48,7 @@ class Hero extends gm.Entity {
 		ca = null;
 	}
 
-	function controlsLocked() {
+	public function controlsLocked() {
 		return ca.locked() || Console.ME.isActive();
 	}
 
@@ -78,7 +79,6 @@ class Hero extends gm.Entity {
 			// Jump
 			if( ca.aPressed() )
 				queueCommand(Jump);
-
 			if( recentlyOnGround && ifQueuedRemove(Jump) ) {
 				dy = -Const.db.HeroJump_1;
 				setSquashX(0.6);
@@ -86,11 +86,14 @@ class Hero extends gm.Entity {
 				clearRecentlyOnGround();
 			}
 
-			// Jump
-			if( ca.aPressed() && onGround ) {
-				dy = -0.3;
+			// Activate interactive
+			if( ca.yPressed() )
+				queueCommand(Trigger);
+			if( ifQueuedRemove(Trigger) ) {
+				var e = Interactive.getCurrent(this);
+				if( e!=null )
+					e.tryToTrigger();
 			}
-
 		}
 	}
 
