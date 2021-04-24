@@ -189,7 +189,6 @@ class Fx extends dn.Process {
 	public inline function levelFireSparks(cx:Int, cy:Int, fs:FireState) {
 		var pow = fs.getPowerRatio(true);
 
-		if( level.hasCollision(cx,cy+1) )
 		for(i in 0...M.round(1+pow)) {
 			var p = allocTopAdd( getTile(dict.pixel), getFlameX(cx,cy), getFlameY(cx,cy) );
 			p.colorAnimS(0xff8800, 0xff0044, rnd(0.3,1));
@@ -213,7 +212,7 @@ class Fx extends dn.Process {
 	}
 	inline function getFlameY(cx:Int,cy:Int) {
 		return Const.GRID * (
-			level.hasCollision(cx,cy-1) ? rnd(cy,cy+0.3) :
+			level.hasCollision(cx,cy-1) ? rnd(cy,cy+1) :
 			level.hasCollision(cx,cy+1) ? rnd(cy+1,cy+1.4) :
 			rnd(cy-0.2,cy+1.2)
 		);

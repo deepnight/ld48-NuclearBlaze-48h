@@ -41,7 +41,7 @@ class Level extends dn.Process {
 				fireStates.set( coordId(cx,cy), new FireState() );
 			else if( hasCollision(cx,cy-1) && cx%2==0 )
 				fireStates.set( coordId(cx,cy), new FireState() );
-			else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) && cy%2==0 )
+			else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) )
 				fireStates.set( coordId(cx,cy), new FireState() );
 		}
 	}
@@ -140,6 +140,10 @@ class Level extends dn.Process {
 		return hasFireState(cx,cy) && fireStates.get( coordId(cx,cy) ).isBurning();
 	}
 
+	public inline function getFireLevel(cx,cy) {
+		return isBurning(cx,cy) ? getFireState(cx,cy).level : 0;
+	}
+
 	public inline function ignite(cx,cy, startLevel=0) {
 		if( hasFireState(cx,cy) && !hasCollision(cx,cy) )
 			getFireState(cx,cy).ignite(startLevel);
@@ -163,8 +167,10 @@ class Level extends dn.Process {
 				if( Game.ME.camera.isOnScreenCase(cx,cy,64) && isBurning(cx,cy) ) {
 					fs = getFireState(cx,cy);
 					fx.levelFlames(cx, cy, fs);
-					fx.levelFireSparks(cx, cy, fs);
-					if( smoke )
+					if( !hasCollision(cx,cy-1) )
+						fx.levelFireSparks(cx, cy, fs);
+
+					if( smoke && hasCollision(cx,cy+1) )
 						fx.levelFireSmoke(cx, cy, fs);
 				}
 		}
