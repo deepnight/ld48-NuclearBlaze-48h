@@ -149,7 +149,7 @@ class Hero extends gm.Entity {
 			// b.dx = Math.cos(waterAng)*s;
 			// b.dy = Math.sin(waterAng)*s;
 
-			var range = 12;
+			var range = 8;
 			var pts = [];
 			dn.Bresenham.iterateDisc(cx,cy, range, (x,y)->{
 				if( level.hasCollision(x,y) || !level.isBurning(x,y) || !sightCheck(x,y) )
@@ -164,7 +164,7 @@ class Hero extends gm.Entity {
 			if( pts.length>0 ) {
 				var dh = new dn.DecisionHelper(pts);
 				dh.score( pt->-M.radDistance(pt.a, waterAng)*5 );
-				dh.score( pt->level.getFireState(pt.x,pt.y).level*0.3 );
+				dh.score( pt->level.getFireState(pt.x,pt.y).level*0.6 );
 				dh.score( pt->-distCase(pt.x,pt.y)*0.2 );
 				var pt = dh.getBest();
 				var r = 1;
@@ -175,11 +175,12 @@ class Hero extends gm.Entity {
 					if( fs==null )
 						continue;
 
-					fs.wetnessS = Const.db.WetDuration_1;
-					if( fs.level==0 )
-						fs.reset();
-					else
+					fs.underControlS = Const.db.ControlDuration_1;
+					if( fs.level>0 )
 						fs.decrease(Const.db.WaterFireDecrease_1);
+
+					if( fs.level==0 )
+						fs.setToMin();
 				}
 			}
 		}

@@ -73,8 +73,8 @@
 					"value1": 2
 				},
 				{
-					"constId": "WetDuration",
-					"value1": 15
+					"constId": "ControlDuration",
+					"value1": 5
 				},
 				{
 					"constId": "WaterFireDecrease",

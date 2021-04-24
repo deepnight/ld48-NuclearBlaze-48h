@@ -7,13 +7,18 @@ class FireState {
 	public var lr(default,null) = 0.; // level ratio
 
 	public var propgationCdS = 0.;
-	public var wetnessS = 0.;
+	public var underControlS = 0.;
+	public var superS = 0.;
 
 	public inline function new() {}
 
 	@:keep
 	public function toString() {
 		return 'FS:$level>${Std.int(lr*100)}%';
+	}
+
+	public inline function isUnderControl() {
+		return underControlS>0;
 	}
 
 	public inline function getPowerRatio(step=false) {
@@ -37,7 +42,12 @@ class FireState {
 		}
 	}
 
-	public inline function reset() {
+	public function setToMin() {
+		level = 0;
+		lr = 0.1;
+	}
+
+	public inline function clear() {
 		level = 0;
 		lr = 0;
 	}

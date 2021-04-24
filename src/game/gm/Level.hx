@@ -37,11 +37,14 @@ class Level extends dn.Process {
 			if( hasCollision(cx,cy) )
 				continue;
 
+			if( cx<=0 || cy<=0 || cx>=cWid-1 || cy>=cHei-1 )
+				continue;
+
 			if( hasCollision(cx,cy+1) )
 				fireStates.set( coordId(cx,cy), new FireState() );
-			else if( hasCollision(cx,cy-1) && cx%2==0 )
+			else if( hasCollision(cx,cy-1) )
 				fireStates.set( coordId(cx,cy), new FireState() );
-			else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) )
+			else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) && cy%2==0 )
 				fireStates.set( coordId(cx,cy), new FireState() );
 		}
 	}
@@ -193,19 +196,19 @@ class Level extends dn.Process {
 				fs = getFireState(cx,cy);
 
 				// Increase
-				if( fs.isBurning() && fs.wetnessS<=0 )
+				if( fs.isBurning() && !fs.isUnderControl() )
 					fs.increase( Const.db.FireIncPerTick_1);
 
 				// Update cooldown
 				if( fs.propgationCdS>0 )
 					fs.propgationCdS -= Const.db.FireTick_1;
 
-				// Update wetness
-				if( fs.wetnessS>0 )
-					fs.wetnessS -= Const.db.FireTick_1;
+				// Update underControlness
+				if( fs.underControlS>0 )
+					fs.underControlS -= Const.db.FireTick_1;
 
 				// Try to propagate
-				if( fs.wetnessS<=0 && fs.isMaxed() && fs.propgationCdS<=0 && Std.random(100) < Const.db.FirePropagation_1*100 ) {
+				if( !fs.isUnderControl() && fs.isMaxed() && fs.propgationCdS<=0 && Std.random(100) < Const.db.FirePropagation_1*100 ) {
 					fs.propgationCdS = Const.db.FirePropagation_2;
 					for(y in cy-range...cy+range+1)
 					for(x in cx-range...cx+range+1)
