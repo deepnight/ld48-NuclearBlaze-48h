@@ -47,7 +47,7 @@ class Game extends Process {
 		hud = new ui.Hud();
 		camera = new Camera();
 
-		startLevel(Assets.worldData.all_levels.FirstLevel);
+		startLevel(Assets.worldData.all_levels.House);
 	}
 
 
@@ -66,6 +66,7 @@ class Game extends Process {
 		garbageCollectEntities();
 
 		level = new Level(l);
+		new gm.en.Hero();
 		// <---- Here: instanciate your level entities
 
 		camera.centerOnTarget();

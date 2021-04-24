@@ -17,6 +17,12 @@ class Entity {
 	var utmod(get,never) : Float; inline function get_utmod() return Game.ME.utmod;
 	public var hud(get,never) : ui.Hud; inline function get_hud() return Game.ME.hud;
 
+	public var onGround(get,never) : Bool;
+		inline function get_onGround() return isAlive() && yr==1 && dyTotal==0 && level.hasCollision(cx,cy+1);
+
+	public var recentlyOnGround(get,never) : Bool;
+		inline function get_recentlyOnGround() return isAlive() && ( onGround || cd.has("recentlyOnGround") );
+
 	var dict = Assets.tilesDict;
 
 	/** Cooldowns **/
@@ -188,6 +194,9 @@ class Entity {
 	var actions : Array<{ id:String, cb:Void->Void, t:Float }> = [];
 
 
+	var fallStartCy = 999999.;
+	var gravityMul = 1.0;
+
     public function new(x:Int, y:Int) {
         uid = Const.makeUniqueId();
 		ALL.push(this);
@@ -286,6 +295,7 @@ class Entity {
 			prevFrameattachY = attachY;
 		}
 		updateLastFixedUpdatePos();
+		fallStartCy = cy+yr;
 	}
 
 	/** Quickly set X/Y pivots. If Y is omitted, it will be equal to X. **/
@@ -571,6 +581,11 @@ class Entity {
 	}
 
 
+	inline function clearRecentlyOnGround() {
+		cd.unset("recentlyOnGround");
+	}
+
+
 	/**
 		"Beginning of the frame" loop, called before any other Entity update loop
 	**/
@@ -580,6 +595,8 @@ class Entity {
 		updateAffects();
 		updateActions();
 
+		if( onGround )
+			cd.setS("recentlyOnGround",0.1); // allows "just-in-time" jumps
 
 		#if debug
 		// Display the list of active "affects" (with `/set affect` in console)
@@ -659,13 +676,49 @@ class Entity {
 	}
 
 
+	function onLand(cHei:Float) {
+		hud.notify(""+M.pretty(cHei));
+	}
+
+	function onTouchCeiling() {}
+	function onTouchWall(wallDir:Int) {}
+
 
 	/** Called at the beginning of each X movement step **/
 	function onPreStepX() {
+		// Right collision
+		if( xr>0.8 && level.hasCollision(cx+1,cy) ) {
+			onTouchWall(1);
+			xr = 0.8;
+		}
+
+		// Left collision
+		if( xr<0.2 && level.hasCollision(cx-1,cy) ) {
+			onTouchWall(-1);
+			xr = 0.2;
+		}
 	}
 
 	/** Called at the beginning of each Y movement step **/
 	function onPreStepY() {
+		// Land on ground
+		if( yr>1 && level.hasCollision(cx,cy+1) ) {
+			setSquashY(0.5);
+			dy = 0;
+			yr = 1;
+			var cHei = M.fmax(0, cy+yr-fallStartCy);
+			onPosManuallyChanged();
+			onLand(cHei);
+		}
+
+		// Ceiling collision
+		if( yr<0.2 && level.hasCollision(cx,cy-1) )
+			yr = 0.2;
+	}
+
+
+	function getGravity() {
+		return Const.db.Gravity_1 * gravityMul;
 	}
 
 
@@ -674,6 +727,9 @@ class Entity {
 	**/
 	public function fixedUpdate() {
 		updateLastFixedUpdatePos();
+
+		if( gravityMul>0 && !onGround )
+			dy+=getGravity();
 
 		/*
 			Stepping: any movement greater than 33% of grid size (ie. 0.33) will increase the number of `steps` here. These steps will break down the full movement into smaller iterations to avoid jumping over grid collisions.
@@ -700,6 +756,9 @@ class Entity {
 
 				while( yr>1 ) { yr--; cy++; }
 				while( yr<0 ) { yr++; cy--; }
+
+				if( dyTotal<=0 || onGround )
+					fallStartCy = cy+yr;
 
 				n++;
 			}

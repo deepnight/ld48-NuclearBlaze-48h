@@ -42,12 +42,14 @@
 			],
 			"lines": [
 				{
-					"desc1": "Some free text description for value1",
-					"desc2": "whatever you want",
-					"value1": 1.5,
-					"value2": 2,
-					"value3": 3.9,
-					"constId": "SomeConstantName"
+					"desc1": "power",
+					"value1": 0.05,
+					"constId": "Gravity"
+				},
+				{
+					"constId": "HeroJump",
+					"desc1": "base power",
+					"value1": 0.8
 				}
 			],
 			"separators": [],

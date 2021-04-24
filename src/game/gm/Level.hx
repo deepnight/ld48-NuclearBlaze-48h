@@ -81,10 +81,19 @@ class Level extends dn.Process {
 		var tg = new h2d.TileGroup(tilesetSource, root);
 
 		var layer = data.l_Collisions;
-		for( autoTile in layer.autoTiles ) {
-			var tile = layer.tileset.getAutoLayerTile(autoTile);
-			tg.add(autoTile.renderX, autoTile.renderY, tile);
+		tg.removeChildren(); // HACK
+		var g = new h2d.Graphics(tg);
+		for(cy in 0...layer.cHei)
+		for(cx in 0...layer.cWid) {
+			if( !layer.hasValue(cx,cy) )
+				continue;
+			g.beginFill(0xffffff);
+			g.drawRect( layer.gridSize*cx, layer.gridSize*cy, layer.gridSize, layer.gridSize);
 		}
+		// for( autoTile in layer.autoTiles ) {
+		// 	var tile = layer.tileset.getAutoLayerTile(autoTile);
+		// 	tg.add(autoTile.renderX, autoTile.renderY, tile);
+		// }
 	}
 
 	override function postUpdate() {

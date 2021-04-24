@@ -56,8 +56,7 @@ class App extends dn.Process {
 	}
 
 	final function _createGameInstance() {
-		// new Game(); // <---- Uncomment this to start an empty Game instance
-		new sample.SampleGame(); // <---- Uncomment this to start the Sample Game instance
+		new Game();
 	}
 
 
@@ -111,8 +110,8 @@ class App extends dn.Process {
 		ca = controller.createAccess("main");
 		controller.bind(AXIS_LEFT_X_NEG, K.LEFT, K.Q, K.A);
 		controller.bind(AXIS_LEFT_X_POS, K.RIGHT, K.D);
-		controller.bind(X, K.SPACE, K.F, K.E);
-		controller.bind(A, K.UP, K.Z, K.W);
+		// controller.bind(X, K.SPACE, K.F, K.E);
+		controller.bind(A, K.UP, K.Z, K.W, K.SPACE);
 		controller.bind(B, K.ENTER, K.NUMPAD_ENTER);
 		controller.bind(SELECT, K.R);
 		controller.bind(START, K.N);
