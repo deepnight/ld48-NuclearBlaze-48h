@@ -74,7 +74,7 @@ class App extends dn.Process {
 	function initEngine() {
 		// Engine settings
 		engine.backgroundColor = 0xff<<24 | 0x111133;
-        #if( hl && !debug )
+		#if hl
         engine.fullScreen = true;
         #end
 
@@ -113,8 +113,9 @@ class App extends dn.Process {
 		ca = controller.createAccess("main");
 		controller.bind(AXIS_LEFT_X_NEG, K.LEFT, K.Q, K.A);
 		controller.bind(AXIS_LEFT_X_POS, K.RIGHT, K.D);
+		controller.bind(Y, K.SPACE, K.F, K.E);
 		// controller.bind(X, K.SPACE, K.F, K.E);
-		controller.bind(A, K.UP, K.Z, K.W, K.SPACE);
+		controller.bind(A, K.UP, K.Z, K.W);
 		controller.bind(B, K.ENTER, K.NUMPAD_ENTER);
 		controller.bind(SELECT, K.R);
 		controller.bind(START, K.N);
