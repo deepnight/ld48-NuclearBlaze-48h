@@ -87,6 +87,8 @@ class Hero extends gm.Entity {
 	override function preUpdate() {
 		super.preUpdate();
 
+		walkSpeed = 0;
+
 		// Command input queue management
 		for( k in cmdQueue.keys() ) {
 			cmdQueue.set(k, cmdQueue.get(k) - 1/Const.FPS*tmod);
@@ -94,13 +96,17 @@ class Hero extends gm.Entity {
 				cmdQueue.remove(k);
 		}
 
-		walkSpeed = 0;
 
+		// Control queueing
 		if( ca.xPressed() )
 			queueCommand(Use);
 
 		if( ca.aPressed() )
 			queueCommand(Jump);
+
+		// Dir control
+		if( ca.leftDist()>0 )
+			dir = M.radDistance(0,ca.leftAngle()) <= M.PIHALF ? 1 : -1;
 
 		if( !controlsLocked() && !isWatering() ) {
 
@@ -126,7 +132,10 @@ class Hero extends gm.Entity {
 				// else
 					chargeAction("water", 0.2, ()->{
 						cd.setS("watering",0.2);
-						waterAng = dirToAng();
+						if( ca.leftDist()>0 )
+							waterAng = ca.leftAngle();
+						else
+							waterAng = dirToAng();
 					});
 
 			}
@@ -141,48 +150,68 @@ class Hero extends gm.Entity {
 				cd.setS("watering",0.2);
 			camera.shakeS(0.1, 0.1);
 
-			if( ca.leftDist()>0 )
-				waterAng = ca.leftAngle();
+			// if( ca.leftDist()>0 )
+				// waterAng += M.sign(M.radSubstract(ca.leftAngle(), waterAng)) * 0.1;
 
-			// var b = new Bullet(centerX, centerY);
-			// var s = 0.3;
-			// b.dx = Math.cos(waterAng)*s;
-			// b.dy = Math.sin(waterAng)*s;
+			// waterAng += M.radSubstract(dirToAng(), waterAng) * 0.2;
+			waterAng = dirToAng();
 
-			var range = 8;
-			var pts = [];
-			dn.Bresenham.iterateDisc(cx,cy, range, (x,y)->{
-				if( level.hasCollision(x,y) || !level.isBurning(x,y) || !sightCheck(x,y) )
-					return;
+			var horizontalBeam = ca.leftDist()==0 || M.radDistance(ca.leftAngle(),-M.PIHALF) > M.PIHALF*0.5;
 
-				var a = Math.atan2(y-cy, x-cx);
-				if( M.radDistance(a,waterAng) > M.PIHALF*0.4 )
-					return;
-
-				pts.push({ a:a, x:x, y:y });
-			});
-			if( pts.length>0 ) {
-				var dh = new dn.DecisionHelper(pts);
-				dh.score( pt->-M.radDistance(pt.a, waterAng)*5 );
-				dh.score( pt->level.getFireState(pt.x,pt.y).level*0.6 );
-				dh.score( pt->-distCase(pt.x,pt.y)*0.2 );
-				var pt = dh.getBest();
-				var r = 1;
-				for(y in pt.y-r...pt.y+r+1)
-				for(x in pt.x-r...pt.x+r+1) {
-					fx.markerCase(x,y, 0.1, 0x4ad8f1);
-					var fs = level.getFireState(x, y);
-					if( fs==null )
-						continue;
-
-					fs.underControlS = Const.db.ControlDuration_1;
-					if( fs.level>0 )
-						fs.decrease(Const.db.WaterFireDecrease_1);
-
-					if( fs.level==0 )
-						fs.setToMin();
+			if( !cd.hasSetS("bullet",0.03) ) {
+				var b = new Bullet(centerX, centerY);
+				var s = 0.7;
+				if( horizontalBeam ) {
+					var a = dirToAng();
+					b.dx = Math.cos(a)*s;
+					b.dy = Math.sin(a)*s-rnd(0.15,0.3);
+				}
+				else {
+					var a = dirToAng() - dir*M.PIHALF*0.5 + Math.cos(ftime*0.5)*0.4;
+					b.dx = Math.cos(a)*s;
+					b.dy = Math.sin(a)*s-rnd(0.15,0.3);
 				}
 			}
+
+			dn.Bresenham.iterateDisc(cx,cy,2, (x,y)->{
+				if( level.isBurning(cx,cy) )
+					level.getFireState(cx,cy).decrease(Const.db.WaterFireDecrease_1);
+			});
+
+			// var range = 8;
+			// var pts = [];
+			// dn.Bresenham.iterateDisc(cx,cy, range, (x,y)->{
+			// 	if( level.hasCollision(x,y) || !level.isBurning(x,y) || !sightCheck(x,y) )
+			// 		return;
+
+			// 	var a = Math.atan2(y-cy, x-cx);
+			// 	if( M.radDistance(a,waterAng) > M.PIHALF*0.4 )
+			// 		return;
+
+			// 	pts.push({ a:a, x:x, y:y });
+			// });
+			// if( pts.length>0 ) {
+			// 	var dh = new dn.DecisionHelper(pts);
+			// 	dh.score( pt->-M.radDistance(pt.a, waterAng)*5 );
+			// 	dh.score( pt->level.getFireState(pt.x,pt.y).level*0.6 );
+			// 	dh.score( pt->-distCase(pt.x,pt.y)*0.2 );
+			// 	var pt = dh.getBest();
+			// 	var r = 1;
+			// 	for(y in pt.y-r...pt.y+r+1)
+			// 	for(x in pt.x-r...pt.x+r+1) {
+			// 		fx.markerCase(x,y, 0.1, 0x4ad8f1);
+			// 		var fs = level.getFireState(x, y);
+			// 		if( fs==null )
+			// 			continue;
+
+			// 		fs.underControlS = Const.db.ControlDuration_1;
+			// 		if( fs.level>0 )
+			// 			fs.decrease(Const.db.WaterFireDecrease_1);
+
+			// 		if( fs.level==0 )
+			// 			fs.setToMin();
+			// 	}
+			// }
 		}
 
 		// Walk movement
