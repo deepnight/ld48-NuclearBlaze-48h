@@ -249,11 +249,12 @@ class Fx extends dn.Process {
 
 	public inline function levelFlames(cx:Int,cy:Int, fs:FireState) {
 		var pow = fs.getPowerRatio(true);
+		var baseCol = fs.level<2 ? 0xff0000 : C.interpolateInt(0xff6200,0xffcc33,rnd(0,1));
 
 		for( i in 0...Std.int(1+pow*3) ) {
 			var p = allocTopAdd( getTile(dict.fxFlame), getFlameX(cx,cy), getFlameY(cx,cy) );
 			p.setFadeS(rnd(0.7,0.8), rnd(0.2,0.4), 0.3);
-			p.colorAnimS( C.interpolateInt(0xff0000, 0xffcc00, rnd(0,1)), 0xb71919, rnd(0.2,0.4) );
+			p.colorAnimS( baseCol, 0xb71919, rnd(0.3,0.6) );
 			p.setScale(rnd(0.9,2) * compressUp(pow,0.7));
 			p.scaleX *= rnd(0.7,1.4,true);
 			p.rotation = -rnd(0.1,0.2);

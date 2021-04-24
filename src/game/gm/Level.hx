@@ -188,7 +188,8 @@ class Level extends dn.Process {
 
 	function updateFire() {
 		var fs : FireState = null;
-		var range = Std.int(Const.db.FirePropagationRange_1);
+		var rangeX = Std.int(Const.db.FirePropagationRange_1);
+		var rangeY = Std.int(Const.db.FirePropagationRange_2);
 
 		for(cy in 0...data.l_Collisions.cHei)
 		for(cx in 0...data.l_Collisions.cWid) {
@@ -210,8 +211,8 @@ class Level extends dn.Process {
 				// Try to propagate
 				if( !fs.isUnderControl() && fs.isMaxed() && fs.propgationCdS<=0 && Std.random(100) < Const.db.FirePropagation_1*100 ) {
 					fs.propgationCdS = Const.db.FirePropagation_2;
-					for(y in cy-range...cy+range+1)
-					for(x in cx-range...cx+range+1)
+					for(y in cy-rangeY...cy+rangeY+1)
+					for(x in cx-rangeX...cx+rangeX+1)
 						if( sighCheck(cx,cy, x,y) )
 							ignite(x,y);
 				}

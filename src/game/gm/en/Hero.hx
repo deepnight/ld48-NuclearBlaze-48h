@@ -231,10 +231,12 @@ class Hero extends gm.Entity {
 			dx += walkSpeed*0.05;
 		}
 
-		if( level.getFireLevel(cx,cy)>=1 ) {
-			cd.setS("burning",2);
-			if( level.getFireLevel(cx,cy)>=2 && !cd.has("shield") )
-				hit(1);
-		}
+		dn.Bresenham.iterateDisc(cx,cy,1, (x,y)->{
+			if( level.getFireLevel(x,y)>=1 ) {
+				cd.setS("burning",2);
+				if( level.getFireLevel(x,y)>=2 && !cd.has("shield") )
+					hit(1);
+			}
+		});
 	}
 }

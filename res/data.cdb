@@ -63,7 +63,7 @@
 				},
 				{
 					"constId": "FireIncPerTick",
-					"value1": 0.75,
+					"value1": 0.3,
 					"desc1": "ratio increase per tick"
 				},
 				{
@@ -75,7 +75,10 @@
 				},
 				{
 					"constId": "FirePropagationRange",
-					"value1": 2
+					"value1": 2,
+					"desc1": "X",
+					"desc2": "Y",
+					"value2": 2
 				},
 				{
 					"constId": "ControlDuration",
