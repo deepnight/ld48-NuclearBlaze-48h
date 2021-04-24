@@ -198,7 +198,6 @@ class ConstDbBuilder {
 			pos: pos,
 			kind: FFun({
 				args: [
-					// { name:"constId", type: macro:String },
 					{ name:"constId", type:Context.getType("CastleDb.ConstDbKind").toComplexType() },
 					{ name:"valueIdx", type: macro:Int, opt:true, value:macro 1 },
 				],

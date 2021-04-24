@@ -86,6 +86,12 @@ class Game extends Process {
 			new gm.en.int.Door(d);
 		// <---- Here: instanciate your level entities
 
+		for(e in level.data.l_Entities.all_FireStarter)
+			dn.Bresenham.iterateDisc(
+				e.cx, e.cy, e.f_range,
+				(x,y)->level.ignite(x,y)
+			);
+
 		camera.centerOnTarget();
 		hud.onLevelStart();
 		Process.resizeAll();

@@ -166,29 +166,46 @@ class Fx extends dn.Process {
 	}
 
 
-	public function wallFlameSmoke(cx:Int,cy:Int) {
+	inline function compressUp(ratio:Float, range:Float) return (1-range) + range*ratio;
+
+	public inline function wallFlameSmoke(cx:Int,cy:Int, fs:FireState) {
+		var pow = fs.getPowerRatio(true);
+
 		var p = allocTopNormal( getTile(dict.fxSmoke), (cx+rnd(0,1))*Const.GRID, (cy+rnd(0,1))*Const.GRID );
-		p.setFadeS(rnd(0.6, 0.8), 0.3, rnd(1,2));
+		p.setFadeS(rnd(0.6, 0.8)*compressUp(pow,0.7), 0.3, rnd(1,2));
 		p.colorAnimS(0xc14132, 0x57546f, rnd(0.4, 1.2));
 		p.rotation = rnd(0,M.PI2);
 		p.dr = rnd(0,0.03,true);
 		p.ds = rnd(0.002, 0.004);
-		p.dy = -rnd(0.3, 0.8);
+		p.dy = -rnd(0.3, 0.8) * compressUp(pow,0.8);
 		p.frict = rnd(0.99,1);
 		p.lifeS = rnd(0.3,0.6);
 		p.delayS = rnd(0,0.4);
 	}
 
-	public function wallFlame(cx:Int,cy:Int) {
-		for(i in 0...3) {
+	public inline function wallFlame(cx:Int,cy:Int, fs:FireState) {
+		var pow = fs.getPowerRatio(true);
+
+		// Tiny spark
+		var p = allocTopAdd( getTile(dict.pixel), (cx+rnd(0,1))*Const.GRID, (cy+rnd(-0.5,0.5))*Const.GRID );
+		p.colorAnimS(0xffcc00, 0xff0000, rnd(0.3,1));
+		p.setFadeS(rnd(0.4,0.8), 0.1, 0.3);
+		p.alphaFlicker = 0.6;
+		p.dx = -rnd(0.1,0.3);
+		p.dy = -rnd(0.4, 1) * compressUp(pow,0.5);
+		p.frict = rnd(0.985, 1);
+		p.lifeS = rnd(0.2,0.5);
+
+		// Flames
+		for( i in 0...Std.int(1+pow*2) ) {
 			var p = allocTopAdd( getTile(dict.fxFlame), (cx+rnd(0,1))*Const.GRID, (cy+rnd(0,1))*Const.GRID );
 			p.setFadeS(rnd(0.7,0.8), 0.1, 0.2);
 			p.colorAnimS( C.interpolateInt(0xff0000, 0xffcc00, rnd(0,1)), 0xb71919, rnd(0.2,0.4) );
-			p.setScale(rnd(0.6,1));
+			p.setScale(rnd(0.6,1) * compressUp(pow,0.7));
 			p.scaleX *= rnd(0.5,1,true);
 			p.rotation = -rnd(0.1,0.2);
-			p.dx = -rnd(0.1,0.3);
 			p.scaleMul = rnd(0.98,0.99);
+			p.dx = -rnd(0.1,0.3);
 			p.dy = -rnd(0.3, 0.6);
 			p.frict = rnd(0.94, 0.96);
 			p.lifeS = rnd(0.2,0.3);

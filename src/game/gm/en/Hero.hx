@@ -65,8 +65,8 @@ class Hero extends gm.Entity {
 
 	override function postUpdate() {
 		super.postUpdate();
-		if( !cd.hasSetS("flame",0.1) )
-			fx.flame(centerX, centerY);
+		// if( !cd.hasSetS("flame",0.1) )
+			// fx.flame(centerX, centerY);
 	}
 
 	override function preUpdate() {
@@ -94,7 +94,7 @@ class Hero extends gm.Entity {
 			if( recentlyOnGround && ifQueuedRemove(Jump) ) {
 				dy = -Const.db.HeroJump_1;
 				setSquashX(0.6);
-				fx.dotsExplosionExample(centerX, centerY, 0xffcc00);
+				// fx.dotsExplosionExample(centerX, centerY, 0xffcc00);
 				clearRecentlyOnGround();
 			}
 

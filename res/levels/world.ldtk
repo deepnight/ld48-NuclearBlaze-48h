@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 14,
+	"nextUid": 16,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -254,6 +254,52 @@
 			"pivotX": 0.5,
 			"pivotY": 1,
 			"fieldDefs": []
+		},
+		{
+			"identifier": "FireStarter",
+			"uid": 14,
+			"tags": [],
+			"width": 16,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#FF0000",
+			"renderMode": "Cross",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "Stretch",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0.5,
+			"pivotY": 0.5,
+			"fieldDefs": [
+				{
+					"identifier": "range",
+					"__type": "Int",
+					"uid": 15,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "RadiusGrid",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": true,
+					"editorCutLongValues": true,
+					"min": 1,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Int", "params": [1] },
+					"textLanguageMode": null
+				}
+			]
 		}
 	], "tilesets": [
 		{
@@ -374,6 +420,34 @@
 							"defUid": 2,
 							"px": [392,352],
 							"fieldInstances": []
+						},
+						{
+							"__identifier": "FireStarter",
+							"__grid": [48,21],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 16,
+							"height": 16,
+							"defUid": 14,
+							"px": [776,344],
+							"fieldInstances": [{ "__identifier": "range", "__value": 1, "__type": "Int", "defUid": 15, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "FireStarter",
+							"__grid": [35,15],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 16,
+							"height": 16,
+							"defUid": 14,
+							"px": [568,248],
+							"fieldInstances": [{
+								"__identifier": "range",
+								"__value": 6,
+								"__type": "Int",
+								"defUid": 15,
+								"realEditorValues": [{ "id": "V_Int", "params": [6] }]
+							}]
 						}
 					]
 				},

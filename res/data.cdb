@@ -50,6 +50,20 @@
 					"constId": "HeroJump",
 					"desc1": "base power",
 					"value1": 0.8
+				},
+				{
+					"constId": "FireTick",
+					"desc1": "fire update frequency (sec)",
+					"value1": 1,
+					"desc2": "ratio increase per tick",
+					"value2": 0.3
+				},
+				{
+					"constId": "FirePropagation",
+					"desc1": "success %",
+					"value1": 0.7,
+					"desc2": "cooldown (sec) if success ",
+					"value2": 3
 				}
 			],
 			"separators": [],
