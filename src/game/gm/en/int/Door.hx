@@ -16,6 +16,11 @@ class Door extends Interactive {
 	}
 
 	function updateCollisions() {
+		if( isAlive() ) {
+			spr.set( closed ? dict.doorClosed : dict.doorOpened );
+			spr.setCenterRatio(closed ? 0.5 : 0, 1);
+		}
+
 		if( level==null || level.destroyed )
 			return;
 
