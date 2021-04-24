@@ -16,6 +16,7 @@ class Entity {
 	var tmod(get,never) : Float; inline function get_tmod() return Game.ME.tmod;
 	var utmod(get,never) : Float; inline function get_utmod() return Game.ME.utmod;
 	public var hud(get,never) : ui.Hud; inline function get_hud() return Game.ME.hud;
+	public var hero(get,never) : gm.en.Hero; inline function get_hero() return Game.ME.hero;
 
 	public var onGround(get,never) : Bool;
 		inline function get_onGround() return isAlive() && yr==1 && dyTotal==0 && level.hasCollision(cx,cy+1);
@@ -677,7 +678,6 @@ class Entity {
 
 
 	function onLand(cHei:Float) {
-		hud.notify(""+M.pretty(cHei));
 	}
 
 	function onTouchCeiling() {}

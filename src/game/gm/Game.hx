@@ -30,6 +30,9 @@ class Game extends Process {
 	var slowMos : Map<String, { id:String, t:Float, f:Float }> = new Map();
 
 
+	public var hero : Hero;
+
+
 	public function new() {
 		super(App.ME);
 
@@ -66,7 +69,10 @@ class Game extends Process {
 		garbageCollectEntities();
 
 		level = new Level(l);
-		new gm.en.Hero();
+		hero = new gm.en.Hero();
+
+		for(d in level.data.l_Entities.all_Door)
+			new gm.en.int.Door(d);
 		// <---- Here: instanciate your level entities
 
 		camera.centerOnTarget();
