@@ -52,6 +52,11 @@
 					"value1": 0.8
 				},
 				{
+					"constId": "HeroHitShield",
+					"desc1": "shield duration (sec)",
+					"value1": 2
+				},
+				{
 					"constId": "FireTick",
 					"desc1": "fire update frequency (sec)",
 					"value1": 0.6

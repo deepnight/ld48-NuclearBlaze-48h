@@ -245,7 +245,7 @@ class Entity {
 	}
 
 	/** Inflict damage **/
-	public function hit(dmg:Int, from:Null<Entity>) {
+	public function hit(dmg:Int, ?from:Null<Entity>) {
 		if( !isAlive() || dmg<=0 )
 			return;
 

@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 18,
+	"nextUid": 19,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -203,7 +203,28 @@
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0.5,
 			"pivotY": 1,
-			"fieldDefs": []
+			"fieldDefs": [
+				{
+					"identifier": "startHP",
+					"__type": "Int",
+					"uid": 18,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "NameAndValue",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": true,
+					"editorCutLongValues": true,
+					"min": 1,
+					"max": 10,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Int", "params": [3] },
+					"textLanguageMode": null
+				}
+			]
 		},
 		{
 			"identifier": "WaterSource",
@@ -455,7 +476,7 @@
 							"height": 16,
 							"defUid": 1,
 							"px": [440,352],
-							"fieldInstances": []
+							"fieldInstances": [{ "__identifier": "startHP", "__value": 3, "__type": "Int", "defUid": 18, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "WaterSource",

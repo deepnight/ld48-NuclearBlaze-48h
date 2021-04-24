@@ -169,12 +169,41 @@ class Fx extends dn.Process {
 
 	inline function compressUp(ratio:Float, range:Float) return (1-range) + range*ratio;
 
+	public inline function fireVanish(cx:Int, cy:Int) {
+		var p = allocTopNormal( getTile(dict.fxSmoke), getFlameX(cx,cy), getFlameY(cx,cy) );
+		p.setFadeS(rnd(0.2, 0.3), 0.03, rnd(0.5,1));
+		p.colorize(0xc3b9a0);
+		p.setScale(rnd(0.7,0.8));
+		p.ds = 0.1;
+		p.dsFrict = 0.9;
+		p.scaleMul = rnd(0.97,0.99);
+		p.rotation = rnd(0,M.PI2);
+		p.dr = rnd(0,0.03,true);
+		p.lifeS = 0.2;
+
+		for(i in 0...4) {
+			var p = allocTopNormal( getTile(dict.fxSmoke), getFlameX(cx,cy), getFlameY(cx,cy) );
+			p.setFadeS(rnd(0.1, 0.2), rnd(0.1,0.2), rnd(2,3));
+			p.colorAnimS(0xc34029, 0xc3b9a0, rnd(0.1,0.5));
+			p.setScale(rnd(0.6,0.8,true));
+			p.rotation = rnd(0,M.PI2);
+			p.dr = rnd(0,0.03,true);
+			p.ds = rnd(0.002, 0.004);
+			p.gx = windX * rnd(0,0.003);
+			p.dy = -rnd(0.1, 0.3);
+			p.frict = rnd(0.99,1);
+			p.lifeS = rnd(0.3,0.6);
+			p.delayS = rnd(0,0.4);
+		}
+	}
+
 	public inline function levelFireSmoke(cx:Int,cy:Int, fs:FireState) {
 		var pow = fs.getPowerRatio(true);
 
 		var p = allocTopNormal( getTile(dict.fxSmoke), getFlameX(cx,cy), getFlameY(cx,cy) );
 		p.setFadeS(rnd(0.4, 0.6)*compressUp(pow,0.7), rnd(0.3,0.5), rnd(0.4,1));
-		p.colorAnimS(0xc14132, 0x57546f, rnd(0.4, 1.2));
+		// p.colorAnimS(0xc14132, 0x57546f, rnd(0.4, 1.2));
+		p.colorAnimS(0xc14132, 0x0, rnd(0.4, 1.2));
 		p.setScale(rnd(1,2,true));
 		p.rotation = rnd(0,M.PI2);
 		p.dr = rnd(0,0.03,true);

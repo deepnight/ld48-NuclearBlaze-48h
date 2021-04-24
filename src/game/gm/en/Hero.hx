@@ -20,8 +20,16 @@ class Hero extends gm.Entity {
 		ca = App.ME.controller.createAccess("hero");
 		ca.setLeftDeadZone(0.3);
 
+		initLife(data.f_startHP);
+
 		camera.trackEntity(this, true);
 		spr.set(dict.doggie);
+	}
+
+	override function onDamage(dmg:Int, from:Entity) {
+		super.onDamage(dmg, from);
+		fx.flashBangS(0xff0000, 0.3, 1);
+		cd.setS("shield",Const.db.HeroHitShield_1);
 	}
 
 	inline function queueCommand(c:CtrlCommand, durationS=0.15) {
@@ -80,6 +88,9 @@ class Hero extends gm.Entity {
 		super.postUpdate();
 		if( cd.has("burning") && !cd.hasSetS("flame",0.2) )
 			fx.flame(centerX, centerY);
+
+		if( cd.has("shield") && !cd.hasSetS("shieldBlink",0.2) )
+			blink(0xffffff);
 	}
 
 	inline function isWatering() return cd.has("watering");
@@ -156,20 +167,21 @@ class Hero extends gm.Entity {
 			// waterAng += M.radSubstract(dirToAng(), waterAng) * 0.2;
 			waterAng = dirToAng();
 
-			var horizontalBeam = ca.leftDist()==0 || M.radDistance(ca.leftAngle(),-M.PIHALF) > M.PIHALF*0.5;
+			var horizontalBeam = ca.leftDist()==0 || M.radDistance(ca.leftAngle(),-M.PIHALF) > M.PIHALF*0.65;
 
-			if( !cd.hasSetS("bullet",0.03) ) {
-				var b = new Bullet(centerX, centerY);
-				var s = 0.7;
+			if( !cd.has("bullet") ) {
+				var ang = dirToAng();
 				if( horizontalBeam ) {
-					var a = dirToAng();
-					b.dx = Math.cos(a)*s;
-					b.dy = Math.sin(a)*s-rnd(0.15,0.3);
+					var b = new gm.en.bu.WaterDrop(centerX, centerY, ang-dir*0.2 + rnd(0, 0.15, true));
+					b.dx *= 1.1;
+					cd.setS("bullet",0.03);
 				}
 				else {
-					var a = dirToAng() - dir*M.PIHALF*0.5 + Math.cos(ftime*0.5)*0.4;
-					b.dx = Math.cos(a)*s;
-					b.dy = Math.sin(a)*s-rnd(0.15,0.3);
+					var n = 4;
+					for(i in 0...3)
+						new gm.en.bu.WaterDrop(centerX, centerY, ang - dir*M.PIHALF*0.65 + i/(n-1) * 0.4  + rnd(0, 0.15, true));
+					// new gm.en.bu.WaterDrop(centerX, centerY, ang - dir*M.PIHALF*0.5 - Math.cos(ftime*0.2)*0.6);
+					cd.setS("bullet",0.1);
 				}
 			}
 
@@ -219,7 +231,10 @@ class Hero extends gm.Entity {
 			dx += walkSpeed*0.05;
 		}
 
-		if( level.getFireLevel(cx,cy)>=1 )
+		if( level.getFireLevel(cx,cy)>=1 ) {
 			cd.setS("burning",2);
+			if( level.getFireLevel(cx,cy)>=2 && !cd.has("shield") )
+				hit(1);
+		}
 	}
 }
