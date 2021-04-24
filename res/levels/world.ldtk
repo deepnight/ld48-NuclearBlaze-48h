@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 17,
+	"nextUid": 18,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -253,7 +253,28 @@
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0.5,
 			"pivotY": 1,
-			"fieldDefs": []
+			"fieldDefs": [
+				{
+					"identifier": "opened",
+					"__type": "Bool",
+					"uid": 17,
+					"type": "F_Bool",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "ValueOnly",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
 		},
 		{
 			"identifier": "FireStarter",
@@ -395,7 +416,7 @@
 							"height": 32,
 							"defUid": 5,
 							"px": [472,352],
-							"fieldInstances": []
+							"fieldInstances": [{ "__identifier": "opened", "__value": false, "__type": "Bool", "defUid": 17, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "Door",
@@ -406,7 +427,7 @@
 							"height": 32,
 							"defUid": 5,
 							"px": [664,352],
-							"fieldInstances": []
+							"fieldInstances": [{ "__identifier": "opened", "__value": false, "__type": "Bool", "defUid": 17, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "Door",
@@ -417,17 +438,26 @@
 							"height": 32,
 							"defUid": 5,
 							"px": [664,272],
-							"fieldInstances": []
+							"fieldInstances": [{
+								"__identifier": "opened",
+								"__value": true,
+								"__type": "Bool",
+								"defUid": 17,
+								"realEditorValues": [{
+									"id": "V_Bool",
+									"params": [ true ]
+								}]
+							}]
 						},
 						{
 							"__identifier": "Hero",
-							"__grid": [45,16],
+							"__grid": [33,16],
 							"__pivot": [0.5,1],
 							"__tile": null,
 							"width": 16,
 							"height": 16,
 							"defUid": 1,
-							"px": [728,272],
+							"px": [536,272],
 							"fieldInstances": []
 						},
 						{
@@ -440,26 +470,6 @@
 							"defUid": 2,
 							"px": [392,352],
 							"fieldInstances": []
-						},
-						{
-							"__identifier": "FireStarter",
-							"__grid": [48,21],
-							"__pivot": [0.5,0.5],
-							"__tile": null,
-							"width": 16,
-							"height": 16,
-							"defUid": 14,
-							"px": [776,344],
-							"fieldInstances": [
-								{ "__identifier": "range", "__value": 1, "__type": "Int", "defUid": 15, "realEditorValues": [] },
-								{
-									"__identifier": "startFireLevel",
-									"__value": 2,
-									"__type": "Int",
-									"defUid": 16,
-									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
-								}
-							]
 						},
 						{
 							"__identifier": "FireStarter",
@@ -480,10 +490,10 @@
 								},
 								{
 									"__identifier": "startFireLevel",
-									"__value": 2,
+									"__value": 0,
 									"__type": "Int",
 									"defUid": 16,
-									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+									"realEditorValues": [null]
 								}
 							]
 						},
@@ -515,20 +525,20 @@
 						},
 						{
 							"__identifier": "FireStarter",
-							"__grid": [44,22],
+							"__grid": [48,21],
 							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 16,
 							"height": 16,
 							"defUid": 14,
-							"px": [712,360],
+							"px": [776,344],
 							"fieldInstances": [
 								{
 									"__identifier": "range",
-									"__value": 3,
+									"__value": 2,
 									"__type": "Int",
 									"defUid": 15,
-									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
 								},
 								{
 									"__identifier": "startFireLevel",

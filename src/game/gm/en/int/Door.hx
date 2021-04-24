@@ -7,6 +7,7 @@ class Door extends Interactive {
 	public function new(d:Entity_Door) {
 		super(d.cx,d.cy);
 		cHei = M.round(d.height / Const.GRID);
+		closed = !d.f_opened;
 		updateCollisions();
 	}
 
