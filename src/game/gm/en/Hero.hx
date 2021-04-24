@@ -6,6 +6,8 @@ enum CtrlCommand {
 }
 
 class Hero extends gm.Entity {
+	var anims = dn.heaps.assets.Aseprite.getDict( hxd.Res.atlas.hero );
+
 	var data : Entity_Hero;
 	var ca : ControllerAccess;
 	var walkSpeed = 0.;
@@ -23,7 +25,9 @@ class Hero extends gm.Entity {
 		initLife(data.f_startHP);
 
 		camera.trackEntity(this, true);
-		spr.set(dict.doggie);
+		spr.set(Assets.hero);
+
+		spr.anim.registerStateAnim(anims.idle, 0);
 	}
 
 	override function onDamage(dmg:Int, from:Entity) {

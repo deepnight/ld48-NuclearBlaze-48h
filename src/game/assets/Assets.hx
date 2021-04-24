@@ -15,6 +15,7 @@ class Assets {
 
 	/** Main atlas **/
 	public static var tiles : SpriteLib;
+	public static var hero : SpriteLib;
 
 	/** Fully typed access to slice names present in Aseprite file (eg. `trace(tilesDict.myStoneTexture)` )**/
 	public static var tilesDict = dn.heaps.assets.Aseprite.getDict(hxd.Res.atlas.tiles);
@@ -38,6 +39,7 @@ class Assets {
 
 		// build sprite atlas directly from Aseprite file
 		tiles = dn.heaps.assets.Aseprite.convertToSLib(Const.FPS, hxd.Res.atlas.tiles.toAseprite());
+		hero = dn.heaps.assets.Aseprite.convertToSLib(Const.FPS, hxd.Res.atlas.hero.toAseprite());
 
 		// CastleDB file hot reloading
 		#if debug
