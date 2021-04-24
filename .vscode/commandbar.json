@@ -57,7 +57,7 @@
 		{
 			"text": "📦 Redist",
 			"color": "lightgreen",
-			"command": "haxelib run redistHelper hl.dx.hxml js.hxml -o redist -p LD48 -zip",
+			"command": "haxelib run redistHelper hl.dx.hxml js.hxml -o redist -p LD48",
 			"alignment": "right",
 			"skipTerminateQuickPick": false,
 			"priority": -50
