@@ -11,6 +11,7 @@ class Fx extends dn.Process {
 	final dict = Assets.tilesDict;
 
 	var pool : ParticlePool;
+	var windX = 0.;
 
 	public var bgAddSb    : h2d.SpriteBatch;
 	public var bgNormalSb    : h2d.SpriteBatch;
@@ -178,6 +179,7 @@ class Fx extends dn.Process {
 		p.rotation = rnd(0,M.PI2);
 		p.dr = rnd(0,0.03,true);
 		p.ds = rnd(0.002, 0.004);
+		p.gx = windX*rnd(0.01,0.02);
 		p.dy = -rnd(0.3, 0.8) * compressUp(pow,0.8);
 		p.frict = rnd(0.99,1);
 		p.lifeS = rnd(0.3,0.6);
@@ -194,7 +196,7 @@ class Fx extends dn.Process {
 			p.setFadeS(rnd(0.7,1), 0.1, 0.3);
 			p.alphaFlicker = 0.6;
 			p.dx = rnd(-0.8,0.4) * compressUp(pow,0.5);
-			p.dy = -rnd(0.6, 3) * compressUp(pow,0.5);
+			p.dy = -rnd(0.6, 5) * compressUp(pow,0.5);
 			p.gx = rnd(0,0.05,true);
 			p.frict = rnd(0.8, 0.96);
 			p.lifeS = rnd(0.2,0.3);
@@ -206,7 +208,7 @@ class Fx extends dn.Process {
 		return Const.GRID * (
 			level.hasCollision(cx-1,cy) ? rnd(cx-0.2,cx+0.1) :
 			level.hasCollision(cx+1,cy) ? rnd(cx+0.9,cx+1.2) :
-			rnd(cx-0.3,cx+1.3)
+			rnd(cx-0.1,cx+1.1)
 		);
 	}
 	inline function getFlameY(cx:Int,cy:Int) {
@@ -224,15 +226,19 @@ class Fx extends dn.Process {
 			var p = allocTopAdd( getTile(dict.fxFlame), getFlameX(cx,cy), getFlameY(cx,cy) );
 			p.setFadeS(rnd(0.7,0.8), rnd(0.2,0.4), 0.3);
 			p.colorAnimS( C.interpolateInt(0xff0000, 0xffcc00, rnd(0,1)), 0xb71919, rnd(0.2,0.4) );
-			p.setScale(rnd(0.8,1.3) * compressUp(pow,0.7));
-			p.scaleX *= rnd(0.7,1,true);
+			p.setScale(rnd(0.9,2) * compressUp(pow,0.7));
+			p.scaleX *= rnd(0.7,1.2,true);
 			p.rotation = -rnd(0.1,0.2);
-			p.scaleMul = rnd(0.98,0.99);
-			p.dx = -rnd(0.1,0.3);
-			p.dy = -rnd(0.3, 0.6);
-			p.frict = rnd(0.94, 0.96);
+			p.scaleMul = rnd(0.94,0.96);
+			p.dsY = rnd(0.01,0.02);
+			p.dsFrict = 0.92;
+			p.dx = rnd(0,0.2,true) + windX*0.2;
+			p.dy = i==0
+				? -rnd(0.4, 0.6) * compressUp(pow,0.7)
+				: -rnd(0.2, 1.4) * compressUp(pow,0.5);
+			p.frict = rnd(0.94, 0.98);
 			p.lifeS = rnd(0.3,0.5);
-			p.delayS = i==0 ? 0 : rnd(0,0.4);
+			p.delayS = rnd(0,0.4);
 		}
 
 	}
@@ -260,6 +266,7 @@ class Fx extends dn.Process {
 	override function update() {
 		super.update();
 
+		windX = Math.cos(ftime*0.01);
 		pool.update(game.tmod);
 	}
 }
