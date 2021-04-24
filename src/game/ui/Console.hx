@@ -56,6 +56,19 @@ class Console extends h2d.Console {
 			new DebugDrone();
 		});
 
+		// Show fireStates
+		this.addCommand("fs", [], ()->{
+			if( !Game.exists() )
+				return;
+
+			Game.ME.fx.clear();
+			var l = Game.ME.level;
+			for(cx in 0...l.cWid)
+			for(cy in 0...l.cHei)
+				if( l.hasFireState(cx,cy) )
+					Game.ME.fx.markerCase(cx,cy, 5, l.isBurning(cx,cy) ? 0xffcc00 : 0x770000);
+		});
+
 		// Create a stats box
 		this.addCommand("fps", [], ()->{
 			if( stats!=null ) {

@@ -168,12 +168,13 @@ class Fx extends dn.Process {
 
 	inline function compressUp(ratio:Float, range:Float) return (1-range) + range*ratio;
 
-	public inline function wallFlameSmoke(cx:Int,cy:Int, fs:FireState) {
+	public inline function levelFireSmoke(cx:Int,cy:Int, fs:FireState) {
 		var pow = fs.getPowerRatio(true);
 
-		var p = allocTopNormal( getTile(dict.fxSmoke), (cx+rnd(0,1))*Const.GRID, (cy+rnd(0,1))*Const.GRID );
-		p.setFadeS(rnd(0.6, 0.8)*compressUp(pow,0.7), 0.3, rnd(1,2));
+		var p = allocTopNormal( getTile(dict.fxSmoke), getFlameX(cx,cy), getFlameY(cx,cy) );
+		p.setFadeS(rnd(0.4, 0.6)*compressUp(pow,0.7), rnd(0.3,0.5), rnd(0.4,1));
 		p.colorAnimS(0xc14132, 0x57546f, rnd(0.4, 1.2));
+		p.setScale(rnd(1,2,true));
 		p.rotation = rnd(0,M.PI2);
 		p.dr = rnd(0,0.03,true);
 		p.ds = rnd(0.002, 0.004);
@@ -183,33 +184,55 @@ class Fx extends dn.Process {
 		p.delayS = rnd(0,0.4);
 	}
 
-	public inline function wallFlame(cx:Int,cy:Int, fs:FireState) {
+	public inline function levelFireSparks(cx:Int, cy:Int, fs:FireState) {
 		var pow = fs.getPowerRatio(true);
 
-		// Tiny spark
-		var p = allocTopAdd( getTile(dict.pixel), (cx+rnd(0,1))*Const.GRID, (cy+rnd(-0.5,0.5))*Const.GRID );
-		p.colorAnimS(0xffcc00, 0xff0000, rnd(0.3,1));
-		p.setFadeS(rnd(0.4,0.8), 0.1, 0.3);
-		p.alphaFlicker = 0.6;
-		p.dx = -rnd(0.1,0.3);
-		p.dy = -rnd(0.4, 1) * compressUp(pow,0.5);
-		p.frict = rnd(0.985, 1);
-		p.lifeS = rnd(0.2,0.5);
+		if( level.hasCollision(cx,cy+1) )
+		for(i in 0...M.round(1+pow)) {
+			var p = allocTopAdd( getTile(dict.pixel), getFlameX(cx,cy), getFlameY(cx,cy) );
+			p.colorAnimS(0xff8800, 0xff0044, rnd(0.3,1));
+			p.setFadeS(rnd(0.7,1), 0.1, 0.3);
+			p.alphaFlicker = 0.6;
+			p.dx = rnd(-0.8,0.4) * compressUp(pow,0.5);
+			p.dy = -rnd(0.6, 3) * compressUp(pow,0.5);
+			p.gx = rnd(0,0.05,true);
+			p.frict = rnd(0.8, 0.96);
+			p.lifeS = rnd(0.2,0.3);
+			p.delayS = rnd(0, 0.5);
+		}
+	}
 
-		// Flames
-		for( i in 0...Std.int(1+pow*2) ) {
-			var p = allocTopAdd( getTile(dict.fxFlame), (cx+rnd(0,1))*Const.GRID, (cy+rnd(0,1))*Const.GRID );
-			p.setFadeS(rnd(0.7,0.8), 0.1, 0.2);
+	inline function getFlameX(cx:Int,cy:Int) {
+		return Const.GRID * (
+			level.hasCollision(cx-1,cy) ? rnd(cx-0.2,cx+0.1) :
+			level.hasCollision(cx+1,cy) ? rnd(cx+0.9,cx+1.2) :
+			rnd(cx-0.3,cx+1.3)
+		);
+	}
+	inline function getFlameY(cx:Int,cy:Int) {
+		return Const.GRID * (
+			level.hasCollision(cx,cy-1) ? rnd(cy,cy+0.3) :
+			level.hasCollision(cx,cy+1) ? rnd(cy+1,cy+1.4) :
+			rnd(cy-0.2,cy+1.2)
+		);
+	}
+
+	public inline function levelFlames(cx:Int,cy:Int, fs:FireState) {
+		var pow = fs.getPowerRatio(true);
+
+		for( i in 0...Std.int(1+pow*3) ) {
+			var p = allocTopAdd( getTile(dict.fxFlame), getFlameX(cx,cy), getFlameY(cx,cy) );
+			p.setFadeS(rnd(0.7,0.8), rnd(0.2,0.4), 0.3);
 			p.colorAnimS( C.interpolateInt(0xff0000, 0xffcc00, rnd(0,1)), 0xb71919, rnd(0.2,0.4) );
-			p.setScale(rnd(0.6,1) * compressUp(pow,0.7));
-			p.scaleX *= rnd(0.5,1,true);
+			p.setScale(rnd(0.8,1.3) * compressUp(pow,0.7));
+			p.scaleX *= rnd(0.7,1,true);
 			p.rotation = -rnd(0.1,0.2);
 			p.scaleMul = rnd(0.98,0.99);
 			p.dx = -rnd(0.1,0.3);
 			p.dy = -rnd(0.3, 0.6);
 			p.frict = rnd(0.94, 0.96);
-			p.lifeS = rnd(0.2,0.3);
-			p.delayS = i==0 ? 0 : rnd(0,0.1);
+			p.lifeS = rnd(0.3,0.5);
+			p.delayS = i==0 ? 0 : rnd(0,0.4);
 		}
 
 	}

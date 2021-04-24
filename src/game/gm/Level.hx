@@ -31,12 +31,18 @@ class Level extends dn.Process {
 		data = ldtkLevel;
 		tilesetSource = hxd.Res.atlas.world.toAseprite().toTile();
 
-		// Init fire states
+		// Init fire spots
 		for(cy in 0...data.l_Collisions.cHei)
 		for(cx in 0...data.l_Collisions.cWid) {
-			if( !hasCollision(cx,cy) || hasCollision(cx-1,cy) && hasCollision(cx+1,cy) && hasCollision(cx,cy-1) && hasCollision(cx,cy+1) )
+			if( hasCollision(cx,cy) )
 				continue;
-			fireStates.set( coordId(cx,cy), new FireState() );
+
+			if( hasCollision(cx,cy+1) )
+				fireStates.set( coordId(cx,cy), new FireState() );
+			else if( hasCollision(cx,cy-1) && cx%2==0 )
+				fireStates.set( coordId(cx,cy), new FireState() );
+			else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) && cy%2==0 )
+				fireStates.set( coordId(cx,cy), new FireState() );
 		}
 	}
 
@@ -149,16 +155,17 @@ class Level extends dn.Process {
 		}
 
 		// Fire fx
-		if( !cd.hasSetS("flames",0.1) ) {
+		if( !cd.hasSetS("flames",0.4) ) {
 			var smoke = !cd.hasSetS("flamesSmoke",0.4);
 			var fs : FireState = null;
 			for(cy in 0...data.l_Collisions.cHei)
 			for(cx in 0...data.l_Collisions.cWid)
-				if( Game.ME.camera.isOnScreenCase(cx,cy) && isBurning(cx,cy) ) {
+				if( Game.ME.camera.isOnScreenCase(cx,cy,64) && isBurning(cx,cy) ) {
 					fs = getFireState(cx,cy);
-					fx.wallFlame(cx, cy, fs);
+					fx.levelFlames(cx, cy, fs);
+					fx.levelFireSparks(cx, cy, fs);
 					if( smoke )
-						fx.wallFlameSmoke(cx, cy, fs);
+						fx.levelFireSmoke(cx, cy, fs);
 				}
 		}
 	}
