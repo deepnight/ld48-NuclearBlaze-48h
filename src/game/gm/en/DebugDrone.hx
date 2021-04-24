@@ -30,6 +30,7 @@ class DebugDrone extends Entity {
 
 		ME = this;
 		setPosPixel(camera.rawFocus.levelX, camera.rawFocus.levelY);
+		gravityMul = 0;
 
 		// Controller
 		ca = App.ME.controller.createAccess("drone", true);
@@ -144,7 +145,7 @@ class DebugDrone extends Entity {
 			prevCamTarget = camera.target;
 
 		// Display FPS
-		debug( M.round(hxd.Timer.fps()) + " FPS" );
+		debug( M.round(hxd.Timer.fps()) + " FPS, fx="+@:privateAccess fx.pool.count() );
 
 		// Collisions
 		if( level.hasCollision(cx,cy) )

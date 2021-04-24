@@ -187,6 +187,9 @@ class Entity {
 	/** Center Y pixel coordinate of the bounding box **/
 	public var centerY(get,never) : Float; inline function get_centerY() return attachY + (0.5-pivotY) * hei;
 
+	public var coordId(get,never) : Int;
+		inline function get_coordId() return level!=null && !level.destroyed ? level.coordId(cx,cy) : 0;
+
 	/** attachX value during last frame **/
 	public var prevFrameattachX(default,null) : Float = -Const.INFINITE;
 	/** attachY value during last frame **/
@@ -194,7 +197,7 @@ class Entity {
 
 	var actions : Array<{ id:String, cb:Void->Void, t:Float }> = [];
 
-
+	public var fireState : FireState;
 	var fallStartCy = 999999.;
 	var gravityMul = 1.0;
 
@@ -206,6 +209,7 @@ class Entity {
 		ucd = new dn.Cooldown(Const.FPS);
         setPosCase(x,y);
 		initLife(1);
+		fireState = new FireState();
 
         spr = new HSprite(Assets.tiles);
 		Game.ME.scroller.add(spr, Const.DP_MAIN);
@@ -704,7 +708,6 @@ class Entity {
 	function onPreStepY() {
 		// Land on ground
 		if( yr>1 && level.hasCollision(cx,cy+1) ) {
-			setSquashY(0.5);
 			dy = 0;
 			yr = 1;
 			var cHei = M.fmax(0, cy+yr-fallStartCy);

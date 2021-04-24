@@ -39,6 +39,9 @@ class App extends dn.Process {
 
 	/** Start game process **/
 	public function startGame() {
+		if( Console.ME.stats!=null )
+			Console.ME.stats.removeAllComponents();
+
 		if( Game.exists() ) {
 			// Kill previous game instance first
 			Game.ME.destroy();

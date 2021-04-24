@@ -6,7 +6,7 @@ class Console extends h2d.Console {
 	var flags : Map<String,Bool>;
 	#end
 
-	var stats : Null<dn.heaps.StatsBox>;
+	public var stats : Null<dn.heaps.StatsBox>;
 
 	public function new(f:h2d.Font, p:h2d.Object) {
 		super(f, p);
@@ -72,6 +72,18 @@ class Console extends h2d.Console {
 		addFlagCommandAlias("affect");
 		addFlagCommandAlias("scroll");
 		addFlagCommandAlias("cam");
+	}
+
+	public function enableStats() {
+		if( stats==null )
+			stats = new dn.heaps.StatsBox(App.ME);
+	}
+
+	public function disableStats() {
+		if( stats!=null )  {
+			stats.destroy();
+			stats = null;
+		}
 	}
 
 	/** Creates a shortcut command "/flag" to toggle specified flag state **/

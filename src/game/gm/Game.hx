@@ -51,6 +51,17 @@ class Game extends Process {
 		camera = new Camera();
 
 		startLevel(Assets.worldData.all_levels.House);
+
+
+		#if debug
+		Console.ME.enableStats();
+		var tf : h2d.Text = null;
+		Console.ME.stats.addComponent( (f)->{
+			if( tf==null )
+				tf = new h2d.Text(Assets.fontSmall, f);
+			tf.text = Std.string( @:privateAccess fx.pool.count() + " fx" );
+		});
+		#end
 	}
 
 

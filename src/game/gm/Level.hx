@@ -21,6 +21,7 @@ class Level extends dn.Process {
 
 	var collOverride : Map<Int,Bool> = new Map();
 	var marks : Map< LevelMark, Map<Int,Bool> > = new Map();
+	public var fireStates : Map<Int,FireState> = new Map();
 	var invalidated = true;
 
 	public function new(ldtkLevel:World.World_Level) {
@@ -29,10 +30,23 @@ class Level extends dn.Process {
 		createRootInLayers(Game.ME.scroller, Const.DP_BG);
 		data = ldtkLevel;
 		tilesetSource = hxd.Res.atlas.world.toAseprite().toTile();
+
+		// Init fire states
+		for(cy in 0...data.l_Collisions.cHei)
+		for(cx in 0...data.l_Collisions.cWid) {
+			if( !hasCollision(cx,cy) || hasCollision(cx-1,cy) && hasCollision(cx+1,cy) && hasCollision(cx,cy-1) && hasCollision(cx,cy+1) )
+				continue;
+			fireStates.set( coordId(cx,cy), new FireState() );
+		}
 	}
 
 	override function onDispose() {
 		super.onDispose();
+
+		for(fs in fireStates)
+			fs.dispose();
+		fireStates = null;
+
 		data = null;
 		tilesetSource = null;
 		marks = null;
@@ -110,6 +124,18 @@ class Level extends dn.Process {
 
 	override function postUpdate() {
 		super.postUpdate();
+
+
+		if( !cd.hasSetS("flames",0.1) ) {
+			var smoke = !cd.hasSetS("flamesSmoke",0.4);
+			for(cy in 0...data.l_Collisions.cHei)
+			for(cx in 0...data.l_Collisions.cWid)
+				if( fireStates.exists( coordId(cx,cy) ) && Game.ME.camera.isOnScreenCase(cx,cy) ) {
+					fx.wallFlame(cx, cy);
+					if( smoke )
+						fx.wallFlameSmoke(cx, cy);
+				}
+		}
 
 		if( invalidated ) {
 			invalidated = false;

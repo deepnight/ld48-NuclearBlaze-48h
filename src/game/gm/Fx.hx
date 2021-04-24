@@ -166,6 +166,57 @@ class Fx extends dn.Process {
 	}
 
 
+	public function wallFlameSmoke(cx:Int,cy:Int) {
+		var p = allocTopNormal( getTile(dict.fxSmoke), (cx+rnd(0,1))*Const.GRID, (cy+rnd(0,1))*Const.GRID );
+		p.setFadeS(rnd(0.6, 0.8), 0.3, rnd(1,2));
+		p.colorAnimS(0xc14132, 0x57546f, rnd(0.4, 1.2));
+		p.rotation = rnd(0,M.PI2);
+		p.dr = rnd(0,0.03,true);
+		p.ds = rnd(0.002, 0.004);
+		p.dy = -rnd(0.3, 0.8);
+		p.frict = rnd(0.99,1);
+		p.lifeS = rnd(0.3,0.6);
+		p.delayS = rnd(0,0.4);
+	}
+
+	public function wallFlame(cx:Int,cy:Int) {
+		for(i in 0...3) {
+			var p = allocTopAdd( getTile(dict.fxFlame), (cx+rnd(0,1))*Const.GRID, (cy+rnd(0,1))*Const.GRID );
+			p.setFadeS(rnd(0.7,0.8), 0.1, 0.2);
+			p.colorAnimS( C.interpolateInt(0xff0000, 0xffcc00, rnd(0,1)), 0xb71919, rnd(0.2,0.4) );
+			p.setScale(rnd(0.6,1));
+			p.scaleX *= rnd(0.5,1,true);
+			p.rotation = -rnd(0.1,0.2);
+			p.dx = -rnd(0.1,0.3);
+			p.scaleMul = rnd(0.98,0.99);
+			p.dy = -rnd(0.3, 0.6);
+			p.frict = rnd(0.94, 0.96);
+			p.lifeS = rnd(0.2,0.3);
+			p.delayS = i==0 ? 0 : rnd(0,0.1);
+		}
+
+	}
+
+
+	public function flame(x:Float,y:Float) {
+		for(i in 0...4) {
+			var p = allocTopAdd( getTile(dict.fxFlame), x+rnd(0,3,true), y+rnd(0,7,true) );
+			p.setFadeS(rnd(0.3,0.5), 0.1, 0.2);
+			p.colorAnimS( C.interpolateInt(0xff5500, 0xffcc00, rnd(0,1)), 0x9e62f1, rnd(0.2,0.4) );
+			p.setScale(rnd(0.4,0.8));
+			p.scaleX*=rndSign();
+			p.rotation = -rnd(0.1,0.2);
+			p.dx = -rnd(0.1,0.3);
+			p.scaleMul = rnd(0.98,0.99);
+			p.dy = -rnd(0.4, 1.3);
+			p.frict = rnd(0.94, 0.96);
+			p.lifeS = rnd(0.2,0.3);
+			p.delayS = i==0 ? 0 : rnd(0,0.1);
+		}
+
+	}
+
+
 	override function update() {
 		super.update();
 

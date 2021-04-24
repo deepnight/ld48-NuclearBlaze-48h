@@ -94,6 +94,11 @@ class Camera extends dn.Process {
 		return levelX>=left && levelX<=right && levelY>=top && levelY<=bottom;
 	}
 
+	public inline function isOnScreenCase(cx:Int, cy:Int, pad=32) {
+		return cx*Const.GRID>=left-pad && (cx+1)*Const.GRID<=right+pad
+			&& cy*Const.GRID>=top-pad && (cy+1)*Const.GRID<=bottom+pad;
+	}
+
 	public function trackEntity(e:Entity, immediate:Bool, speed=1.0) {
 		target = e;
 		setTrackingSpeed(speed);

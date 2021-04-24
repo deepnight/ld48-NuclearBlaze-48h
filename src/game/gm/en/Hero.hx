@@ -52,9 +52,21 @@ class Hero extends gm.Entity {
 		return ca.locked() || Console.ME.isActive();
 	}
 
+
+	override function onLand(cHei:Float) {
+		super.onLand(cHei);
+		setSquashY(0.5);
+	}
+
 	override function onTouchWall(wallDir:Int) {
 		super.onTouchWall(wallDir);
 		dx*=0.66;
+	}
+
+	override function postUpdate() {
+		super.postUpdate();
+		if( !cd.hasSetS("flame",0.1) )
+			fx.flame(centerX, centerY);
 	}
 
 	override function preUpdate() {
