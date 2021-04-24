@@ -1,8 +1,8 @@
-redist/
 bin/
 dump/
 docs/
 res/.tmp/
+*.zip
 
 # VScode
 .vscode/settings.json
