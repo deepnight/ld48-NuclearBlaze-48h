@@ -200,6 +200,7 @@ class Entity {
 	public var fireState : FireState;
 	var fallStartCy = 999999.;
 	var gravityMul = 1.0;
+	var collides = true;
 
     public function new(x:Int, y:Int) {
         uid = Const.makeUniqueId();
@@ -691,33 +692,37 @@ class Entity {
 
 	/** Called at the beginning of each X movement step **/
 	function onPreStepX() {
-		// Right collision
-		if( xr>0.8 && level.hasCollision(cx+1,cy) ) {
-			onTouchWall(1);
-			xr = 0.8;
-		}
+		if( collides ) {
+			// Right collision
+			if( xr>0.8 && level.hasCollision(cx+1,cy) ) {
+				onTouchWall(1);
+				xr = 0.8;
+			}
 
-		// Left collision
-		if( xr<0.2 && level.hasCollision(cx-1,cy) ) {
-			onTouchWall(-1);
-			xr = 0.2;
+			// Left collision
+			if( xr<0.2 && level.hasCollision(cx-1,cy) ) {
+				onTouchWall(-1);
+				xr = 0.2;
+			}
 		}
 	}
 
 	/** Called at the beginning of each Y movement step **/
 	function onPreStepY() {
-		// Land on ground
-		if( yr>1 && level.hasCollision(cx,cy+1) ) {
-			dy = 0;
-			yr = 1;
-			var cHei = M.fmax(0, cy+yr-fallStartCy);
-			onPosManuallyChanged();
-			onLand(cHei);
-		}
+		if( collides ) {
+			// Land on ground
+			if( yr>1 && level.hasCollision(cx,cy+1) ) {
+				dy = 0;
+				yr = 1;
+				var cHei = M.fmax(0, cy+yr-fallStartCy);
+				onPosManuallyChanged();
+				onLand(cHei);
+			}
 
-		// Ceiling collision
-		if( yr<0.2 && level.hasCollision(cx,cy-1) )
-			yr = 0.2;
+			// Ceiling collision
+			if( yr<0.2 && level.hasCollision(cx,cy-1) )
+				yr = 0.2;
+		}
 	}
 
 
