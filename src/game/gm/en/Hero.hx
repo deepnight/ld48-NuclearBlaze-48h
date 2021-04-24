@@ -95,6 +95,13 @@ class Hero extends gm.Entity {
 		}
 
 		walkSpeed = 0;
+
+		if( ca.xPressed() )
+			queueCommand(Use);
+
+		if( ca.aPressed() )
+			queueCommand(Jump);
+
 		if( !controlsLocked() && !isWatering() ) {
 
 			// Walk
@@ -104,8 +111,6 @@ class Hero extends gm.Entity {
 			}
 
 			// Jump
-			if( ca.aPressed() )
-				queueCommand(Jump);
 			if( recentlyOnGround && ifQueuedRemove(Jump) ) {
 				dy = -Const.db.HeroJump_1;
 				setSquashX(0.6);
@@ -114,8 +119,6 @@ class Hero extends gm.Entity {
 			}
 
 			// Activate interactive
-			if( ca.xPressed() )
-				queueCommand(Use);
 			if( ifQueuedRemove(Use) ) {
 				// var e = Interactive.getCurrent(this);
 				// if( e!=null )
@@ -140,6 +143,11 @@ class Hero extends gm.Entity {
 
 			if( ca.leftDist()>0 )
 				waterAng = ca.leftAngle();
+
+			// var b = new Bullet(centerX, centerY);
+			// var s = 0.3;
+			// b.dx = Math.cos(waterAng)*s;
+			// b.dy = Math.sin(waterAng)*s;
 
 			var range = 12;
 			var pts = [];
@@ -181,7 +189,7 @@ class Hero extends gm.Entity {
 			dx += walkSpeed*0.05;
 		}
 
-		if( level.isBurning(cx,cy) )
+		if( level.getFireLevel(cx,cy)>=1 )
 			cd.setS("burning",2);
 	}
 }

@@ -448,13 +448,13 @@
 						},
 						{
 							"__identifier": "Hero",
-							"__grid": [34,21],
+							"__grid": [27,21],
 							"__pivot": [0.5,1],
 							"__tile": null,
 							"width": 16,
 							"height": 16,
 							"defUid": 1,
-							"px": [552,352],
+							"px": [440,352],
 							"fieldInstances": []
 						},
 						{
@@ -529,6 +529,32 @@
 							"height": 16,
 							"defUid": 14,
 							"px": [776,344],
+							"fieldInstances": [
+								{
+									"__identifier": "range",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 15,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{
+									"__identifier": "startFireLevel",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 16,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								}
+							]
+						},
+						{
+							"__identifier": "FireStarter",
+							"__grid": [36,20],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 16,
+							"height": 16,
+							"defUid": 14,
+							"px": [584,328],
 							"fieldInstances": [
 								{
 									"__identifier": "range",
