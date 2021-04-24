@@ -63,7 +63,7 @@
 					"desc1": "success %",
 					"value1": 0.7,
 					"desc2": "cooldown (sec) if success ",
-					"value2": 3
+					"value2": 5
 				}
 			],
 			"separators": [],

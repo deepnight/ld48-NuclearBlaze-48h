@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 16,
+	"nextUid": 17,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -298,6 +298,26 @@
 					"acceptFileTypes": null,
 					"defaultOverride": { "id": "V_Int", "params": [1] },
 					"textLanguageMode": null
+				},
+				{
+					"identifier": "startFireLevel",
+					"__type": "Int",
+					"uid": 16,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "NameAndValue",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": 0,
+					"max": 2,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
 				}
 			]
 		}
@@ -430,24 +450,62 @@
 							"height": 16,
 							"defUid": 14,
 							"px": [776,344],
-							"fieldInstances": [{ "__identifier": "range", "__value": 1, "__type": "Int", "defUid": 15, "realEditorValues": [] }]
+							"fieldInstances": [
+								{ "__identifier": "range", "__value": 1, "__type": "Int", "defUid": 15, "realEditorValues": [] },
+								{
+									"__identifier": "startFireLevel",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 16,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								}
+							]
 						},
 						{
 							"__identifier": "FireStarter",
-							"__grid": [35,15],
+							"__grid": [36,14],
 							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 16,
 							"height": 16,
 							"defUid": 14,
-							"px": [568,248],
-							"fieldInstances": [{
-								"__identifier": "range",
-								"__value": 6,
-								"__type": "Int",
-								"defUid": 15,
-								"realEditorValues": [{ "id": "V_Int", "params": [6] }]
-							}]
+							"px": [584,232],
+							"fieldInstances": [
+								{
+									"__identifier": "range",
+									"__value": 4,
+									"__type": "Int",
+									"defUid": 15,
+									"realEditorValues": [{ "id": "V_Int", "params": [4] }]
+								},
+								{ "__identifier": "startFireLevel", "__value": 0, "__type": "Int", "defUid": 16, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "FireStarter",
+							"__grid": [33,22],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 16,
+							"height": 16,
+							"defUid": 14,
+							"px": [536,360],
+							"fieldInstances": [
+								{
+									"__identifier": "range",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 15,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{
+									"__identifier": "startFireLevel",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 16,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								}
+							]
 						}
 					]
 				},

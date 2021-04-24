@@ -134,9 +134,9 @@ class Level extends dn.Process {
 		return hasFireState(cx,cy) && fireStates.get( coordId(cx,cy) ).isBurning();
 	}
 
-	public inline function ignite(cx,cy) {
+	public inline function ignite(cx,cy, startLevel=0) {
 		if( hasFireState(cx,cy) )
-			getFireState(cx,cy).ignite();
+			getFireState(cx,cy).ignite(startLevel);
 	}
 
 	override function postUpdate() {
@@ -163,37 +163,38 @@ class Level extends dn.Process {
 		}
 	}
 
+	function updateFire() {
+		var fs : FireState = null;
+
+		for(cy in 0...data.l_Collisions.cHei)
+		for(cx in 0...data.l_Collisions.cWid) {
+			if( hasFireState(cx,cy) ) {
+				fs = getFireState(cx,cy);
+
+				// Increase
+				if( fs.isBurning() )
+					fs.increase( Const.db.FireTick_2);
+
+				// Update cooldown
+				if( fs.propgationCdS>0 )
+					fs.propgationCdS -= Const.db.FireTick_1;
+
+				// Try to propagate
+				if( fs.isMaxed() && fs.propgationCdS<=0 && Std.random(100) < Const.db.FirePropagation_1*100 ) {
+					fs.propgationCdS = Const.db.FirePropagation_2;
+					for(ox in -2...3)
+					for(oy in -3...3)
+						ignite(cx+ox, cy+oy);
+				}
+			}
+		}
+	}
+
 	override function update() {
 		super.update();
 
 		// Fire update
-		if( !cd.hasSetS("fireTick",Const.db.FireTick_1) ) {
-			var fs : FireState = null;
-			for(cy in 0...data.l_Collisions.cHei)
-			for(cx in 0...data.l_Collisions.cWid) {
-				if( hasFireState(cx,cy) ) {
-					fs = getFireState(cx,cy);
-
-					// Increase
-					if( fs.isBurning() )
-						fs.increase( Const.db.FireTick_2);
-
-					// Try to propagate
-					if( fs.isMaxed() ) {
-						if( fs.propgationCdS>0 ) {
-							// On cooldown
-							fs.propgationCdS -= 1/Const.FPS*tmod;
-						}
-						else if( Std.random(100) < Const.db.FirePropagation_1*100 ) {
-							// Success!
-							fs.propgationCdS = Const.db.FirePropagation_2;
-							for(ox in -2...3)
-							for(oy in -3...3)
-								ignite(cx+ox, cy+oy);
-						}
-					}
-				}
-			}
-		}
+		if( !cd.hasSetS("fireTick",Const.db.FireTick_1) )
+			updateFire();
 	}
 }

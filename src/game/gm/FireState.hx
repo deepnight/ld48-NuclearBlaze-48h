@@ -29,9 +29,11 @@ class FireState {
 		return level>=MAX;
 	}
 
-	public function ignite() {
-		if( !isBurning() )
-			lr = 0.1;
+	public function ignite(startLevel=0) {
+		if( !isBurning() || level<startLevel) {
+			level = startLevel;
+			lr = 0.01;
+		}
 	}
 
 	public inline function reset() {
