@@ -20,6 +20,7 @@ class Hero extends gm.Entity {
 		ca.setLeftDeadZone(0.3);
 
 		camera.trackEntity(this, true);
+		spr.set(dict.doggie);
 	}
 
 	inline function queueCommand(c:CtrlCommand, durationS=0.15) {
