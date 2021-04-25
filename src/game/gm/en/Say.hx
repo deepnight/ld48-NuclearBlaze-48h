@@ -18,7 +18,7 @@ class Say extends Entity {
 	override function fixedUpdate() {
 		super.fixedUpdate();
 
-		if( distCase(hero)<=data.f_triggerDist ) {
+		if( distCase(hero)<=data.f_triggerDist && ( !data.f_needSight || sightCheck(hero) ) ) {
 			hero.say(data.f_text, data.f_color_int);
 			destroy();
 			game.addSlowMo("say",1, 0.8);

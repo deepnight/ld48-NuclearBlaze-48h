@@ -318,9 +318,12 @@ class Game extends Process {
 				level.fogRender.visible = !level.fogRender.visible;
 			#end
 
-			// Restart whole game
-			if( ca.selectPressed() )
+			// Restart
+			if( ca.isKeyboardPressed(K.R) && ca.isKeyboardDown(K.SHIFT) )
+				App.ME.startGame();
+			else if( ca.selectPressed() )
 				startCurrentLevel();
+
 
 		}
 	}

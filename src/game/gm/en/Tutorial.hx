@@ -27,13 +27,17 @@ class Tutorial extends Entity {
 		bg = new h2d.ScaleGrid( Assets.tiles.getTile(dict.tutorial),4,4, tf);
 		bg.color.setColor( C.addAlphaF(data.f_color_int) );
 		bg.alpha = 0.4;
+
+		entityVisible = false;
+		updatePos();
 	}
 
 	public function updatePos() {
 		var p : Float = data.f_padding;
 
-		tf.setScale( M.imax(1,Std.int(Const.SCALE*0.5)) );
 		tf.visible = entityVisible;
+
+		tf.setScale( M.imax(1,Std.int(Const.SCALE*0.5)) );
 		tf.x = Std.int( sprX*Const.SCALE + game.scroller.x + p*Const.SCALE );
 		tf.y = Std.int( sprY*Const.SCALE + game.scroller.y + p*Const.SCALE );
 		tf.maxWidth = ( data.width - data.f_padding*2 ) * Const.SCALE / tf.scaleX;

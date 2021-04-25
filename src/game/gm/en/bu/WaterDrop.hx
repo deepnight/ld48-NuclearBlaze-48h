@@ -63,7 +63,7 @@ class WaterDrop extends Bullet {
 
 
 		// Reduce fire
-		if( !cd.has("limit") ) {
+		if( !cd.has("lock") ) {
 			var x = cx;
 			for(y in cy-1...cy+2) {
 				var fs = level.getFireState(x,y);
@@ -82,7 +82,7 @@ class WaterDrop extends Bullet {
 
 					if( fs.level>=1 ) {
 						fx.fireSplash(sprX, sprY);
-						cd.setS("limit", Const.INFINITE);
+						cd.setS("lock", Const.INFINITE);
 					}
 				}
 				fs.underControlS = Const.db.ControlDuration_1;

@@ -447,9 +447,9 @@ class Hero extends gm.Entity {
 		super.fixedUpdate();
 
 		// Climb one ways
-		if( level.hasOneWay(cx,cy-1) && dy>0 && !climbing && !cd.has("oneWayLock") ) {
+		if( level.hasOneWay(cx,cy-1) && dy>0 && yr<=0.3 && !climbing && !cd.has("oneWayLock") ) {
 			setSquashX(0.6);
-			yr = M.fmin(0.2,yr);
+			yr = M.fmin(0.1,yr);
 			bdy = 0;
 			dy = -0.55;
 		}
@@ -525,21 +525,25 @@ class Hero extends gm.Entity {
 				var shootX = centerX+dir*5;
 				var shootY = centerY+3;
 				if( verticalAiming==0 ) {
+					// Horizontal
 					var b = new gm.en.bu.WaterDrop(shootX, shootY, ang-dir*0.2 + rnd(0, 0.05, true));
 					var b = new gm.en.bu.WaterDrop(shootX, shootY, ang-dir*0.1 + rnd(0, 0.05, true));
 					b.dx*=0.8;
+					b.cd.setS("lock",0.03);
 					cd.setS("bullet",0.02);
 				}
 				else if( verticalAiming<0 ) {
+					// UP
 					shootY-=2;
 					var n = 5;
 					for(i in 0...n) {
 						var b = new gm.en.bu.WaterDrop(shootX, shootY, ang - dir*M.PIHALF*0.85 + i/(n-1)*dir*0.6  + rnd(0, 0.05, true));
-						b.gravityMul*=0.85;
+						b.gravityMul*=0.8;
 					}
 					cd.setS("bullet",0.16);
 				}
 				else {
+					// Self
 					var n = 6;
 					var ang = 0.25;
 					for(i in 0...n) {
