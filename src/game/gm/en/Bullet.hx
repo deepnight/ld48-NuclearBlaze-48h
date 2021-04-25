@@ -13,19 +13,20 @@ class Bullet extends Entity {
 	function onHitCollision() {}
 
 
-	override function onPreStepX() {
-		super.onPreStepX();
-		if( level.hasCollision(cx,cy) ) {
+	function checkCollision() {
+		if( !destroyed && ( level.hasWallCollision(cx,cy) || level.hasOneWay(cx,cy) && dyTotal>0 ) ) {
 			onHitCollision();
 			destroy();
 		}
 	}
 
+	override function onPreStepX() {
+		super.onPreStepX();
+		checkCollision();
+	}
+
 	override function onPreStepY() {
 		super.onPreStepY();
-		if( !destroyed && level.hasCollision(cx,cy) ) {
-			onHitCollision();
-			destroy();
-		}
+		checkCollision();
 	}
 }

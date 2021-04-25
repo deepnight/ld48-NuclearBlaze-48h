@@ -134,7 +134,7 @@ class Fx extends dn.Process {
 	}
 
 	inline function collides(p:HParticle, offX=0., offY=0.) {
-		return level.hasCollision( Std.int((p.x+offX)/Const.GRID), Std.int((p.y+offY)/Const.GRID) );
+		return level.hasAnyCollision( Std.int((p.x+offX)/Const.GRID), Std.int((p.y+offY)/Const.GRID) );
 	}
 
 	public function flashBangS(c:UInt, a:Float, ?t=0.1) {
@@ -235,7 +235,7 @@ class Fx extends dn.Process {
 	public inline function levelExtinguishedSmoke(x:Float,y:Float, fs:FireState) {
 		var p = allocTopNormal( getTile(dict.fxSmoke), x+rnd(0,8,true), y-rnd(0,10) );
 		p.setFadeS(rnd(0.4, 0.6), rnd(0.4,0.6), rnd(0.8,1));
-		p.colorAnimS(0x9890b1, 0x0, rnd(0.8, 1.2));
+		p.colorAnimS(0x4d4959, 0x0, rnd(0.8, 1.2));
 		p.setScale(rnd(1,2,true));
 		p.rotation = rnd(0,M.PI2);
 		p.dr = rnd(0,0.02,true);
@@ -273,15 +273,15 @@ class Fx extends dn.Process {
 
 	inline function getFlameX(cx:Int,cy:Int) {
 		return Const.GRID * (
-			level.hasCollision(cx-1,cy) ? rnd(cx-0.2,cx+0.1) :
-			level.hasCollision(cx+1,cy) ? rnd(cx+0.9,cx+1.2) :
+			level.hasAnyCollision(cx-1,cy) ? rnd(cx-0.2,cx+0.1) :
+			level.hasAnyCollision(cx+1,cy) ? rnd(cx+0.9,cx+1.2) :
 			rnd(cx-0.1,cx+1.1)
 		);
 	}
 	inline function getFlameY(cx:Int,cy:Int) {
 		return Const.GRID * (
-			level.hasCollision(cx,cy-1) ? rnd(cy,cy+1) :
-			level.hasCollision(cx,cy+1) ? rnd(cy+1,cy+1.4) :
+			level.hasAnyCollision(cx,cy-1) ? rnd(cy,cy+1) :
+			level.hasAnyCollision(cx,cy+1) ? rnd(cy+1,cy+1.4) :
 			rnd(cy-0.2,cy+1.2)
 		);
 	}
@@ -294,7 +294,7 @@ class Fx extends dn.Process {
 			baseCol = 0x7860e7;
 
 		var n = Std.int(1+pow*3);
-		if( !level.hasCollision(cx,cy+1) )
+		if( !level.hasAnyCollision(cx,cy+1) )
 			n+=2;
 
 		for( i in 0...n ) {
@@ -359,7 +359,7 @@ class Fx extends dn.Process {
 		p.setFadeS( vary(0.7)*alpha, 0, 0.1);
 		p.colorize(0x1aabe7);
 		p.rotation = a;
-		p.scaleX = vary(0.4);
+		p.scaleX = vary(0.2);
 		p.scaleMul = rnd(1.02,1.03);
 		p.frict = vary(0.8);
 		p.lifeS = rnd(0.06,0.10);

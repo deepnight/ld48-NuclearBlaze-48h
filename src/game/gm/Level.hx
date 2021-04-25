@@ -56,15 +56,15 @@ class Level extends dn.Process {
 			}
 
 			// Init fire spots
-			if( !hasCollision(cx,cy) ) {
+			if( !hasAnyCollision(cx,cy) ) {
 				if( cx<=0 || cy<=0 || cx>=cWid-1 || cy>=cHei-1 )
 					continue;
 
-				if( hasCollision(cx,cy+1) && !hasProperty(cx,cy+1,StopFire) )
+				if( hasAnyCollision(cx,cy+1) && !hasProperty(cx,cy+1,StopFire) )
 					fireStates.set( coordId(cx,cy), new FireState() );
-				// else if( hasCollision(cx,cy-1) )
+				// else if( hasAnyCollision(cx,cy-1) )
 				// 	fireStates.set( coordId(cx,cy), new FireState() );
-				else if( ( hasCollision(cx-1,cy) && !hasProperty(cx-1,cy,StopFire) || hasCollision(cx+1,cy) && !hasProperty(cx+1,cy,StopFire) ) )
+				else if( ( hasAnyCollision(cx-1,cy) && !hasProperty(cx-1,cy,StopFire) || hasAnyCollision(cx+1,cy) && !hasProperty(cx+1,cy,StopFire) ) )
 					fireStates.set( coordId(cx,cy), new FireState() );
 
 				// Properties
@@ -164,15 +164,29 @@ class Level extends dn.Process {
 	}
 
 	// Alias
-	inline function hc(x,y) return hasCollision(x,y);
+	inline function hc(x,y) return hasAnyCollision(x,y);
 
 	/** Return TRUE if "Collisions" layer contains a collision value **/
-	public inline function hasCollision(cx,cy) : Bool {
+	public inline function hasAnyCollision(cx,cy) : Bool {
+		return !isValid(cx,cy)
+			? true
+			: collOverride.exists(coordId(cx,cy))
+				? collOverride.get(coordId(cx,cy))
+				: data.l_Collisions.getInt(cx,cy)==1 || data.l_Collisions.getInt(cx,cy)==2;
+	}
+
+	/** Return TRUE if "Collisions" layer contains a WALL collision value **/
+	public inline function hasWallCollision(cx,cy) : Bool {
 		return !isValid(cx,cy)
 			? true
 			: collOverride.exists(coordId(cx,cy))
 				? collOverride.get(coordId(cx,cy))
 				: data.l_Collisions.getInt(cx,cy)==1;
+	}
+
+	/** Return TRUE if "Collisions" layer contains a WALL collision value **/
+	public inline function hasOneWay(cx,cy) : Bool {
+		return !isValid(cx,cy) ? false : data.l_Collisions.getInt(cx,cy)==2;
 	}
 
 	/** Render current level**/
@@ -214,7 +228,7 @@ class Level extends dn.Process {
 	}
 
 	public inline function ignite(cx,cy, startLevel=0, startProgress=0.) {
-		if( hasFireState(cx,cy) && !hasCollision(cx,cy) && !getFireState(cx,cy).isUnderControl() ) {
+		if( hasFireState(cx,cy) && !hasAnyCollision(cx,cy) && !getFireState(cx,cy).isUnderControl() ) {
 			var fs = getFireState(cx,cy);
 			if( !fs.isBurning() ) {
 				fs.ignite(startLevel, startProgress);
@@ -248,15 +262,15 @@ class Level extends dn.Process {
 					fs = getFireState(cx,cy);
 					if( fs.isBurning() ) {
 						fx.levelFlames(cx, cy, fs);
-						if( isFogRevealed(cx,cy) && !hasCollision(cx,cy-1) )
+						if( isFogRevealed(cx,cy) && !hasAnyCollision(cx,cy-1) )
 							fx.levelFireSparks(cx, cy, fs);
 
 
-						if( smoke && hasCollision(cx,cy+1) )
+						if( smoke && hasAnyCollision(cx,cy+1) )
 							fx.levelFireSmoke(cx, cy, fs);
 					}
 					else if( fs.extinguished ) {
-						if( smoke && hasCollision(cx,cy+1) )
+						if( smoke && hasAnyCollision(cx,cy+1) )
 							fx.levelExtinguishedSmoke((cx+0.5)*Const.GRID, (cy+1)*Const.GRID, fs);
 					}
 				}
@@ -328,7 +342,7 @@ class Level extends dn.Process {
 	}
 
 	function canSeeThrough(cx,cy) {
-		return isValid(cx,cy) && !hasCollision(cx,cy);
+		return isValid(cx,cy) && !hasAnyCollision(cx,cy);
 	}
 	inline function sighCheck(x1,y1,x2,y2) {
 		return dn.Bresenham.checkThinLine(x1,y1, x2,y2, canSeeThrough);

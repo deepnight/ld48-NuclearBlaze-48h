@@ -31,7 +31,9 @@ class Game extends Process {
 
 
 	public var hero : Hero;
-	public var mask : HSprite;
+	// public var masks : Array<HSprite> = [];
+
+	public var curLevelIdx = 0;
 
 
 	public function new() {
@@ -51,12 +53,15 @@ class Game extends Process {
 		hud = new ui.Hud();
 		camera = new Camera();
 
-		mask = Assets.tiles.h_get(Assets.tilesDict.mask);
-		root.add(mask, Const.DP_TOP);
-		mask.colorize(0x0);
-		mask.visible = false;
+		// for(i in 0...2) {
+		// 	var mask = Assets.tiles.h_get(Assets.tilesDict.mask,0, 0.5,0.5);
+		// 	root.add(mask, Const.DP_TOP);
+		// 	masks.push(mask);
+		// 	mask.colorize(0x0);
+		// }
 
-		startLevel(Assets.worldData.all_levels.House);
+		startCurrentLevel();
+		// startLevel(Assets.worldData.all_levels.Lab);
 
 
 		#if debug
@@ -68,6 +73,16 @@ class Game extends Process {
 			tf.text = Std.string( @:privateAccess fx.pool.count() + " fx" );
 		});
 		#end
+	}
+
+	public function startCurrentLevel() {
+		startLevel(Assets.worldData.levels[curLevelIdx]);
+	}
+
+	public function nextLevel() {
+		level.destroy();
+		curLevelIdx++;
+		startCurrentLevel();
 	}
 
 
@@ -126,9 +141,6 @@ class Game extends Process {
 	/** Window/app resize event **/
 	override function onResize() {
 		super.onResize();
-		mask.scaleX = w()/mask.tile.width;
-		mask.scaleY = h()/mask.tile.height;
-		mask.alpha = 0.8;
 	}
 
 
@@ -224,6 +236,24 @@ class Game extends Process {
 
 		// Dispose entities marked as "destroyed"
 		garbageCollectEntities();
+
+		// Masks
+		// var i = 0;
+		// for(mask in masks) {
+		// 	mask.x = w()*0.5;
+		// 	mask.y = h()*0.5;
+		// 	mask.scaleX = w()/mask.tile.width;
+		// 	mask.scaleY = h()/mask.tile.height;
+		// 	mask.alpha = 0.8;
+		// 	switch i {
+		// 		case 0:
+
+		// 		case 1:
+		// 			mask.scaleX*=-1.1;
+		// 			mask.scaleY*=-1.1;
+		// 	}
+		// 	i++;
+		// }
 	}
 
 
@@ -260,17 +290,19 @@ class Game extends Process {
 			#if debug
 			if( ca.isKeyboardPressed(K.D) && ca.isKeyboardDown(K.CTRL) && ca.isKeyboardDown(K.SHIFT) )
 				new DebugDrone(); // <-- HERE: provide an Entity as argument to attach Drone near it
-			#end
+
+			// Next level
+			if( ca.isKeyboardPressed(K.N) )
+				nextLevel();
 
 			// Fog
-			#if debug
 			if( ca.isKeyboardPressed(K.F) )
 				level.fogRender.visible = !level.fogRender.visible;
 			#end
 
 			// Restart whole game
 			if( ca.selectPressed() )
-				App.ME.startGame();
+				startCurrentLevel();
 
 		}
 	}

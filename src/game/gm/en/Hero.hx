@@ -338,6 +338,14 @@ class Hero extends gm.Entity {
 	override function fixedUpdate() {
 		super.fixedUpdate();
 
+		// Climb one ways
+		if( level.hasOneWay(cx,cy-1) && dy>0 ) {
+			setSquashX(0.6);
+			yr = M.fmin(0.2,yr);
+			bdy = 0;
+			dy = -0.55;
+		}
+
 		if( isWatering() ) {
 			dx*=0.5;
 
@@ -371,12 +379,13 @@ class Hero extends gm.Entity {
 					cd.setS("bullet",0.16);
 				}
 				else {
-					var r = 20;
 					var n = 6;
-					var ang = 0.4;
+					var ang = 0.25;
 					for(i in 0...n) {
 						var b = new gm.en.bu.WaterDrop(centerX, centerY, -M.PIHALF - ang + ang*2*i/(n-1) );
-						b.gravityMul = 2;
+						b.frictY = 0.85;
+						b.gravityMul = 2.4;
+						b.power = 2;
 						// var b = new gm.en.bu.WaterDrop(centerX-r + r*2*i/(n-1), top-10, M.PIHALF + rnd(0, 0.15, true));
 						// b.gravityMul*=0.7;
 					}
@@ -384,11 +393,6 @@ class Hero extends gm.Entity {
 				}
 			}
 
-			// // Turn off nearby fires
-			// dn.Bresenham.iterateDisc(cx,cy,2, (x,y)->{
-			// 	if( level.isBurning(cx,cy) )
-			// 		level.getFireState(cx,cy).decrease(Const.db.WaterFireDecrease_1);
-			// });
 		}
 
 

@@ -19,7 +19,7 @@ class Entity {
 	public var hero(get,never) : gm.en.Hero; inline function get_hero() return Game.ME.hero;
 
 	public var onGround(get,never) : Bool;
-		inline function get_onGround() return !destroyed && yr==1 && dyTotal==0 && level.hasCollision(cx,cy+1);
+		inline function get_onGround() return !destroyed && yr==1 && dyTotal==0 && level.hasAnyCollision(cx,cy+1);
 
 	public var recentlyOnGround(get,never) : Bool;
 		inline function get_recentlyOnGround() return isAlive() && ( onGround || cd.has("recentlyOnGround") );
@@ -355,7 +355,7 @@ class Entity {
 	}
 
 	function canSeeThrough(cx:Int, cy:Int) {
-		return !level.hasCollision(cx,cy) || this.cx==cx && this.cy==cy;
+		return !level.hasWallCollision(cx,cy) || this.cx==cx && this.cy==cy;
 	}
 
 	/** Check if the grid-based line between this and given target isn't blocked by some obstacle **/
@@ -703,13 +703,13 @@ class Entity {
 	function onPreStepX() {
 		if( collides ) {
 			// Right collision
-			if( xr>0.8 && level.hasCollision(cx+1,cy) ) {
+			if( xr>0.8 && level.hasWallCollision(cx+1,cy) ) {
 				onTouchWall(1);
 				xr = 0.8;
 			}
 
 			// Left collision
-			if( xr<0.2 && level.hasCollision(cx-1,cy) ) {
+			if( xr<0.2 && level.hasWallCollision(cx-1,cy) ) {
 				onTouchWall(-1);
 				xr = 0.2;
 			}
@@ -720,7 +720,7 @@ class Entity {
 	function onPreStepY() {
 		if( collides ) {
 			// Land on ground
-			if( yr>1 && level.hasCollision(cx,cy+1) ) {
+			if( yr>1 && level.hasAnyCollision(cx,cy+1) ) {
 				dy = 0;
 				yr = 1;
 				bdx*=0.5;
@@ -731,7 +731,7 @@ class Entity {
 			}
 
 			// Ceiling collision
-			if( yr<0.2 && level.hasCollision(cx,cy-1) )
+			if( yr<0.2 && level.hasWallCollision(cx,cy-1) )
 				yr = 0.2;
 		}
 	}

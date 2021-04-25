@@ -4,6 +4,7 @@ class WaterDrop extends Bullet {
 	var lastTailX = 0.;
 	var lastTailY = 0.;
 	var elapsedDist = 0.;
+	public var power = 1.0;
 
 	public function new(xx:Float, yy:Float, ang:Float) {
 		super(xx,yy);
@@ -71,14 +72,10 @@ class WaterDrop extends Bullet {
 
 				if( fs.isBurning() ) {
 					var before = fs.level;
-					fs.decrease( Const.db.WaterFireDecrease_1 );
+					fs.decrease( Const.db.WaterFireDecrease_1*power );
 					if( fs.level<=0 ) {
 						fs.clear();
 						fs.extinguished = true;
-						// if( level.hasCollision(x,y+1) && x%3==0 )
-						// 	fs.setToMin();
-						// else
-							// fs.clear();
 						if( before>0 )
 							fx.fireVanish(x,y);
 					}
@@ -86,8 +83,6 @@ class WaterDrop extends Bullet {
 					if( fs.level>=1 ) {
 						fx.fireSplash(sprX, sprY);
 						cd.setS("limit", Const.INFINITE);
-						// fx.waterTail(lastTailX, lastTailY, sprX, sprY);
-						// destroy();
 					}
 				}
 				fs.underControlS = Const.db.ControlDuration_1;
