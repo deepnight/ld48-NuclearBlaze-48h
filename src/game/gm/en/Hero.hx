@@ -39,7 +39,7 @@ class Hero extends gm.Entity {
 		spr.anim.registerStateAnim(anims.jumpDown, 6, ()->!onGround );
 		spr.anim.registerStateAnim(anims.run, 5, 1.3, ()->onGround && M.fabs(dxTotal)>0.05 );
 		spr.anim.registerStateAnim(anims.shootUp, 3, ()->isWatering() && verticalAiming<0 );
-		spr.anim.registerStateAnim(anims.idleCrouch, 3, ()->isWatering() && verticalAiming>0 );
+		spr.anim.registerStateAnim(anims.shootDown, 3, ()->isWatering() && verticalAiming>0 );
 		spr.anim.registerStateAnim(anims.shoot, 3, ()->isWatering() && verticalAiming==0 );
 		spr.anim.registerStateAnim(anims.shootCharge, 2, ()->isChargingAction("water") );
 		spr.anim.registerStateAnim(anims.idleCrouch, 1, ()->!cd.has("recentMove"));
@@ -324,7 +324,7 @@ class Hero extends gm.Entity {
 			// Activate interactive
 			if( onGround && ifQueuedRemove(Use) ) {
 				dx = 0;
-				chargeAction("water", 0.2, ()->{
+				chargeAction("water", 0.1, ()->{
 					cd.setS("watering",0.2);
 					if( ca.leftDist()>0 )
 						waterAng = ca.leftAngle();
@@ -372,11 +372,15 @@ class Hero extends gm.Entity {
 				}
 				else {
 					var r = 20;
-					var n = 5;
+					var n = 6;
+					var ang = 0.4;
 					for(i in 0...n) {
-						var b = new gm.en.bu.WaterDrop(centerX-r + r*2*i/(n-1), top-10, M.PIHALF + rnd(0, 0.15, true));
-						b.gravityMul*=0.7;
+						var b = new gm.en.bu.WaterDrop(centerX, centerY, -M.PIHALF - ang + ang*2*i/(n-1) );
+						b.gravityMul = 2;
+						// var b = new gm.en.bu.WaterDrop(centerX-r + r*2*i/(n-1), top-10, M.PIHALF + rnd(0, 0.15, true));
+						// b.gravityMul*=0.7;
 					}
+					cd.setS("bullet",0.16);
 				}
 			}
 
