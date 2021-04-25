@@ -149,12 +149,29 @@ class Fx extends dn.Process {
 	}
 
 
-	/**
-		A small sample to demonstrate how basic particles work. This example produces a small explosion of yellow dots that will fall and slowly fade to purple.
+	public function itemPickUp(x:Float, y:Float, color:UInt) {
+		var p = allocTopAdd(getTile(dict.fxStar), x,y);
+		p.colorize(color);
+		p.scale = 2;
+		p.scaleMul = rnd(0.96,0.97);
+		p.dr = rnd(0.2,0.3,true);
+		p.rotation = rnd(0, M.PI,true);
+		p.lifeS = vary(0.5);
 
-		USAGE: fx.dotsExplosionExample(50,50, 0xffcc00)
-	**/
-	public function dotsExplosionExample(x:Float, y:Float, color:UInt) {
+		for(i in 0...80) {
+			var p = allocTopAdd( getTile(dict.pixel), x+rnd(0,3,true), y+rnd(0,3,true) );
+			p.alpha = rnd(0.4,1);
+			p.colorAnimS(color, 0x762087, rnd(0.6, 3)); // fade particle color from given color to some purple
+			p.moveAwayFrom(x,y+8, rnd(1,3)); // move away from source
+			p.frict = rnd(0.8, 0.9); // friction applied to velocities
+			p.gy = rnd(0, 0.06); // gravity Y (added on each frame)
+			p.lifeS = rnd(2,3); // life time in seconds
+			p.onUpdate = _waterPhysics;
+		}
+	}
+
+
+	public function dotsExplosion(x:Float, y:Float, color:UInt) {
 		for(i in 0...80) {
 			var p = allocTopAdd( getTile(dict.fxDot), x+rnd(0,3,true), y+rnd(0,3,true) );
 			p.alpha = rnd(0.4,1);

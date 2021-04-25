@@ -14,6 +14,7 @@ class Hero extends gm.Entity {
 	var cmdQueue : Map<CtrlCommand,Float> = new Map();
 	var waterAng = 0.;
 	var aimingUp = false;
+	var inventory : Array<Enum_Items> = [];
 
 	public function new() {
 		data = level.data.l_Entities.all_Hero[0];
@@ -38,6 +39,25 @@ class Hero extends gm.Entity {
 		spr.anim.registerStateAnim(anims.shootCharge, 2, ()->isChargingAction("water") );
 		spr.anim.registerStateAnim(anims.idleCrouch, 1, ()->!cd.has("recentMove"));
 		spr.anim.registerStateAnim(anims.idle, 0);
+	}
+
+	public function hasItem(k:Enum_Items) {
+		for(e in inventory)
+			if( e==k )
+				return true;
+		return false;
+	}
+
+	public function addItem(k:Enum_Items) {
+		return inventory.push(k);
+	}
+
+	public function useItem(k:Enum_Items) {
+		return inventory.remove(k);
+	}
+
+	public function clearInventory() {
+		return inventory = [];
 	}
 
 	override function onDamage(dmg:Int, from:Entity) {

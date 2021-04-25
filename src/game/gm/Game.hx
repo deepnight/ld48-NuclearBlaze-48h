@@ -90,7 +90,10 @@ class Game extends Process {
 
 		for(d in level.data.l_Entities.all_Door)
 			new gm.en.int.Door(d);
-		// <---- Here: instanciate your level entities
+
+		for(d in level.data.l_Entities.all_Item)
+			new gm.en.Item(d);
+
 
 		for(e in level.data.l_Entities.all_FireStarter)
 			dn.Bresenham.iterateDisc(
