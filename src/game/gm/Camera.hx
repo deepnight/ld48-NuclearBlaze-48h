@@ -70,6 +70,7 @@ class Camera extends dn.Process {
 		super(Game.ME);
 		rawFocus = LPoint.fromCase(0,0);
 		clampedFocus = LPoint.fromCase(0,0);
+		clampToLevelBounds = true;
 		dx = dy = 0;
 	}
 
