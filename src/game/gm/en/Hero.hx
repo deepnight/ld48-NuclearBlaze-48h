@@ -29,7 +29,9 @@ class Hero extends gm.Entity {
 
 		spr.filter = new dn.heaps.filter.PixelOutline(0x330000, 0.4);
 		spr.set(Assets.hero);
-		spr.anim.registerStateAnim(anims.run, 5, ()->onGround && M.fabs(dxTotal)>0.05 );
+		spr.anim.registerStateAnim(anims.jumpUp, 7, ()->!onGround && dy<0.1 );
+		spr.anim.registerStateAnim(anims.jumpDown, 6, ()->!onGround );
+		spr.anim.registerStateAnim(anims.run, 5, 1.3, ()->onGround && M.fabs(dxTotal)>0.05 );
 		spr.anim.registerStateAnim(anims.shootUp, 4, ()->isWatering() && aimingUp );
 		spr.anim.registerStateAnim(anims.shoot, 3, ()->isWatering() && !aimingUp );
 		spr.anim.registerStateAnim(anims.shootCharge, 2, ()->isChargingAction("water") );
@@ -76,7 +78,8 @@ class Hero extends gm.Entity {
 
 	override function onLand(cHei:Float) {
 		super.onLand(cHei);
-		setSquashY(0.5);
+		setSquashY(0.8);
+		spr.anim.play(anims.land);
 	}
 
 	override function onTouchWall(wallDir:Int) {
@@ -190,7 +193,7 @@ class Hero extends gm.Entity {
 				var shootY = centerY+3;
 				if( !aimingUp ) {
 					var b = new gm.en.bu.WaterDrop(shootX, shootY, ang-dir*0.2 + rnd(0, 0.15, true));
-					b.dx *= 1.2;
+					b.dx*=1.2;
 					cd.setS("bullet",0.02);
 				}
 				else {
@@ -203,58 +206,27 @@ class Hero extends gm.Entity {
 				}
 			}
 
+			// Turn off nearby fires
 			dn.Bresenham.iterateDisc(cx,cy,2, (x,y)->{
 				if( level.isBurning(cx,cy) )
 					level.getFireState(cx,cy).decrease(Const.db.WaterFireDecrease_1);
 			});
-
-			// var range = 8;
-			// var pts = [];
-			// dn.Bresenham.iterateDisc(cx,cy, range, (x,y)->{
-			// 	if( level.hasCollision(x,y) || !level.isBurning(x,y) || !sightCheck(x,y) )
-			// 		return;
-
-			// 	var a = Math.atan2(y-cy, x-cx);
-			// 	if( M.radDistance(a,waterAng) > M.PIHALF*0.4 )
-			// 		return;
-
-			// 	pts.push({ a:a, x:x, y:y });
-			// });
-			// if( pts.length>0 ) {
-			// 	var dh = new dn.DecisionHelper(pts);
-			// 	dh.score( pt->-M.radDistance(pt.a, waterAng)*5 );
-			// 	dh.score( pt->level.getFireState(pt.x,pt.y).level*0.6 );
-			// 	dh.score( pt->-distCase(pt.x,pt.y)*0.2 );
-			// 	var pt = dh.getBest();
-			// 	var r = 1;
-			// 	for(y in pt.y-r...pt.y+r+1)
-			// 	for(x in pt.x-r...pt.x+r+1) {
-			// 		fx.markerCase(x,y, 0.1, 0x4ad8f1);
-			// 		var fs = level.getFireState(x, y);
-			// 		if( fs==null )
-			// 			continue;
-
-			// 		fs.underControlS = Const.db.ControlDuration_1;
-			// 		if( fs.level>0 )
-			// 			fs.decrease(Const.db.WaterFireDecrease_1);
-
-			// 		if( fs.level==0 )
-			// 			fs.setToMin();
-			// 	}
-			// }
 		}
+
 
 		// Walk movement
 		if( walkSpeed!=0 ) {
-			dx += walkSpeed*0.05;
+			dx += walkSpeed*0.03;
 			cd.setS("recentMove",0.3);
 		}
-		else
+		else if( !isChargingAction("jump") )
 			dx*=0.6;
 
 		if( !onGround )
-			cd.setS("recentMove",0.3);
+			cd.setS("recentMove",0.6);
 
+
+		// Fire damage
 		dn.Bresenham.iterateDisc(cx,cy,1, (x,y)->{
 			if( level.getFireLevel(x,y)>=1 ) {
 				cd.setS("burning",2);
