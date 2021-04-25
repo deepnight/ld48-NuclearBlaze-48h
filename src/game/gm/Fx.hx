@@ -250,6 +250,8 @@ class Fx extends dn.Process {
 	public inline function levelFlames(cx:Int,cy:Int, fs:FireState) {
 		var pow = fs.getPowerRatio(true);
 		var baseCol = fs.level<2 ? 0xff0000 : C.interpolateInt(0xff6200,0xffcc33,rnd(0,1));
+		if( fs.quickFire )
+			baseCol = 0x7860e7;
 
 		for( i in 0...Std.int(1+pow*3) ) {
 			var p = allocTopAdd( getTile(dict.fxFlame), getFlameX(cx,cy), getFlameY(cx,cy) );
@@ -269,8 +271,42 @@ class Fx extends dn.Process {
 			p.lifeS = rnd(0.3,0.5);
 			p.delayS = rnd(0,0.4);
 		}
-
 	}
+
+
+	public function oilIgnite(cx,cy) {
+		for(i in 0...7) {
+			var p = allocTopAdd(getTile(dict.pixel), getFlameX(cx,cy)+rnd(0,4,true), getFlameY(cx,cy)+rnd(0,4,true));
+			p.colorize(0x7860e7);
+			p.alphaFlicker = 0.7;
+			p.dr = rnd(0.1,0.2,true);
+			p.delayS = i * rnd(0.1,0.2);
+			p.lifeS = rnd(0.1,0.2);
+		}
+		for(i in 0...3) {
+			var p = allocTopAdd(getTile(dict.fxStar), getFlameX(cx,cy)+rnd(0,4,true), getFlameY(cx,cy)+rnd(0,4,true));
+			p.colorize(0x7860e7);
+			p.alphaFlicker = 0.7;
+			p.dr = rnd(0.1,0.2,true);
+			p.scaleMul = rnd(0.96,0.99);
+			// p.setScale(rnd(0.4,0.6));
+			p.rotation = rnd(0, M.PI,true);
+			p.delayS = i * rnd(0.1,0.2);
+			p.lifeS = rnd(0.1,0.2);
+		}
+	}
+
+
+	// public function explosion(cx,cy) {
+		// for(i in 0...3) {
+		// 	var p = allocTopAdd(getTile(dict.fxExplode), getFlameX(cx,cy)+rnd(0,4,true), getFlameY(cx,cy)+rnd(0,4,true));
+		// 	p.colorize(0x7860e7);
+		// 	p.playAnimAndKill( Assets.tiles, dict.fxExplode, rnd(0.3,0.4) );
+		// 	p.setScale(rnd(0.4,0.6));
+		// 	p.rotation = rnd(0, 0.4, true);
+		// 	p.delayS = i * rnd(0.1,0.2);
+		// }
+	// }
 
 
 	public function flame(x:Float,y:Float) {

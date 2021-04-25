@@ -39,6 +39,7 @@ class Assets {
 
 		// build sprite atlas directly from Aseprite file
 		tiles = dn.heaps.assets.Aseprite.convertToSLib(Const.FPS, hxd.Res.atlas.tiles.toAseprite());
+		tiles.defineAnim("fxExplode","0(2),1-6");
 		hero = dn.heaps.assets.Aseprite.convertToSLib(Const.FPS, hxd.Res.atlas.hero.toAseprite());
 
 		// CastleDB file hot reloading

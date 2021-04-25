@@ -10,6 +10,8 @@ class FireState {
 	public var underControlS = 0.;
 	public var superS = 0.;
 
+	public var quickFire = false;
+
 	public inline function new() {}
 
 	@:keep
@@ -35,10 +37,10 @@ class FireState {
 		return level>=MAX;
 	}
 
-	public function ignite(startLevel=0) {
+	public function ignite(startLevel=0, startProgress=0.) {
 		if( !isBurning() || level<startLevel) {
 			level = startLevel;
-			lr = 0.01;
+			lr = M.fmax(startProgress, 0.01);
 		}
 	}
 

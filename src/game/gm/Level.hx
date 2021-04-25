@@ -24,6 +24,11 @@ class Level extends dn.Process {
 	public var fireStates : Map<Int,FireState> = new Map();
 	var invalidated = true;
 
+	public var fogRender : h2d.SpriteBatch;
+	public var fogState : Map<Int,Bool> = new Map();
+	var fogWid : Int;
+	var fogHei : Int;
+
 	public function new(ldtkLevel:World.World_Level) {
 		super(Game.ME);
 
@@ -46,11 +51,25 @@ class Level extends dn.Process {
 				fireStates.set( coordId(cx,cy), new FireState() );
 			else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) && cy%2==0 )
 				fireStates.set( coordId(cx,cy), new FireState() );
+
+			// Properties
+			if( hasFireState(cx,cy) ) {
+				if( data.l_Properties.hasValue(cx, cy+1, 1) )
+					getFireState(cx,cy).quickFire = true;
+			}
 		}
+
+		fogRender = new h2d.SpriteBatch(Assets.tiles.tile);
+		game.scroller.add(fogRender, Const.DP_TOP);
+		buildFog();
 	}
 
 	override function onDispose() {
 		super.onDispose();
+
+		fogRender.remove();
+		fogRender = null;
+		fogState = null;
 
 		for(fs in fireStates)
 			fs.dispose();
@@ -59,6 +78,12 @@ class Level extends dn.Process {
 		data = null;
 		tilesetSource = null;
 		marks = null;
+	}
+
+	function buildFog() {
+		fogRender.clear();
+		fogWid = M.ceil( game.camera.pxWid/Const.GRID );
+		fogHei = M.ceil( game.camera.pxHei/Const.GRID );
 	}
 
 	/** TRUE if given coords are in level bounds **/
@@ -148,8 +173,17 @@ class Level extends dn.Process {
 	}
 
 	public inline function ignite(cx,cy, startLevel=0) {
-		if( hasFireState(cx,cy) && !hasCollision(cx,cy) )
-			getFireState(cx,cy).ignite(startLevel);
+		if( hasFireState(cx,cy) && !hasCollision(cx,cy) && !getFireState(cx,cy).isUnderControl() ) {
+			var fs = getFireState(cx,cy);
+			if( !fs.isBurning() ) {
+				fs.ignite(startLevel);
+				if( fs.quickFire ) {
+					ignite(cx-1,cy, 1);
+					ignite(cx+1,cy, 1);
+					fx.oilIgnite(cx,cy);
+				}
+			}
+		}
 	}
 
 	override function postUpdate() {
@@ -197,8 +231,13 @@ class Level extends dn.Process {
 				fs = getFireState(cx,cy);
 
 				// Increase
-				if( fs.isBurning() && !fs.isUnderControl() )
+				if( fs.isBurning() && !fs.isUnderControl() ) {
 					fs.increase( Const.db.FireIncPerTick_1);
+					if( fs.quickFire ) {
+						ignite(cx-1,cy, 1);
+						ignite(cx+1,cy, 1);
+					}
+				}
 
 				// Update cooldown
 				if( fs.propgationCdS>0 )

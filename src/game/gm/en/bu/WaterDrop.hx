@@ -18,27 +18,34 @@ class WaterDrop extends Bullet {
 		super.fixedUpdate();
 
 		// Reduce fire
-		var x = cx;
-		for(y in cy-1...cy+2) {
-			var fs = level.getFireState(x,y);
-			if( fs==null )
-				continue;
+		if( !cd.has("limit") ) {
+			var x = cx;
+			for(y in cy-1...cy+2) {
+				var fs = level.getFireState(x,y);
+				if( fs==null )
+					continue;
 
-			if( fs.isBurning() ) {
-				var before = fs.level;
-				fs.decrease( Const.db.WaterFireDecrease_1 );
-				if( fs.level<=0 ) {
-					if( level.hasCollision(x,y+1) && x%3==0 )
-						fs.setToMin();
-					else
-						fs.clear();
-					if( before>0 )
-						fx.fireVanish(x,y);
+				if( fs.isBurning() ) {
+					var before = fs.level;
+					fs.decrease( Const.db.WaterFireDecrease_1 );
+					if( fs.level<=0 ) {
+						if( level.hasCollision(x,y+1) && x%3==0 )
+							fs.setToMin();
+						else
+							fs.clear();
+						if( before>0 )
+							fx.fireVanish(x,y);
+					}
+
+					if( fs.level>=2 )
+						destroy();
+					else if( fs.level>=1)
+						cd.setS("limit",0.2);
 				}
+				fs.underControlS = Const.db.ControlDuration_1;
+				if( fs.quickFire )
+					fs.underControlS*=0.25;
 			}
-			fs.underControlS = Const.db.ControlDuration_1;
-			if( fs.level>=1 )
-				destroy();
 		}
 	}
 }
