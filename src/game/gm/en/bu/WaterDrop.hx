@@ -73,10 +73,12 @@ class WaterDrop extends Bullet {
 					var before = fs.level;
 					fs.decrease( Const.db.WaterFireDecrease_1 );
 					if( fs.level<=0 ) {
+						fs.clear();
+						fs.extinguished = true;
 						// if( level.hasCollision(x,y+1) && x%3==0 )
 						// 	fs.setToMin();
 						// else
-							fs.clear();
+							// fs.clear();
 						if( before>0 )
 							fx.fireVanish(x,y);
 					}

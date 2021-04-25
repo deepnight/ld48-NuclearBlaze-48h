@@ -235,15 +235,21 @@ class Level extends dn.Process {
 			var fs : FireState = null;
 			for(cy in 0...data.l_Collisions.cHei)
 			for(cx in 0...data.l_Collisions.cWid)
-				if( Game.ME.camera.isOnScreenCase(cx,cy,64) && isBurning(cx,cy) ) {
+				if( Game.ME.camera.isOnScreenCase(cx,cy,64) && hasFireState(cx,cy) ) {
 					fs = getFireState(cx,cy);
-					fx.levelFlames(cx, cy, fs);
-					if( isFogRevealed(cx,cy) && !hasCollision(cx,cy-1) )
-						fx.levelFireSparks(cx, cy, fs);
+					if( fs.isBurning() ) {
+						fx.levelFlames(cx, cy, fs);
+						if( isFogRevealed(cx,cy) && !hasCollision(cx,cy-1) )
+							fx.levelFireSparks(cx, cy, fs);
 
 
-					if( smoke && hasCollision(cx,cy+1) )
-						fx.levelFireSmoke(cx, cy, fs);
+						if( smoke && hasCollision(cx,cy+1) )
+							fx.levelFireSmoke(cx, cy, fs);
+					}
+					else if( fs.extinguished ) {
+						if( smoke && hasCollision(cx,cy+1) )
+							fx.levelExtinguishedSmoke((cx+0.5)*Const.GRID, (cy+1)*Const.GRID, fs);
+					}
 				}
 		}
 

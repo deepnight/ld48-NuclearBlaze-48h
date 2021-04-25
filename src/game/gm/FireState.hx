@@ -10,6 +10,8 @@ class FireState {
 	public var underControlS = 0.;
 	public var superS = 0.;
 
+	public var extinguished = false;
+
 	public var quickFire = false;
 
 	public inline function new() {}
