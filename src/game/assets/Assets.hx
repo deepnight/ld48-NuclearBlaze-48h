@@ -91,8 +91,17 @@ class Assets {
 	}
 
 
+	public static function getItem(e:Enum_Items) : h2d.Tile {
+		if( !tiles.exists("item"+e.getName()) )
+			return h2d.Tile.fromColor(0xff0000,16,16); // error
+		else
+			return tiles.getTile("item"+e.getName());
+	}
+
+
 	public static function update(tmod) {
 		tiles.tmod = tmod;
+		hero.tmod = tmod;
 		// <-- add other atlas TMOD updates here
 	}
 

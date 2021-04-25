@@ -9,19 +9,20 @@ class Hud extends dn.Process {
 	var invalidated = true;
 	var notifications : Array<h2d.Flow> = [];
 	var notifTw : dn.Tweenie;
+	var inventory : h2d.Flow;
 
 	var debugText : h2d.Text;
 
 	public function new() {
 		super(Game.ME);
 
-		notifTw = new Tweenie(Const.FPS);
-
 		createRootInLayers(game.root, Const.DP_UI);
 		root.filter = new h2d.filter.Nothing(); // force pixel perfect rendering
+		notifications = [];
+		notifTw = new Tweenie(Const.FPS);
 
 		flow = new h2d.Flow(root);
-		notifications = [];
+		inventory = new h2d.Flow(flow);
 
 		debugText = new h2d.Text(Assets.fontSmall, root);
 		clearDebug();
@@ -89,6 +90,13 @@ class Hud extends dn.Process {
 			y+=f.outerHeight+1;
 		}
 
+	}
+
+	public function setInventory(items:Array<Enum_Items>) {
+		inventory.removeChildren();
+		for(i in items) {
+			new h2d.Bitmap( Assets.getItem(i), inventory );
+		}
 	}
 
 	public inline function invalidate() invalidated = true;

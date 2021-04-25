@@ -6,11 +6,13 @@ class Door extends Interactive {
 	var cHei = 0;
 
 	public var kicks = 0;
+	public var requiredItem : Null<Enum_Items>;
 
 	public function new(d:Entity_Door) {
 		super(d.cx,d.cy);
 		ALL.push(this);
 		Game.ME.scroller.add(spr, Const.DP_BG);
+		requiredItem = d.f_requiredItem;
 
 		kicks = d.f_kicks;
 		cHei = M.round(d.height / Const.GRID);
@@ -53,6 +55,11 @@ class Door extends Interactive {
 		dir = openDir;
 		level.clearFogUpdateDelay();
 		updateCollisions();
+
+		if( requiredItem!=null ) {
+			hero.sayBubble( new h2d.Bitmap(Assets.getItem(requiredItem)), Assets.tilesDict.emoteOk);
+			hero.useItem(requiredItem);
+		}
 
 
 		// Check if there are fires behind

@@ -287,7 +287,7 @@ class Fx extends dn.Process {
 			p.dsFrict = 0.92;
 			p.dx = rnd(0,0.2,true) + windX*0.2;
 			p.dy = i==0
-				? -rnd(0.4, 0.6) * compressUp(pow,0.7)
+				? -rnd(0.7, 0.9) * compressUp(pow,0.7)
 				: -rnd(0.2, 1.4) * compressUp(pow,0.5);
 			p.frict = rnd(0.94, 0.98);
 			p.lifeS = rnd(0.3,0.5);

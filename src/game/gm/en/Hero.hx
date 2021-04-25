@@ -15,6 +15,7 @@ class Hero extends gm.Entity {
 	var waterAng = 0.;
 	var aimingUp = false;
 	var inventory : Array<Enum_Items> = [];
+	var bubble : Null<h2d.Bitmap>;
 
 	public function new() {
 		data = level.data.l_Entities.all_Hero[0];
@@ -39,6 +40,8 @@ class Hero extends gm.Entity {
 		spr.anim.registerStateAnim(anims.shootCharge, 2, ()->isChargingAction("water") );
 		spr.anim.registerStateAnim(anims.idleCrouch, 1, ()->!cd.has("recentMove"));
 		spr.anim.registerStateAnim(anims.idle, 0);
+
+		clearInventory();
 	}
 
 	public function hasItem(k:Enum_Items) {
@@ -49,15 +52,22 @@ class Hero extends gm.Entity {
 	}
 
 	public function addItem(k:Enum_Items) {
-		return inventory.push(k);
+		inventory.push(k);
+		hud.setInventory(inventory);
 	}
 
 	public function useItem(k:Enum_Items) {
-		return inventory.remove(k);
+		if( inventory.remove(k) ) {
+			hud.setInventory(inventory);
+			return true;
+		}
+		else
+			return false;
 	}
 
 	public function clearInventory() {
-		return inventory = [];
+		inventory = [];
+		hud.setInventory(inventory);
 	}
 
 	override function onDamage(dmg:Int, from:Entity) {
@@ -88,6 +98,8 @@ class Hero extends gm.Entity {
 	override function dispose() {
 		super.dispose();
 
+		clearBubble();
+
 		ca.dispose();
 		ca = null;
 	}
@@ -106,6 +118,45 @@ class Hero extends gm.Entity {
 		spr.anim.play(anims.land);
 	}
 
+	public function say(str:String, c=0xffffff) {
+		hud.notify('"$str"', c);
+	}
+
+	function clearBubble() {
+		if( bubble!=null ) {
+			bubble.remove();
+			bubble = null;
+		}
+	}
+
+	public function sayBubble(e:h2d.Object, ?extraEmote:String) {
+		clearBubble();
+
+		bubble = Assets.tiles.getBitmap(Assets.tilesDict.bubble);
+		bubble.tile.setCenterRatio(0.5,1);
+		bubble.scaleY = 0;
+		bubble.scaleX = 1.5;
+
+		var f = new h2d.Flow(bubble);
+		f.layout = Horizontal;
+		f.minWidth = Std.int( bubble.tile.width );
+		f.verticalAlign = Middle;
+		f.horizontalAlign = Middle;
+		f.horizontalSpacing = 3;
+		f.x = -bubble.tile.width*0.5;
+		f.y = -bubble.tile.height + 9;
+
+		f.addChild(e);
+		e.filter = new dn.heaps.filter.PixelOutline();
+		if( extraEmote!=null ) {
+			var icon = Assets.tiles.getBitmap(extraEmote);
+			icon.filter = new dn.heaps.filter.PixelOutline();
+			f.addChild(icon);
+		}
+		game.scroller.add(bubble, Const.DP_UI);
+		cd.setS("keepBubble",1.5);
+	}
+
 	override function onTouchWall(wallDir:Int) {
 		super.onTouchWall(wallDir);
 		dx*=0.66;
@@ -113,7 +164,18 @@ class Hero extends gm.Entity {
 		if( onGround && !controlsLocked() && !cd.has("doorKickLimit") ) {
 			var d = gm.en.int.Door.getAt(cx+wallDir,cy);
 			if( d!=null && d.closed ) {
-				if( d.kicks==0 ) {
+				if( d.requiredItem!=null && !hasItem(d.requiredItem) ) {
+					if( !cd.hasSetS("tryToOpen",1) ) {
+						spr.anim.play(anims.useStart);
+						xr = dirTo(d)==1 ? 0.3 : 0.7;
+						chargeAction("openDoor", 0.3, ()->{
+							spr.anim.play(anims.useEnd);
+							sayBubble( new h2d.Bitmap(Assets.getItem(d.requiredItem)), Assets.tilesDict.emoteQuestion);
+							camera.shakeS(0.1,0.2);
+						});
+					}
+				}
+				else if( d.kicks==0 ) {
 					spr.anim.play(anims.useStart);
 					xr = dirTo(d)==1 ? 0.3 : 0.7;
 					chargeAction("openDoor", 0.5, ()->{
@@ -137,6 +199,7 @@ class Hero extends gm.Entity {
 							camera.bump(wallDir, 3);
 							cd.setS("doorKickLimit",0.3);
 							d.setSquashX(0.5);
+							sayBubble( Assets.tiles.getBitmap("emoteNumber"+d.kicks), Assets.tilesDict.emoteShield);
 						}
 					});
 			}
@@ -150,6 +213,23 @@ class Hero extends gm.Entity {
 
 		if( cd.has("shield") && !cd.hasSetS("shieldBlink",0.2) )
 			blink(0xffffff);
+
+		if( bubble!=null ) {
+			bubble.x = sprX;
+			bubble.y = top;
+			bubble.scaleX += (1-bubble.scaleX) * M.fmin(1, 0.3*tmod);
+			bubble.scaleY += (1-bubble.scaleY) * M.fmin(1, 0.3*tmod);
+			if( !cd.has("keepBubble") ) {
+				bubble.alpha-=0.03*tmod;
+				if( bubble.alpha<=0 )
+					clearBubble();
+			}
+		}
+	}
+
+	function isChargingDirLockAction() {
+		return isChargingAction("kickDoor") ||
+			isChargingAction("openDoor");
 	}
 
 	inline function isWatering() return cd.has("watering");
@@ -179,7 +259,7 @@ class Hero extends gm.Entity {
 			queueCommand(Jump);
 
 		// Dir control
-		if( ca.leftDist()>0 )
+		if( ca.leftDist()>0 && !isChargingDirLockAction())
 			dir = M.radDistance(0,ca.leftAngle()) <= M.PIHALF ? 1 : -1;
 
 		// Vertical aiming control
