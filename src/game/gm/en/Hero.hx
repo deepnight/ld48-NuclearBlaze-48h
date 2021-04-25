@@ -60,6 +60,7 @@ class Hero extends gm.Entity {
 	}
 
 	override function onDie() {
+		stopClimbing();
 		cancelAction();
 		cancelVelocities();
 		clearBubble();
@@ -152,7 +153,7 @@ class Hero extends gm.Entity {
 
 		saying = new h2d.Flow();
 		game.scroller.add(saying, Const.DP_UI);
-		cd.setS("keepSaying",2.5);
+		cd.setS("keepSaying",2.5 + str.length*0.05);
 		saying.scaleX = 2;
 		saying.scaleY = 0;
 		saying.layout = Vertical;
@@ -183,7 +184,7 @@ class Hero extends gm.Entity {
 		}
 	}
 
-	public function sayBubble(e:h2d.Object, ?extraEmote:String) {
+	public function sayBubble(e:h2d.Object, ?extraEmote:String, outlineIcon=true) {
 		clearBubble();
 
 		bubble = Assets.tiles.getBitmap(Assets.tilesDict.bubble);
@@ -198,10 +199,11 @@ class Hero extends gm.Entity {
 		f.horizontalAlign = Middle;
 		f.horizontalSpacing = 3;
 		f.x = -bubble.tile.width*0.5;
-		f.y = -bubble.tile.height + 9;
+		f.y = -bubble.tile.height + 7;
 
 		f.addChild(e);
-		e.filter = new dn.heaps.filter.PixelOutline();
+		if( outlineIcon )
+			e.filter = new dn.heaps.filter.PixelOutline();
 		if( extraEmote!=null ) {
 			var icon = Assets.tiles.getBitmap(extraEmote);
 			icon.filter = new dn.heaps.filter.PixelOutline();
@@ -225,7 +227,18 @@ class Hero extends gm.Entity {
 		if( isAlive() && onGround && !controlsLocked() && !cd.has("doorKickLimit") ) {
 			var d = gm.en.int.Door.getAt(cx+wallDir,cy);
 			if( d!=null && d.closed ) {
-				if( d.requiredItem!=null && !hasItem(d.requiredItem) ) {
+				if( d.data.f_requireLevelComplete && !game.levelComplete() ) {
+					if( !cd.hasSetS("tryToOpen",1) ) {
+						spr.anim.play(anims.useStart);
+						xr = dirTo(d)==1 ? 0.3 : 0.7;
+						chargeAction("openDoor", 0.3, ()->{
+							spr.anim.play(anims.useEnd);
+							sayBubble( Assets.tiles.getBitmap(dict.emoteFire), Assets.tilesDict.emoteBad, false );
+							camera.shakeS(0.1,0.2);
+						});
+					}
+				}
+				else if( d.requiredItem!=null && !hasItem(d.requiredItem) ) {
 					if( !cd.hasSetS("tryToOpen",1) ) {
 						spr.anim.play(anims.useStart);
 						xr = dirTo(d)==1 ? 0.3 : 0.7;

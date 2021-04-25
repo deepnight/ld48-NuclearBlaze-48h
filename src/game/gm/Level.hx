@@ -199,7 +199,6 @@ class Level extends dn.Process {
 	function render() {
 		root.removeChildren();
 
-		var layer = data.l_Collisions;
 
 		// var g = new h2d.Graphics(root);
 		// for(cy in 0...layer.cHei)
@@ -211,10 +210,9 @@ class Level extends dn.Process {
 		// }
 
 		var tg = new h2d.TileGroup(tilesetSource, root);
-		for( autoTile in layer.autoTiles ) {
-			var tile = layer.tileset.getAutoLayerTile(autoTile);
-			tg.add(autoTile.renderX, autoTile.renderY, tile);
-		}
+		data.l_Collisions.render(tg);
+		data.l_Tiles.render(tg);
+		data.l_Pipes.render(tg);
 	}
 
 	public inline function hasFireState(cx,cy) {

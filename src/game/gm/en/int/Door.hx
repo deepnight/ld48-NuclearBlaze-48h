@@ -7,14 +7,16 @@ class Door extends Interactive {
 
 	public var kicks = 0;
 	public var requiredItem : Null<Enum_Items>;
+	public var data : Entity_Door;
 
 	public function new(d:Entity_Door) {
 		super(d.cx,d.cy);
+		data = d;
 		ALL.push(this);
 		Game.ME.scroller.add(spr, Const.DP_BG);
 		requiredItem = d.f_requiredItem;
 
-		kicks = d.f_kicks;
+		kicks = d.f_requireLevelComplete ? 0 : d.f_kicks;
 		cHei = M.round(d.height / Const.GRID);
 		hei = cHei*Const.GRID;
 		closed = !d.f_opened;
@@ -38,7 +40,10 @@ class Door extends Interactive {
 
 	function updateCollisions() {
 		if( isAlive() ) {
-			spr.set( closed ? dict.doorClosed : dict.doorOpened );
+			if( data.f_requireLevelComplete )
+				spr.set( closed ? dict.exitClosed : dict.exitOpened);
+			else
+				spr.set( closed ? dict.doorClosed : dict.doorOpened );
 			spr.setCenterRatio(closed ? 0.5 : 0, 1);
 		}
 

@@ -100,6 +100,8 @@ class Game extends Process {
 			e.destroy();
 		garbageCollectEntities();
 
+		cd.unset("successMsg");
+
 		level = new Level(l);
 		hero = new gm.en.Hero();
 
@@ -114,6 +116,9 @@ class Game extends Process {
 
 		for(d in level.data.l_Entities.all_Tutorial)
 			new gm.en.Tutorial(d);
+
+		for(d in level.data.l_Entities.all_Exit)
+			new gm.en.Exit(d);
 
 
 		for(e in level.data.l_Entities.all_FireStarter)
@@ -271,6 +276,10 @@ class Game extends Process {
 		for(e in Entity.ALL) if( !e.destroyed ) e.fixedUpdate();
 	}
 
+	public function levelComplete() {
+		return level.fireCount==0 && successTimerS>=1;
+	}
+
 
 	/** Main loop **/
 	var successTimerS = 0.;
@@ -283,10 +292,10 @@ class Game extends Process {
 		// Victory
 		if( level.fireCount==0 ) {
 			successTimerS+=1/Const.FPS * tmod;
-			if( successTimerS>=0.3 && !cd.hasSetS("successMsg",5) )
+			if( successTimerS>=0.3 && !cd.hasSetS("successMsg",Const.INFINITE) )
 				hero.say(L.t._("Clear! Proceeding deeper..."), 0xccff00);
-			if( successTimerS>=3 )
-				nextLevel();
+			// if( successTimerS>=3 )
+			// 	nextLevel();
 		}
 		else
 			successTimerS = 0;
