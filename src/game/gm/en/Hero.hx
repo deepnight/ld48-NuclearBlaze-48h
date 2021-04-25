@@ -17,6 +17,7 @@ class Hero extends gm.Entity {
 	var verticalAiming = 0;
 	var inventory : Array<Enum_Items> = [];
 	var bubble : Null<h2d.Bitmap>;
+	var saying : Null<h2d.Flow>;
 
 	public function new() {
 		data = level.data.l_Entities.all_Hero[0];
@@ -62,6 +63,7 @@ class Hero extends gm.Entity {
 		cancelAction();
 		cancelVelocities();
 		clearBubble();
+		clearSaying();
 		cd.unset("watering");
 		clearCommandQueue();
 
@@ -123,6 +125,7 @@ class Hero extends gm.Entity {
 		super.dispose();
 
 		clearBubble();
+		clearSaying();
 
 		ca.dispose();
 		ca = null;
@@ -145,13 +148,38 @@ class Hero extends gm.Entity {
 	}
 
 	public function say(str:String, c=0xffffff) {
-		hud.notify('"$str"', c);
+		clearSaying();
+
+		saying = new h2d.Flow();
+		game.scroller.add(saying, Const.DP_UI);
+		cd.setS("keepSaying",2.5);
+		saying.scaleX = 2;
+		saying.scaleY = 0;
+		saying.layout = Vertical;
+		saying.horizontalAlign = Middle;
+		saying.verticalSpacing = 3;
+
+		var tf = new h2d.Text(Assets.fontPixel, saying);
+		tf.maxWidth = 120;
+		tf.text = str;
+		tf.textColor = c;
+
+		var s = Assets.tiles.h_get( Assets.tilesDict.sayLine, saying );
+		s.colorize(c);
 	}
 
 	function clearBubble() {
 		if( bubble!=null ) {
 			bubble.remove();
 			bubble = null;
+		}
+	}
+
+
+	function clearSaying() {
+		if( saying!=null ) {
+			saying.remove();
+			saying = null;
 		}
 	}
 
@@ -258,6 +286,19 @@ class Hero extends gm.Entity {
 				bubble.alpha-=0.03*tmod;
 				if( bubble.alpha<=0 )
 					clearBubble();
+			}
+		}
+		if( saying!=null ) {
+			saying.scaleX += (1-saying.scaleX) * M.fmin(1, 0.3*tmod);
+			saying.scaleY += (1-saying.scaleY) * M.fmin(1, 0.3*tmod);
+			saying.x = Std.int( sprX - saying.outerWidth*0.5*saying.scaleX );
+			saying.y = Std.int( top - saying.outerHeight*saying.scaleY );
+			if( bubble!=null )
+				bubble.y-=saying.outerHeight;
+			if( !cd.has("keepSaying") ) {
+				saying.alpha-=0.03*tmod;
+				if( saying.alpha<=0 )
+					clearSaying();
 			}
 		}
 	}

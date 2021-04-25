@@ -308,6 +308,10 @@ class Camera extends dn.Process {
 			clampedFocus.levelX = rawFocus.levelX;
 			clampedFocus.levelY = rawFocus.levelY;
 		}
+
+
+		for(e in gm.en.Tutorial.ALL)
+			e.updatePos();
 	}
 
 }

@@ -109,6 +109,12 @@ class Game extends Process {
 		for(d in level.data.l_Entities.all_Item)
 			new gm.en.Item(d);
 
+		for(d in level.data.l_Entities.all_Say)
+			new gm.en.Say(d);
+
+		for(d in level.data.l_Entities.all_Tutorial)
+			new gm.en.Tutorial(d);
+
 
 		for(e in level.data.l_Entities.all_FireStarter)
 			dn.Bresenham.iterateDisc(
@@ -278,7 +284,7 @@ class Game extends Process {
 		if( level.fireCount==0 ) {
 			successTimerS+=1/Const.FPS * tmod;
 			if( successTimerS>=0.3 && !cd.hasSetS("successMsg",5) )
-				hud.notify(L.t._("Area secured!"));
+				hero.say(L.t._("Clear! Proceeding deeper..."), 0xccff00);
 			if( successTimerS>=3 )
 				nextLevel();
 		}
