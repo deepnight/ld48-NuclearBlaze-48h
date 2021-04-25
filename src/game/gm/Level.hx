@@ -47,9 +47,9 @@ class Level extends dn.Process {
 
 			if( hasCollision(cx,cy+1) )
 				fireStates.set( coordId(cx,cy), new FireState() );
-			else if( hasCollision(cx,cy-1) )
-				fireStates.set( coordId(cx,cy), new FireState() );
-			else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) && cy%2==0 )
+			// else if( hasCollision(cx,cy-1) )
+			// 	fireStates.set( coordId(cx,cy), new FireState() );
+			else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) )
 				fireStates.set( coordId(cx,cy), new FireState() );
 
 			// Properties
@@ -178,8 +178,9 @@ class Level extends dn.Process {
 			if( !fs.isBurning() ) {
 				fs.ignite(startLevel);
 				if( fs.quickFire ) {
-					ignite(cx-1,cy, 1);
-					ignite(cx+1,cy, 1);
+					fs.level = 2;
+					ignite(cx-1,cy);
+					ignite(cx+1,cy);
 					fx.oilIgnite(cx,cy);
 				}
 			}

@@ -743,7 +743,7 @@ class Entity {
 		/*
 			Stepping: any movement greater than 33% of grid size (ie. 0.33) will increase the number of `steps` here. These steps will break down the full movement into smaller iterations to avoid jumping over grid collisions.
 		*/
-		var steps = M.ceil( ( M.fabs(dxTotal) + M.fabs(dyTotal) ) / 0.33 );
+		var steps = M.ceil( ( M.fabs(dxTotal) + M.fabs(dyTotal) ) / 0.2 );
 		if( steps>0 ) {
 			var n = 0;
 			while ( n<steps ) {

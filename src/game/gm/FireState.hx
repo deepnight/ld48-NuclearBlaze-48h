@@ -3,7 +3,7 @@ package gm;
 class FireState {
 	static final MAX = 2;
 
-	public var level(default,null) = 0;
+	public var level = 0;
 	public var lr(default,null) = 0.; // level ratio
 
 	public var propgationCdS = 0.;

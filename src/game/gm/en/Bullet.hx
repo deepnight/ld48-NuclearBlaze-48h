@@ -10,10 +10,22 @@ class Bullet extends Entity {
 		collides = false;
 	}
 
-	override function fixedUpdate() {
-		super.fixedUpdate();
+	function onHitCollision() {}
 
-		if( level.hasCollision(cx,cy) )
+
+	override function onPreStepX() {
+		super.onPreStepX();
+		if( level.hasCollision(cx,cy) ) {
+			onHitCollision();
 			destroy();
+		}
+	}
+
+	override function onPreStepY() {
+		super.onPreStepY();
+		if( !destroyed && level.hasCollision(cx,cy) ) {
+			onHitCollision();
+			destroy();
+		}
 	}
 }

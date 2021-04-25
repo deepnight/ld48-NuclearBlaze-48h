@@ -189,17 +189,18 @@ class Hero extends gm.Entity {
 
 			if( !cd.has("bullet") ) {
 				var ang = dirToAng();
-				var shootX = centerX+dir*3;
+				var shootX = centerX+dir*5;
 				var shootY = centerY+3;
 				if( !aimingUp ) {
-					var b = new gm.en.bu.WaterDrop(shootX, shootY, ang-dir*0.2 + rnd(0, 0.15, true));
+					var b = new gm.en.bu.WaterDrop(shootX, shootY, ang-dir*0.2 + rnd(0, 0.05, true));
 					b.dx*=1.2;
 					cd.setS("bullet",0.02);
 				}
 				else {
+					shootY-=2;
 					var n = 4;
 					for(i in 0...3) {
-						var b = new gm.en.bu.WaterDrop(shootX, shootY, ang - dir*M.PIHALF*0.64 + i/(n-1) * 0.4  + rnd(0, 0.15, true));
+						var b = new gm.en.bu.WaterDrop(shootX, shootY, ang - dir*M.PIHALF*0.64 + i/(n-1) * 0.5  + rnd(0, 0.05, true));
 						b.gravityMul*=0.85;
 					}
 					cd.setS("bullet",0.13);

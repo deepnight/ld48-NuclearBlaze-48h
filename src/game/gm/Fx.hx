@@ -273,6 +273,94 @@ class Fx extends dn.Process {
 		}
 	}
 
+	inline function vary(maxValue:Float, pct=0.1) {
+		return maxValue * rnd(1-pct, 1);
+	}
+
+	public function waterTail(lastX:Float, lastY:Float, curX:Float, curY:Float) {
+		var d = M.dist(curX, curY, lastX, lastY);
+		var a = Math.atan2(curY-lastY, curX-lastX);
+
+		var p = allocTopAdd( getTile(dict.fxTail), lastX, lastY);
+		p.setFadeS(vary(0.3),0,0.1);
+		p.colorize(0x1aabe7);
+		p.setCenterRatio(0.2,0.5);
+		p.rotation = a;
+		p.scaleX = (d+17)/p.t.width;
+		p.scaleY = vary(0.7);
+		p.scaleYMul = vary(0.96);
+		p.lifeS = rnd(0.2, 0.3);
+
+		var off = rnd(0.5,2,true);
+		var p = allocTopAdd( getTile(dict.pixel), (lastX+curX)*0.5 + Math.cos(a+M.PIHALF)*off, (lastY+curY)*0.5+Math.sin(a+M.PIHALF)*off);
+		p.setFadeS( vary(0.7), 0, 0.1);
+		p.colorize(0x1aabe7);
+		p.moveAng(a, rnd(1,3));
+		p.frict = vary(0.8);
+		p.gy = rnd(0.1,0.2);
+		p.onUpdate = _waterPhysics;
+		p.lifeS = rnd(0.06,0.10);
+
+		var offX = rnd(0,5,true);
+		var offY = rnd(0.5,2,true);
+		var p = allocTopAdd(
+			getTile(dict.fxLineDir),
+			(lastX+curX)*0.5 + Math.cos(a+M.PIHALF)*offY + Math.cos(a)*offX,
+			(lastY+curY)*0.5+Math.sin(a+M.PIHALF)*offY + Math.sin(a)*offX
+		);
+		p.setFadeS( vary(0.7), 0, 0.1);
+		p.colorize(0x1aabe7);
+		p.rotation = a;
+		p.scaleX = vary(0.4);
+		p.scaleMul = rnd(1.02,1.03);
+		p.frict = vary(0.8);
+		p.lifeS = rnd(0.06,0.10);
+	}
+
+	function _waterPhysics(p:HParticle) {
+		if( p.data0!=1 && collides(p) ) {
+			p.data0 = 1;
+			p.dx = p.dy = 0;
+			p.gy = 0;
+			p.setScale( rnd(2,3) );
+			p.scaleMul = vary(0.96, 0.05);
+			p.rotation = rnd(0,M.PI);
+			p.maxAlpha *= 0.4;
+		}
+	}
+
+	public function wallSplash(x:Float, y:Float) {
+		for(i in 0...irnd(8,10)) {
+			var p = allocTopAdd( getTile(dict.pixel), x+rnd(0,3,true), y+rnd(0,3,true) );
+			p.setFadeS(rnd(0.3,0.4), 0, 0.1);
+			p.moveAwayFrom(x,y, rnd(1,2));
+			p.gy = rnd(0.04,0.10);
+			p.frict = vary(0.9);
+			p.colorize(0x1aabe7);
+			p.onUpdate = _waterPhysics;
+			p.lifeS = rnd(0.1,0.3);
+		}
+	}
+
+	public function fireSplash(x:Float, y:Float) {
+		var p = allocTopAdd( getTile(dict.fxSmoke), x,y);
+		p.colorize(0x1aabe7);
+		p.rotation = rnd(0,M.PI2);
+		p.setScale(vary(0.8));
+		p.setFadeS( vary(0.1), 0, 0.1);
+		p.lifeS = 0.2;
+
+		for(i in 0...irnd(8,10)) {
+			var p = allocTopAdd( getTile(dict.pixel), x+rnd(0,3,true), y+rnd(0,3,true) );
+			p.setFadeS(rnd(0.7,1), 0, 0.1);
+			p.moveAwayFrom(x,y, rnd(1,2));
+			p.gy = rnd(0.04,0.10);
+			p.frict = vary(0.9);
+			p.colorize(0x1aabe7);
+			p.onUpdate = _waterPhysics;
+			p.lifeS = rnd(0.1,0.3);
+		}
+	}
 
 	public function oilIgnite(cx,cy) {
 		for(i in 0...7) {
