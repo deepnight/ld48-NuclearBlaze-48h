@@ -26,12 +26,14 @@ class Hero extends gm.Entity {
 		ca.setLeftDeadZone(0.3);
 		dir = data.f_lookRight ? 1 : -1;
 
-		initLife(data.f_startHP);
+		initLife( Std.int(Const.db.HeroHP_1) );
 
 		camera.trackEntity(this, true);
 
 		spr.filter = new dn.heaps.filter.PixelOutline(0x330000, 0.4);
 		spr.set(Assets.hero);
+		spr.anim.registerStateAnim(anims.deathJump, 99, ()->life<=0 && !onGround );
+		spr.anim.registerStateAnim(anims.deathLand, 99, ()->life<=0 && onGround);
 		spr.anim.registerStateAnim(anims.kickCharge, 8, ()->isChargingAction("kickDoor") );
 		spr.anim.registerStateAnim(anims.jumpUp, 7, ()->!onGround && dy<0.1 );
 		spr.anim.registerStateAnim(anims.jumpDown, 6, ()->!onGround );
@@ -51,6 +53,22 @@ class Hero extends gm.Entity {
 			if( e==k )
 				return true;
 		return false;
+	}
+
+	override function onDie() {
+		cancelAction();
+		cancelVelocities();
+		clearBubble();
+		cd.unset("watering");
+		clearCommandQueue();
+
+		setSquashX(0.8);
+		camera.shakeS(2, 0.3);
+		// collides = false;
+		gravityMul = 0.6;
+		bump(-dir*0.4, -0.15);
+		game.addSlowMo("death", 1, 0.3);
+		game.stopFrame();
 	}
 
 	public function addItem(k:Enum_Items) {
@@ -79,7 +97,8 @@ class Hero extends gm.Entity {
 	}
 
 	inline function queueCommand(c:CtrlCommand, durationS=0.15) {
-		cmdQueue.set(c, durationS);
+		if( isAlive() )
+			cmdQueue.set(c, durationS);
 	}
 
 	inline function clearCommandQueue(?c:CtrlCommand) {
@@ -90,7 +109,7 @@ class Hero extends gm.Entity {
 	}
 
 	inline function isQueued(c:CtrlCommand) {
-		return cmdQueue.exists(c);
+		return isAlive() && cmdQueue.exists(c);
 	}
 
 	inline function ifQueuedRemove(c:CtrlCommand) {
@@ -107,7 +126,7 @@ class Hero extends gm.Entity {
 	}
 
 	public function controlsLocked() {
-		return ca.locked() || Console.ME.isActive() || isChargingAction();
+		return life<=0 || ca.locked() || Console.ME.isActive() || isChargingAction();
 	}
 
 
@@ -117,7 +136,9 @@ class Hero extends gm.Entity {
 			setSquashY(0.6);
 		else if( cHei>=2 )
 			setSquashY(0.8);
-		spr.anim.play(anims.land);
+
+		if( isAlive() )
+			spr.anim.play(anims.land);
 	}
 
 	public function say(str:String, c=0xffffff) {
@@ -163,7 +184,14 @@ class Hero extends gm.Entity {
 		super.onTouchWall(wallDir);
 		dx*=0.66;
 
-		if( onGround && !controlsLocked() && !cd.has("doorKickLimit") ) {
+		if( !isAlive() ) {
+			camera.bump(wallDir*3, 0);
+			dx = M.fabs(dx)*-wallDir;
+			bdx = M.fabs(bdx)*-wallDir;
+			setSquashX(0.8);
+		}
+
+		if( isAlive() && onGround && !controlsLocked() && !cd.has("doorKickLimit") ) {
 			var d = gm.en.int.Door.getAt(cx+wallDir,cy);
 			if( d!=null && d.closed ) {
 				if( d.requiredItem!=null && !hasItem(d.requiredItem) ) {
@@ -261,7 +289,7 @@ class Hero extends gm.Entity {
 			queueCommand(Jump);
 
 		// Dir control
-		if( ca.leftDist()>0 && !isChargingDirLockAction())
+		if( isAlive() && ca.leftDist()>0 && !isChargingDirLockAction())
 			dir = M.radDistance(0,ca.leftAngle()) <= M.PIHALF ? 1 : -1;
 
 		// Vertical aiming control
@@ -373,12 +401,13 @@ class Hero extends gm.Entity {
 
 
 		// Fire damage
-		dn.Bresenham.iterateDisc(cx,cy,0, (x,y)->{
-			if( level.getFireLevel(x,y)>=1 ) {
-				cd.setS("burning",2);
-				if( level.getFireLevel(x,y)>=2 && !cd.has("shield") )
-					hit(1);
-			}
-		});
+		if( isAlive() )
+			dn.Bresenham.iterateDisc(cx,cy,0, (x,y)->{
+				if( level.getFireLevel(x,y)>=1 ) {
+					cd.setS("burning",2);
+					if( level.getFireLevel(x,y)>=2 && !cd.has("shield") )
+						hit(1);
+				}
+			});
 	}
 }

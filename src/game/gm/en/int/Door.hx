@@ -73,6 +73,8 @@ class Door extends Interactive {
 
 		// Explodes!
 		if( bigFires>=2 ) {
+			game.addSlowMo("doorExplosion", 1, 0.2);
+			game.stopFrame();
 			fx.explosion(centerX, centerY);
 			// hero.bump( dirTo(hero)*rnd(0.15,0.2), -0.1 );
 			dn.Bresenham.iterateDisc(cx,cy,6, (x,y)->{

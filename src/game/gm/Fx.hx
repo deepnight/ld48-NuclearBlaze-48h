@@ -456,7 +456,7 @@ class Fx extends dn.Process {
 		for(i in 0...12) {
 			var d = i<=2 ? rnd(0,20) : rnd(0,r-10);
 			var a = rnd(0,M.PI2);
-			var p = allocTopAdd(getTile(dict.fxExplode), x+Math.cos(a)*d, y+Math.sin(a)*d);
+			var p = allocBgAdd(getTile(dict.fxExplode), x+Math.cos(a)*d, y+Math.sin(a)*d);
 			p.playAnimAndKill( Assets.tiles, dict.fxExplode, rnd(0.3,0.4) );
 			p.setScale(rnd(0.9,2));
 			p.rotation = rnd(0, 0.4, true);

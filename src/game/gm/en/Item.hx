@@ -12,7 +12,7 @@ class Item extends Entity {
 	override function fixedUpdate() {
 		super.fixedUpdate();
 
-		if( distCase(hero)<=1 ) {
+		if( distCase(hero)<=1 && hero.isAlive() ) {
 			fx.itemPickUp(centerX, centerY, Assets.worldData.getEnumColor(data.f_type) );
 			hero.addItem(data.f_type);
 			destroy();

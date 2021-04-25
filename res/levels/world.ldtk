@@ -224,26 +224,6 @@
 			"pivotY": 1,
 			"fieldDefs": [
 				{
-					"identifier": "startHP",
-					"__type": "Int",
-					"uid": 18,
-					"type": "F_Int",
-					"isArray": false,
-					"canBeNull": false,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "NameAndValue",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": true,
-					"editorCutLongValues": true,
-					"min": 1,
-					"max": 10,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Int", "params": [3] },
-					"textLanguageMode": null
-				},
-				{
 					"identifier": "lookRight",
 					"__type": "Bool",
 					"uid": 28,
@@ -829,26 +809,20 @@
 						},
 						{
 							"__identifier": "Hero",
-							"__grid": [19,21],
+							"__grid": [17,21],
 							"__pivot": [0.5,1],
 							"__tile": null,
 							"width": 16,
 							"height": 16,
 							"defUid": 1,
-							"px": [312,352],
-							"fieldInstances": [
-								{ "__identifier": "startHP", "__value": 3, "__type": "Int", "defUid": 18, "realEditorValues": [] },
-								{
-									"__identifier": "lookRight",
-									"__value": false,
-									"__type": "Bool",
-									"defUid": 28,
-									"realEditorValues": [{
-										"id": "V_Bool",
-										"params": [ false ]
-									}]
-								}
-							]
+							"px": [280,352],
+							"fieldInstances": [{
+								"__identifier": "lookRight",
+								"__value": true,
+								"__type": "Bool",
+								"defUid": 28,
+								"realEditorValues": [null]
+							}]
 						}
 					]
 				},

@@ -52,6 +52,11 @@
 					"value1": 0.8
 				},
 				{
+					"constId": "HeroHP",
+					"value1": 2,
+					"desc1": "life"
+				},
+				{
 					"constId": "HeroHitShield",
 					"desc1": "shield duration (sec)",
 					"value1": 2

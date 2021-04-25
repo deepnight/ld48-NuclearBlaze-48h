@@ -19,7 +19,7 @@ class Entity {
 	public var hero(get,never) : gm.en.Hero; inline function get_hero() return Game.ME.hero;
 
 	public var onGround(get,never) : Bool;
-		inline function get_onGround() return isAlive() && yr==1 && dyTotal==0 && level.hasCollision(cx,cy+1);
+		inline function get_onGround() return !destroyed && yr==1 && dyTotal==0 && level.hasCollision(cx,cy+1);
 
 	public var recentlyOnGround(get,never) : Bool;
 		inline function get_recentlyOnGround() return isAlive() && ( onGround || cd.has("recentlyOnGround") );
@@ -467,6 +467,9 @@ class Entity {
 
 	/** Wait for `sec` seconds, then runs provided callback. **/
 	function chargeAction(id:String, sec:Float, cb:Void->Void) {
+		if( !isAlive() )
+			return;
+
 		if( isChargingAction(id) )
 			cancelAction(id);
 		if( sec<=0 )
@@ -477,6 +480,9 @@ class Entity {
 
 	/** If id is null, return TRUE if any action is charging. If id is provided, return TRUE if this specific action is charging nokw. **/
 	public function isChargingAction(?id:String) {
+		if( !isAlive() )
+			return false;
+
 		if( id==null )
 			return actions.length>0;
 
