@@ -24,6 +24,7 @@ class Hero extends gm.Entity {
 
 		ca = App.ME.controller.createAccess("hero");
 		ca.setLeftDeadZone(0.3);
+		dir = data.f_lookRight ? 1 : -1;
 
 		initLife(data.f_startHP);
 

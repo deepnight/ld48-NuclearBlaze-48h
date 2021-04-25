@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 27,
+	"nextUid": 29,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -241,6 +241,29 @@
 					"regex": null,
 					"acceptFileTypes": null,
 					"defaultOverride": { "id": "V_Int", "params": [3] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "lookRight",
+					"__type": "Bool",
+					"uid": 28,
+					"type": "F_Bool",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "NameAndValue",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": true,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_Bool",
+						"params": [ true ]
+					},
 					"textLanguageMode": null
 				}
 			]
@@ -489,8 +512,8 @@
 		{
 			"identifier": "House",
 			"uid": 0,
-			"worldX": -224,
-			"worldY": 16,
+			"worldX": 0,
+			"worldY": 0,
 			"pxWid": 864,
 			"pxHei": 560,
 			"__bgColor": "#696A79",
@@ -732,17 +755,6 @@
 							]
 						},
 						{
-							"__identifier": "Hero",
-							"__grid": [18,21],
-							"__pivot": [0.5,1],
-							"__tile": null,
-							"width": 16,
-							"height": 16,
-							"defUid": 1,
-							"px": [296,352],
-							"fieldInstances": [{ "__identifier": "startHP", "__value": 3, "__type": "Int", "defUid": 18, "realEditorValues": [] }]
-						},
-						{
 							"__identifier": "Door",
 							"__grid": [24,21],
 							"__pivot": [0.5,1],
@@ -814,6 +826,29 @@
 									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
 								}
 							]
+						},
+						{
+							"__identifier": "Hero",
+							"__grid": [14,21],
+							"__pivot": [0.5,1],
+							"__tile": null,
+							"width": 16,
+							"height": 16,
+							"defUid": 1,
+							"px": [232,352],
+							"fieldInstances": [
+								{ "__identifier": "startHP", "__value": 3, "__type": "Int", "defUid": 18, "realEditorValues": [] },
+								{
+									"__identifier": "lookRight",
+									"__value": false,
+									"__type": "Bool",
+									"defUid": 28,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ false ]
+									}]
+								}
+							]
 						}
 					]
 				},
@@ -844,10 +879,8 @@
 						{ "coordId": 669, "v": 1 },
 						{ "coordId": 723, "v": 1 },
 						{ "coordId": 777, "v": 1 },
-						{ "coordId": 1191, "v": 1 },
 						{ "coordId": 1192, "v": 1 },
 						{ "coordId": 1202, "v": 1 },
-						{ "coordId": 1203, "v": 1 },
 						{ "coordId": 1209, "v": 0 },
 						{ "coordId": 1210, "v": 0 },
 						{ "coordId": 1211, "v": 0 },
@@ -857,9 +890,7 @@
 						{ "coordId": 1218, "v": 0 },
 						{ "coordId": 1219, "v": 0 },
 						{ "coordId": 1220, "v": 0 },
-						{ "coordId": 1221, "v": 0 },
-						{ "coordId": 1246, "v": 1 },
-						{ "coordId": 1256, "v": 1 }
+						{ "coordId": 1221, "v": 0 }
 					],
 					"intGridCsv": [
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -896,8 +927,8 @@
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-						0,2,2,0,0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,0,0,0,
-						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,2,0,0,0,
+						0,0,2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
