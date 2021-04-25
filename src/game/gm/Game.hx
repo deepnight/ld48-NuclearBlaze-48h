@@ -31,6 +31,7 @@ class Game extends Process {
 
 
 	public var hero : Hero;
+	public var mask : HSprite;
 
 
 	public function new() {
@@ -49,6 +50,11 @@ class Game extends Process {
 		fx = new Fx();
 		hud = new ui.Hud();
 		camera = new Camera();
+
+		mask = Assets.tiles.h_get(Assets.tilesDict.mask);
+		root.add(mask, Const.DP_TOP);
+		mask.colorize(0x0);
+		mask.visible = false;
 
 		startLevel(Assets.worldData.all_levels.House);
 
@@ -117,6 +123,9 @@ class Game extends Process {
 	/** Window/app resize event **/
 	override function onResize() {
 		super.onResize();
+		mask.scaleX = w()/mask.tile.width;
+		mask.scaleY = h()/mask.tile.height;
+		mask.alpha = 0.8;
 	}
 
 
