@@ -93,6 +93,10 @@
 					"constId": "WaterFireDecrease",
 					"value1": 0.3,
 					"desc1": "Fire loss on watering"
+				},
+				{
+					"constId": "FogRevealAnimSpeed",
+					"value1": 0.05
 				}
 			],
 			"separators": [],

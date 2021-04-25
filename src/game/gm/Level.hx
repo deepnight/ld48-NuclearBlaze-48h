@@ -30,7 +30,7 @@ class Level extends dn.Process {
 	var invalidated = true;
 
 	public var fogRender : h2d.SpriteBatch;
-	var fogRevealed : Map<Int,Bool> = new Map();
+	var fogReveals : Map<Int,Float> = new Map();
 	var fogElements : Map<Int, h2d.SpriteBatch.BatchElement> = new Map();
 	var fogCx = 0;
 	var fogCy = 0;
@@ -266,12 +266,12 @@ class Level extends dn.Process {
 	}
 
 	public inline function isFogRevealed(cx,cy) {
-		return fogRevealed.exists( coordId(cx,cy) );
+		return fogReveals.exists( coordId(cx,cy) );
 	}
 
 	public inline function revealFog(cx,cy, allowRecursion=true) {
 		if( !isFogRevealed(cx,cy) ) {
-			fogRevealed.set( coordId(cx,cy), true );
+			fogReveals.set( coordId(cx,cy), 0 );
 
 			if( allowRecursion ) {
 				// Wall edges
@@ -298,6 +298,7 @@ class Level extends dn.Process {
 		fogRender.x = fogCx*Const.GRID;
 		fogRender.y = fogCy*Const.GRID;
 
+		// Pierce
 		if( !cd.hasSetS("fogPierce",0.3) ) {
 			var h = game.hero;
 			dn.Bresenham.iterateDisc(game.hero.cx, game.hero.cy, 8, (x,y)->{
@@ -306,11 +307,23 @@ class Level extends dn.Process {
 			});
 		}
 
-		// Pierce
+		// Display
+		var r = 0.;
 		for(oy in 0...fogHei)
 		for(ox in 0...fogWid) {
 			var be = fogElements.get( fogCoordId(ox,oy) );
-			be.visible = !isFogRevealed( fogCx+ox, fogCy+oy );
+			// be.visible = !isFogRevealed( fogCx+ox, fogCy+oy );
+			if( isFogRevealed( fogCx+ox, fogCy+oy ) ) {
+				r = fogReveals.get( coordId(fogCx+ox, fogCy+oy) );
+				r = M.fmin( r+Const.db.FogRevealAnimSpeed_1*tmod, 1 );
+				fogReveals.set( coordId(fogCx+ox, fogCy+oy), r );
+				be.alpha = 1-r;
+				be.visible = r<1;
+			}
+			else {
+				be.alpha = 1;
+				be.visible = true;
+			}
 		}
 	}
 
