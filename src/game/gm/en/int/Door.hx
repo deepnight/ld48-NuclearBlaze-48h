@@ -79,7 +79,7 @@ class Door extends Interactive {
 				if( level.hasFireState(x,y) && !level.isBurning(x,y) && sightCheck(x,y) ) {
 					var fs = level.getFireState(x,y);
 					fs.underControlS = 0;
-					level.ignite(x,y, irnd(0,1));
+					level.ignite(x,y, 1, 0.7);
 				}
 			});
 		}

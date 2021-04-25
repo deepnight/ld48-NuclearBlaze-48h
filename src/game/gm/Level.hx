@@ -213,11 +213,11 @@ class Level extends dn.Process {
 		return isBurning(cx,cy) ? getFireState(cx,cy).level : 0;
 	}
 
-	public inline function ignite(cx,cy, startLevel=0) {
+	public inline function ignite(cx,cy, startLevel=0, startProgress=0.) {
 		if( hasFireState(cx,cy) && !hasCollision(cx,cy) && !getFireState(cx,cy).isUnderControl() ) {
 			var fs = getFireState(cx,cy);
 			if( !fs.isBurning() ) {
-				fs.ignite(startLevel);
+				fs.ignite(startLevel, startProgress);
 				if( fs.quickFire ) {
 					fs.level = 1;
 					fs.lr = 0.5;

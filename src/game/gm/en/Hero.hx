@@ -13,7 +13,7 @@ class Hero extends gm.Entity {
 	var walkSpeed = 0.;
 	var cmdQueue : Map<CtrlCommand,Float> = new Map();
 	var waterAng = 0.;
-	var aimingUp = false;
+	var verticalAiming = 0;
 	var inventory : Array<Enum_Items> = [];
 	var bubble : Null<h2d.Bitmap>;
 
@@ -36,8 +36,9 @@ class Hero extends gm.Entity {
 		spr.anim.registerStateAnim(anims.jumpUp, 7, ()->!onGround && dy<0.1 );
 		spr.anim.registerStateAnim(anims.jumpDown, 6, ()->!onGround );
 		spr.anim.registerStateAnim(anims.run, 5, 1.3, ()->onGround && M.fabs(dxTotal)>0.05 );
-		spr.anim.registerStateAnim(anims.shootUp, 4, ()->isWatering() && aimingUp );
-		spr.anim.registerStateAnim(anims.shoot, 3, ()->isWatering() && !aimingUp );
+		spr.anim.registerStateAnim(anims.shootUp, 3, ()->isWatering() && verticalAiming<0 );
+		spr.anim.registerStateAnim(anims.idleCrouch, 3, ()->isWatering() && verticalAiming>0 );
+		spr.anim.registerStateAnim(anims.shoot, 3, ()->isWatering() && verticalAiming==0 );
 		spr.anim.registerStateAnim(anims.shootCharge, 2, ()->isChargingAction("water") );
 		spr.anim.registerStateAnim(anims.idleCrouch, 1, ()->!cd.has("recentMove"));
 		spr.anim.registerStateAnim(anims.idle, 0);
@@ -264,9 +265,16 @@ class Hero extends gm.Entity {
 			dir = M.radDistance(0,ca.leftAngle()) <= M.PIHALF ? 1 : -1;
 
 		// Vertical aiming control
-		aimingUp = ca.leftDist()>0 && M.radDistance(ca.leftAngle(),-M.PIHALF) <= M.PIHALF*0.65;
-		if( ca.isKeyboardDown(K.UP) || ca.isKeyboardDown(K.Z) || ca.isKeyboardDown(K.W) )
-			aimingUp = true;
+		verticalAiming = 0;
+		if( ca.leftDist()>0 && M.radDistance(ca.leftAngle(),-M.PIHALF) <= M.PIHALF*0.65 )
+			verticalAiming = -1;
+		else if( ca.isKeyboardDown(K.UP) || ca.isKeyboardDown(K.Z) || ca.isKeyboardDown(K.W) )
+			verticalAiming = -1;
+
+		if( ca.leftDist()>0 && M.radDistance(ca.leftAngle(),M.PIHALF) <= M.PIHALF*0.65 )
+			verticalAiming = 1;
+		else if( ca.isKeyboardDown(K.DOWN) || ca.isKeyboardDown(K.S) )
+			verticalAiming = 1;
 
 		if( !controlsLocked() && !isWatering() ) {
 
@@ -319,28 +327,36 @@ class Hero extends gm.Entity {
 				var ang = dirToAng();
 				var shootX = centerX+dir*5;
 				var shootY = centerY+3;
-				if( !aimingUp ) {
+				if( verticalAiming==0 ) {
 					var b = new gm.en.bu.WaterDrop(shootX, shootY, ang-dir*0.2 + rnd(0, 0.05, true));
 					var b = new gm.en.bu.WaterDrop(shootX, shootY, ang-dir*0.1 + rnd(0, 0.05, true));
 					b.dx*=0.8;
 					cd.setS("bullet",0.02);
 				}
-				else {
+				else if( verticalAiming<0 ) {
 					shootY-=2;
-					var n = 4;
-					for(i in 0...3) {
-						var b = new gm.en.bu.WaterDrop(shootX, shootY, ang - dir*M.PIHALF*0.85 + i/(n-1)*dir*0.7  + rnd(0, 0.05, true));
+					var n = 5;
+					for(i in 0...n) {
+						var b = new gm.en.bu.WaterDrop(shootX, shootY, ang - dir*M.PIHALF*0.85 + i/(n-1)*dir*0.6  + rnd(0, 0.05, true));
 						b.gravityMul*=0.85;
 					}
-					cd.setS("bullet",0.13);
+					cd.setS("bullet",0.16);
+				}
+				else {
+					var r = 20;
+					var n = 5;
+					for(i in 0...n) {
+						var b = new gm.en.bu.WaterDrop(centerX-r + r*2*i/(n-1), top-10, M.PIHALF + rnd(0, 0.15, true));
+						b.gravityMul*=0.7;
+					}
 				}
 			}
 
-			// Turn off nearby fires
-			dn.Bresenham.iterateDisc(cx,cy,2, (x,y)->{
-				if( level.isBurning(cx,cy) )
-					level.getFireState(cx,cy).decrease(Const.db.WaterFireDecrease_1);
-			});
+			// // Turn off nearby fires
+			// dn.Bresenham.iterateDisc(cx,cy,2, (x,y)->{
+			// 	if( level.isBurning(cx,cy) )
+			// 		level.getFireState(cx,cy).decrease(Const.db.WaterFireDecrease_1);
+			// });
 		}
 
 
