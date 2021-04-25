@@ -11,6 +11,7 @@ class Hero extends gm.Entity {
 	var data : Entity_Hero;
 	var ca : ControllerAccess;
 	var walkSpeed = 0.;
+	var climbSpeed = 0.;
 	var cmdQueue : Map<CtrlCommand,Float> = new Map();
 	var waterAng = 0.;
 	var verticalAiming = 0;
@@ -264,10 +265,12 @@ class Hero extends gm.Entity {
 
 	inline function isWatering() return cd.has("watering");
 
+	var climbInsistS = 0.;
 	override function preUpdate() {
 		super.preUpdate();
 
 		walkSpeed = 0;
+		climbSpeed = 0;
 
 		// Command input queue management
 		for( k in cmdQueue.keys() ) {
@@ -276,21 +279,22 @@ class Hero extends gm.Entity {
 				cmdQueue.remove(k);
 		}
 
-
 		// Control queueing
 		if( ca.xDown() && !isWatering() ) {
 			cancelAction("jump");
 			cancelAction("kickDoor");
 			cancelAction("openDoor");
+			stopClimbing();
 			queueCommand(Use);
 		}
-
 		if( ca.aPressed() )
 			queueCommand(Jump);
+
 
 		// Dir control
 		if( isAlive() && ca.leftDist()>0 && !isChargingDirLockAction())
 			dir = M.radDistance(0,ca.leftAngle()) <= M.PIHALF ? 1 : -1;
+
 
 		// Vertical aiming control
 		verticalAiming = 0;
@@ -304,21 +308,75 @@ class Hero extends gm.Entity {
 		else if( ca.isKeyboardDown(K.DOWN) || ca.isKeyboardDown(K.S) )
 			verticalAiming = 1;
 
+
+		// Climb start management (complicated stuff to avoid confusions with "aiming up/down")
+		var tryToClimbUp = false;
+		var tryToClimbDown = false;
+		if( isAlive() && !climbing && !ca.xDown() && !isWatering() && !cd.has("climbLock") ) {
+			// Up
+			if( level.hasLadder(cx,cy) && verticalAiming==-1 )
+				tryToClimbUp = true;
+
+			// Down
+			if( level.hasLadder(cx,cy) && !level.hasAnyCollision(cx,cy+1) || level.hasLadder(cx,cy+1) || level.hasLadder(cx,cy+2) )
+				if( verticalAiming==1 )
+					tryToClimbDown = true;
+		}
+		if( tryToClimbUp || tryToClimbDown )
+			clearCommandQueue(Jump);
+		else
+			climbInsistS = 0;
+
+		if( climbing )
+			climbInsistS = 0;
+
+
 		if( !controlsLocked() && !isWatering() ) {
+			// Start climbing up/down
+			if( tryToClimbUp || tryToClimbDown ) {
+				climbInsistS += 1/Const.FPS * tmod;
+				if( climbInsistS>=0.12 ) {
+					startClimbing();
+					if( tryToClimbUp )
+						dy = -0.1;
+					else {
+						if( onGround ) {
+							cy++;
+							yr = 0;
+						}
+						dy = 0.1;
+					}
+				}
+			}
 
 			// Walk
-			if( ca.leftDist()>0 ) {
+			if( ca.leftDist()>0 && !climbing ) {
 				walkSpeed = Math.cos(ca.leftAngle()) * ca.leftDist();
 				dir = M.radDistance(0,ca.leftAngle()) <= M.PIHALF ? 1 : -1;
 			}
 
 			// Jump
-			if( recentlyOnGround && ifQueuedRemove(Jump) ) {
+			if( ( climbing || recentlyOnGround ) && ifQueuedRemove(Jump) ) {
 				chargeAction("jump", 0.08, ()->{
-					dy = -Const.db.HeroJump_1;
+					if( climbing && verticalAiming==1 ) {
+						dy = 0.4;
+						cd.setS("oneWayLock",0.35);
+					}
+					else
+						dy = -Const.db.HeroJump_1;
+					stopClimbing();
+					cd.setS("climbLock",0.35);
 					setSquashX(0.6);
 					clearRecentlyOnGround();
 				});
+			}
+
+			// Climbing
+			if( climbing ) {
+				if( verticalAiming==-1 )
+					climbSpeed = -1;
+				else if( verticalAiming==1 )
+					climbSpeed = 1;
 			}
 
 			// Activate interactive
@@ -339,13 +397,62 @@ class Hero extends gm.Entity {
 		super.fixedUpdate();
 
 		// Climb one ways
-		if( level.hasOneWay(cx,cy-1) && dy>0 ) {
+		if( level.hasOneWay(cx,cy-1) && dy>0 && !climbing && !cd.has("oneWayLock") ) {
 			setSquashX(0.6);
 			yr = M.fmin(0.2,yr);
 			bdy = 0;
 			dy = -0.55;
 		}
 
+		// Lost ladder
+		if( climbing && !level.hasLadder(cx,cy) && !level.hasLadder(cx,cy+1) )
+			stopClimbing();
+
+		// Reach ladder top
+		if( climbing && climbSpeed<0 && !level.hasLadder(cx,cy-1) && !level.hasAnyCollision(cx,cy-1) ) {
+			stopClimbing();
+			dy = -0.5;
+		}
+
+		// Reach ladder bottom
+		if( climbing && climbSpeed>0 && level.hasAnyCollision(cx,cy+1) ) {
+			stopClimbing();
+			dy = 0.2;
+		}
+
+		// Walk movement
+		if( walkSpeed!=0 ) {
+			dx += walkSpeed*0.03;
+			cd.setS("recentMove",0.3);
+		}
+		else if( !isChargingAction("jump") )
+			dx*=0.6;
+
+
+		// Climb movement
+		if( climbing )
+			if( climbSpeed!=0 && !cd.hasSetS("climbStep",0.2) ) {
+				dy+=climbSpeed * 0.1;
+				setSquashX(0.8);
+			}
+			else if( climbSpeed==0 )
+				dy*=0.5;
+
+		if( !onGround )
+			cd.setS("recentMove",0.6);
+
+		// Fire damage
+		if( isAlive() )
+			dn.Bresenham.iterateDisc(cx,cy,0, (x,y)->{
+				if( level.getFireLevel(x,y)>=1 ) {
+					cd.setS("burning",2);
+					if( level.getFireLevel(x,y)>=2 && !cd.has("shield") )
+						hit(1);
+				}
+			});
+
+
+		// Shooting water
 		if( isWatering() ) {
 			dx*=0.5;
 
@@ -386,8 +493,6 @@ class Hero extends gm.Entity {
 						b.frictY = 0.85;
 						b.gravityMul = 2.4;
 						b.power = 2;
-						// var b = new gm.en.bu.WaterDrop(centerX-r + r*2*i/(n-1), top-10, M.PIHALF + rnd(0, 0.15, true));
-						// b.gravityMul*=0.7;
 					}
 					cd.setS("bullet",0.16);
 				}
@@ -395,27 +500,5 @@ class Hero extends gm.Entity {
 
 		}
 
-
-		// Walk movement
-		if( walkSpeed!=0 ) {
-			dx += walkSpeed*0.03;
-			cd.setS("recentMove",0.3);
-		}
-		else if( !isChargingAction("jump") )
-			dx*=0.6;
-
-		if( !onGround )
-			cd.setS("recentMove",0.6);
-
-
-		// Fire damage
-		if( isAlive() )
-			dn.Bresenham.iterateDisc(cx,cy,0, (x,y)->{
-				if( level.getFireLevel(x,y)>=1 ) {
-					cd.setS("burning",2);
-					if( level.getFireLevel(x,y)>=2 && !cd.has("shield") )
-						hit(1);
-				}
-			});
 	}
 }

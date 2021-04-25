@@ -201,6 +201,7 @@ class Entity {
 	var fallStartCy = 999999.;
 	var gravityMul = 1.0;
 	var collides = true;
+	public var climbing = false;
 
     public function new(x:Int, y:Int) {
         uid = Const.makeUniqueId();
@@ -267,6 +268,27 @@ class Entity {
 	function onDie() {
 		destroy();
 	}
+
+
+	public final function startClimbing() {
+		if( climbing )
+			return;
+
+		cancelVelocities();
+		climbing = true;
+		onClimbStart();
+	}
+
+	public final function stopClimbing() {
+		if( !climbing )
+			return;
+
+		climbing = false;
+		onClimbEnd();
+	}
+
+	function onClimbStart() {}
+	function onClimbEnd() {}
 
 	inline function set_dir(v) {
 		return dir = v>0 ? 1 : v<0 ? -1 : dir;
@@ -731,8 +753,8 @@ class Entity {
 			}
 
 			// Ceiling collision
-			if( yr<0.2 && level.hasWallCollision(cx,cy-1) )
-				yr = 0.2;
+			if( yr<0.4 && !climbing && level.hasWallCollision(cx,cy-1) )
+				yr = 0.4;
 		}
 	}
 
@@ -748,7 +770,7 @@ class Entity {
 	public function fixedUpdate() {
 		updateLastFixedUpdatePos();
 
-		if( gravityMul>0 && !onGround )
+		if( gravityMul>0 && !onGround && !climbing )
 			dy+=getGravity();
 
 		/*

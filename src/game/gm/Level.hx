@@ -184,9 +184,14 @@ class Level extends dn.Process {
 				: data.l_Collisions.getInt(cx,cy)==1;
 	}
 
-	/** Return TRUE if "Collisions" layer contains a WALL collision value **/
+	/** Return TRUE if "Collisions" layer contains a ONE WAY collision value **/
 	public inline function hasOneWay(cx,cy) : Bool {
-		return !isValid(cx,cy) ? false : data.l_Collisions.getInt(cx,cy)==2;
+		return !isValid(cx,cy) ? false : data.l_Collisions.getInt(cx,cy)==2 || hasLadder(cx,cy) && !hasLadder(cx,cy-1) && !hasAnyCollision(cx,cy-1);
+	}
+
+	/** Return TRUE if "Collisions" layer contains a LADDER collision value **/
+	public inline function hasLadder(cx,cy) : Bool {
+		return !isValid(cx,cy) ? false : data.l_Collisions.getInt(cx,cy)==3;
 	}
 
 	/** Render current level**/
@@ -317,6 +322,10 @@ class Level extends dn.Process {
 			var h = game.hero;
 			dn.Bresenham.iterateDisc(game.hero.cx, game.hero.cy, 8, (x,y)->{
 				if( !isFogRevealed(x,y) && ( h.sightCheck(x,y) || h.sightCheckFree(h.cx+h.dir, h.cy, x,y) ) )
+					revealFog(x,y);
+
+				// Small floating pieces
+				if( !isFogRevealed(x,y) && isFogRevealed(x-1,y) && isFogRevealed(x+1,y) )
 					revealFog(x,y);
 			});
 		}
