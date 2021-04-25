@@ -36,6 +36,8 @@ class Hero extends gm.Entity {
 		spr.anim.registerStateAnim(anims.deathJump, 99, ()->life<=0 && !onGround );
 		spr.anim.registerStateAnim(anims.deathLand, 99, ()->life<=0 && onGround);
 		spr.anim.registerStateAnim(anims.kickCharge, 8, ()->isChargingAction("kickDoor") );
+		spr.anim.registerStateAnim(anims.climbMove, 8, ()->climbing && climbSpeed!=0 );
+		spr.anim.registerStateAnim(anims.climbIdle, 8, ()->climbing && climbSpeed==0 );
 		spr.anim.registerStateAnim(anims.jumpUp, 7, ()->!onGround && dy<0.1 );
 		spr.anim.registerStateAnim(anims.jumpDown, 6, ()->!onGround );
 		spr.anim.registerStateAnim(anims.run, 5, 1.3, ()->onGround && M.fabs(dxTotal)>0.05 );
@@ -287,8 +289,11 @@ class Hero extends gm.Entity {
 			stopClimbing();
 			queueCommand(Use);
 		}
-		if( ca.aPressed() )
+		if( ca.aPressed() ) {
 			queueCommand(Jump);
+			if( climbing && ( ca.isKeyboardDown(K.UP) || ca.isKeyboardDown(K.Z) || ca.isKeyboardDown(K.W) ) )
+				clearCommandQueue(Jump);
+		}
 
 
 		// Dir control
@@ -362,6 +367,8 @@ class Hero extends gm.Entity {
 						dy = 0.4;
 						cd.setS("oneWayLock",0.35);
 					}
+					else if( climbing && verticalAiming==0 )
+						dy = -Const.db.HeroJump_1 * 0.4;
 					else
 						dy = -Const.db.HeroJump_1;
 					stopClimbing();
@@ -420,6 +427,10 @@ class Hero extends gm.Entity {
 			dy = 0.2;
 		}
 
+		// Recenter on ladder
+		if( climbing )
+			xr+= (0.5-dir*0.2 - xr)*0.5;
+
 		// Walk movement
 		if( walkSpeed!=0 ) {
 			dx += walkSpeed*0.03;
@@ -431,9 +442,9 @@ class Hero extends gm.Entity {
 
 		// Climb movement
 		if( climbing )
-			if( climbSpeed!=0 && !cd.hasSetS("climbStep",0.2) ) {
-				dy+=climbSpeed * 0.1;
-				setSquashX(0.8);
+			if( climbSpeed!=0 && !cd.hasSetS("climbStep",0.3) ) {
+				dy+=climbSpeed * 0.2;
+				setSquashY(0.8);
 			}
 			else if( climbSpeed==0 )
 				dy*=0.5;
