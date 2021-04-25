@@ -37,7 +37,7 @@ class WaterDrop extends Bullet {
 				}
 			}
 			fs.underControlS = Const.db.ControlDuration_1;
-			if( fs.level>=2 )
+			if( fs.level>=1 )
 				destroy();
 		}
 	}

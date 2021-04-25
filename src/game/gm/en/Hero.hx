@@ -13,6 +13,7 @@ class Hero extends gm.Entity {
 	var walkSpeed = 0.;
 	var cmdQueue : Map<CtrlCommand,Float> = new Map();
 	var waterAng = 0.;
+	var aimingUp = false;
 
 	public function new() {
 		data = level.data.l_Entities.all_Hero[0];
@@ -25,8 +26,13 @@ class Hero extends gm.Entity {
 		initLife(data.f_startHP);
 
 		camera.trackEntity(this, true);
-		spr.set(Assets.hero);
 
+		spr.filter = new dn.heaps.filter.PixelOutline(0x330000, 0.4);
+		spr.set(Assets.hero);
+		spr.anim.registerStateAnim(anims.shootUp, 4, ()->isWatering() && aimingUp );
+		spr.anim.registerStateAnim(anims.shoot, 3, ()->isWatering() && !aimingUp );
+		spr.anim.registerStateAnim(anims.shootCharge, 2, ()->isChargingAction("water") );
+		spr.anim.registerStateAnim(anims.idleCrouch, 1, ()->!cd.has("recentMove"));
 		spr.anim.registerStateAnim(anims.idle, 0);
 	}
 
@@ -113,8 +119,10 @@ class Hero extends gm.Entity {
 
 
 		// Control queueing
-		if( ca.xPressed() )
+		if( ca.xDown() && !isWatering() ) {
+			cancelAction("jump");
 			queueCommand(Use);
+		}
 
 		if( ca.aPressed() )
 			queueCommand(Jump);
@@ -122,6 +130,11 @@ class Hero extends gm.Entity {
 		// Dir control
 		if( ca.leftDist()>0 )
 			dir = M.radDistance(0,ca.leftAngle()) <= M.PIHALF ? 1 : -1;
+
+		// Vertical aiming control
+		aimingUp = ca.leftDist()>0 && M.radDistance(ca.leftAngle(),-M.PIHALF) <= M.PIHALF*0.65;
+		if( ca.isKeyboardDown(K.UP) || ca.isKeyboardDown(K.Z) || ca.isKeyboardDown(K.W) )
+			aimingUp = true;
 
 		if( !controlsLocked() && !isWatering() ) {
 
@@ -133,26 +146,23 @@ class Hero extends gm.Entity {
 
 			// Jump
 			if( recentlyOnGround && ifQueuedRemove(Jump) ) {
-				dy = -Const.db.HeroJump_1;
-				setSquashX(0.6);
-				// fx.dotsExplosionExample(centerX, centerY, 0xffcc00);
-				clearRecentlyOnGround();
+				chargeAction("jump", 0.08, ()->{
+					dy = -Const.db.HeroJump_1;
+					setSquashX(0.6);
+					clearRecentlyOnGround();
+				});
 			}
 
 			// Activate interactive
-			if( ifQueuedRemove(Use) ) {
-				// var e = Interactive.getCurrent(this);
-				// if( e!=null )
-				// 	e.tryToTrigger();
-				// else
-					chargeAction("water", 0.2, ()->{
-						cd.setS("watering",0.2);
-						if( ca.leftDist()>0 )
-							waterAng = ca.leftAngle();
-						else
-							waterAng = dirToAng();
-					});
-
+			if( onGround && ifQueuedRemove(Use) ) {
+				dx = 0;
+				chargeAction("water", 0.2, ()->{
+					cd.setS("watering",0.2);
+					if( ca.leftDist()>0 )
+						waterAng = ca.leftAngle();
+					else
+						waterAng = dirToAng();
+				});
 			}
 		}
 	}
@@ -161,6 +171,8 @@ class Hero extends gm.Entity {
 		super.fixedUpdate();
 
 		if( isWatering() ) {
+			dx*=0.5;
+
 			if( ca.xDown() )
 				cd.setS("watering",0.2);
 			camera.shakeS(0.1, 0.1);
@@ -171,21 +183,22 @@ class Hero extends gm.Entity {
 			// waterAng += M.radSubstract(dirToAng(), waterAng) * 0.2;
 			waterAng = dirToAng();
 
-			var horizontalBeam = ca.leftDist()==0 || M.radDistance(ca.leftAngle(),-M.PIHALF) > M.PIHALF*0.65;
-
 			if( !cd.has("bullet") ) {
 				var ang = dirToAng();
-				if( horizontalBeam ) {
-					var b = new gm.en.bu.WaterDrop(centerX, centerY, ang-dir*0.2 + rnd(0, 0.15, true));
-					b.dx *= 1.1;
-					cd.setS("bullet",0.03);
+				var shootX = centerX+dir*3;
+				var shootY = centerY+3;
+				if( !aimingUp ) {
+					var b = new gm.en.bu.WaterDrop(shootX, shootY, ang-dir*0.2 + rnd(0, 0.15, true));
+					b.dx *= 1.2;
+					cd.setS("bullet",0.02);
 				}
 				else {
 					var n = 4;
-					for(i in 0...3)
-						new gm.en.bu.WaterDrop(centerX, centerY, ang - dir*M.PIHALF*0.65 + i/(n-1) * 0.4  + rnd(0, 0.15, true));
-					// new gm.en.bu.WaterDrop(centerX, centerY, ang - dir*M.PIHALF*0.5 - Math.cos(ftime*0.2)*0.6);
-					cd.setS("bullet",0.1);
+					for(i in 0...3) {
+						var b = new gm.en.bu.WaterDrop(shootX, shootY, ang - dir*M.PIHALF*0.64 + i/(n-1) * 0.4  + rnd(0, 0.15, true));
+						b.gravityMul*=0.85;
+					}
+					cd.setS("bullet",0.13);
 				}
 			}
 
@@ -233,7 +246,13 @@ class Hero extends gm.Entity {
 		// Walk movement
 		if( walkSpeed!=0 ) {
 			dx += walkSpeed*0.05;
+			cd.setS("recentMove",0.3);
 		}
+		else
+			dx*=0.6;
+
+		if( !onGround )
+			cd.setS("recentMove",0.3);
 
 		dn.Bresenham.iterateDisc(cx,cy,1, (x,y)->{
 			if( level.getFireLevel(x,y)>=1 ) {

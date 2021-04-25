@@ -5,6 +5,7 @@ class Bullet extends Entity {
 		super(0,0);
 		setPosPixel(xx,yy);
 		gravityMul = 0;
+		wid = hei = 4;
 		frict = 1;
 		collides = false;
 	}
