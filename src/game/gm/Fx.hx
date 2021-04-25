@@ -467,9 +467,10 @@ class Fx extends dn.Process {
 
 	function _dirtPhysics(p:HParticle) {
 		if( collides(p) ) {
-			p.dx *= Math.pow(0.8,tmod);
+			p.dx *= Math.pow(rnd(0.8,0.9),tmod);
 			p.dy = 0;
 			p.gy = 0;
+			p.dr *= Math.pow(0.8,tmod);
 			p.lifeS = 0;
 		}
 
@@ -480,7 +481,7 @@ class Fx extends dn.Process {
 	}
 
 	public function brokenDoor(x:Float, y:Float, dir:Int) {
-		for(i in 0...20) {
+		for(i in 0...40) {
 			var p = allocTopNormal( getTile(dict.fxDirt), x+rnd(0,5,true), y+rnd(0,12,true));
 			p.colorize(0x8f563b);
 			p.setScale(vary(1));
@@ -514,10 +515,10 @@ class Fx extends dn.Process {
 		for(i in 0...50) {
 			var d = rnd(0,20);
 			var a = rnd(0,M.PI2);
-			var p = allocBgAdd(getTile(dict.fxFlame), x+Math.cos(a)*d, y+Math.sin(a)*d);
+			var p = allocTopAdd(getTile(dict.fxFlame), x+Math.cos(a)*d, y+Math.sin(a)*d);
 			p.colorizeRandom(0xff0000, 0xff9900);
 			p.setFadeS(rnd(0.8,1), 0, vary(0.2));
-			p.frict = vary(0.9);
+			p.frict = rnd(0.8,0.94);
 			p.dx = dir*rnd(3,15);
 			p.dy = rnd(-1,0);
 			p.scaleMul = rnd(0.98,0.99);

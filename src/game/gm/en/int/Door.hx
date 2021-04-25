@@ -84,7 +84,10 @@ class Door extends Interactive {
 					level.ignite(x,y, 1, 0.7);
 				}
 			});
+			return true;
 		}
+		else
+			return false;
 	}
 
 	public function close() {
