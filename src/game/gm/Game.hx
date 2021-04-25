@@ -267,11 +267,23 @@ class Game extends Process {
 
 
 	/** Main loop **/
+	var successTimerS = 0.;
 	override function update() {
 		super.update();
 
 		// Entities main loop
 		for(e in Entity.ALL) if( !e.destroyed ) e.update();
+
+		// Victory
+		if( level.fireCount==0 ) {
+			successTimerS+=1/Const.FPS * tmod;
+			if( successTimerS>=0.3 && !cd.hasSetS("successMsg",5) )
+				hud.notify(L.t._("Area secured!"));
+			if( successTimerS>=3 )
+				nextLevel();
+		}
+		else
+			successTimerS = 0;
 
 
 		// Global key shortcuts

@@ -225,7 +225,9 @@ class Hero extends gm.Entity {
 							camera.shakeS(1, 0.3);
 							d.open(wallDir);
 							d.setSquashX(0.8);
-							bump(-wallDir*0.2, -0.1);
+							bump(wallDir*0.3, -0.1);
+							fx.brokenDoor(d.centerX, d.centerY, wallDir);
+							game.stopFrame();
 						}
 						else {
 							camera.shakeS(1, 0.1);

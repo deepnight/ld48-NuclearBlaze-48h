@@ -465,6 +465,72 @@ class Fx extends dn.Process {
 	}
 
 
+	function _dirtPhysics(p:HParticle) {
+		if( collides(p) ) {
+			p.dx *= Math.pow(0.8,tmod);
+			p.dy = 0;
+			p.gy = 0;
+			p.lifeS = 0;
+		}
+
+		if( !collides(p) && ( collides(p,3,0) || collides(p,-3,0) ) ) {
+			p.dx = -p.dx*0.6;
+			p.dr*=-1;
+		}
+	}
+
+	public function brokenDoor(x:Float, y:Float, dir:Int) {
+		for(i in 0...20) {
+			var p = allocTopNormal( getTile(dict.fxDirt), x+rnd(0,5,true), y+rnd(0,12,true));
+			p.colorize(0x8f563b);
+			p.setScale(vary(1));
+			p.dx = dir*rnd(3,12);
+			p.dy = rnd(-0.6,0.1);
+			p.frict = vary(0.96);
+			p.gy = rnd(0.05,0.1);
+			p.rotation = rnd(0,M.PI2);
+			p.dr = rnd(0.1,0.4,true);
+			p.setFadeS(vary(0.9), 0, vary(2));
+			p.onUpdate = _dirtPhysics;
+		}
+	}
+
+
+	public function doorExplosion(x:Float,y:Float, dir:Int) {
+		for(i in 0...12) {
+			var d = rnd(0,20);
+			var a = rnd(0,M.PI2);
+			var p = allocBgAdd(getTile(dict.fxExplode), x+Math.cos(a)*d, y+Math.sin(a)*d);
+			p.alpha = rnd(0.4,0.7);
+			p.playAnimAndKill( Assets.tiles, dict.fxExplode, rnd(0.3,0.4) );
+			p.dx = dir*rnd(1,3);
+			p.frict = rnd(0.9,0.94);
+			p.setScale(rnd(0.9,2));
+			p.rotation = rnd(0, 0.4, true);
+			p.delayS = i*0.02 + rnd(0.,0.1,true);
+		}
+
+		// Flames
+		for(i in 0...50) {
+			var d = rnd(0,20);
+			var a = rnd(0,M.PI2);
+			var p = allocBgAdd(getTile(dict.fxFlame), x+Math.cos(a)*d, y+Math.sin(a)*d);
+			p.colorizeRandom(0xff0000, 0xff9900);
+			p.setFadeS(rnd(0.8,1), 0, vary(0.2));
+			p.frict = vary(0.9);
+			p.dx = dir*rnd(3,15);
+			p.dy = rnd(-1,0);
+			p.scaleMul = rnd(0.98,0.99);
+			p.gx = dir*rnd(0.02,0.03);
+			p.gy = -rnd(0.02,0.03);
+			p.setScale(rnd(0.9,2));
+			p.rotation = p.getMoveAng() + M.PIHALF;
+			p.delayS = rnd(0.1,0.3);
+			p.lifeS = rnd(0.3,1);
+		}
+	}
+
+
 	public function flame(x:Float,y:Float) {
 		for(i in 0...9) {
 			var p = allocTopAdd( getTile(dict.fxFlame), x+rnd(0,3,true), y+rnd(0,7,true) );

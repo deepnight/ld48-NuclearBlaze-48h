@@ -36,6 +36,7 @@ class Level extends dn.Process {
 	var fogCy = 0;
 	var fogWid : Int;
 	var fogHei : Int;
+	public var fireCount(default,null) = Const.INFINITE;
 
 	public function new(ldtkLevel:World.World_Level) {
 		super(Game.ME);
@@ -358,6 +359,8 @@ class Level extends dn.Process {
 	}
 
 	function updateFire() {
+		fireCount = 0;
+
 		var fs : FireState = null;
 		var rangeX = Std.int(Const.db.FirePropagationRange_1);
 		var rangeY = Std.int(Const.db.FirePropagationRange_2);
@@ -366,6 +369,9 @@ class Level extends dn.Process {
 		for(cx in 0...data.l_Collisions.cWid) {
 			if( hasFireState(cx,cy) ) {
 				fs = getFireState(cx,cy);
+
+				if( fs.isBurning() )
+					fireCount++;
 
 				// Increase
 				if( fs.isBurning() && !fs.isUnderControl() ) {
