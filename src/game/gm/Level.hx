@@ -178,7 +178,8 @@ class Level extends dn.Process {
 			if( !fs.isBurning() ) {
 				fs.ignite(startLevel);
 				if( fs.quickFire ) {
-					fs.level = 2;
+					fs.level = 1;
+					fs.lr = 0.5;
 					ignite(cx-1,cy);
 					ignite(cx+1,cy);
 					fx.oilIgnite(cx,cy);
@@ -249,8 +250,8 @@ class Level extends dn.Process {
 					fs.underControlS -= Const.db.FireTick_1;
 
 				// Try to propagate
-				if( !fs.isUnderControl() && fs.isMaxed() && fs.propgationCdS<=0 && Std.random(100) < Const.db.FirePropagation_1*100 ) {
-					fs.propgationCdS = Const.db.FirePropagation_2;
+				if( !fs.isUnderControl() && fs.isMaxed() && fs.propgationCdS<=0 && Std.random(100) < Const.db.FirePropagationChance_1*100 ) {
+					fs.propgationCdS = game.camera.isOnScreenCase(cx,cy) ? Const.db.FirePropagationCd_1 : Const.db.FirePropagationCd_2;
 					for(y in cy-rangeY...cy+rangeY+1)
 					for(x in cx-rangeX...cx+rangeX+1)
 						if( sighCheck(cx,cy, x,y) )

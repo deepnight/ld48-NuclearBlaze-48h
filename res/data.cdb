@@ -59,7 +59,7 @@
 				{
 					"constId": "FireTick",
 					"desc1": "fire update frequency (sec)",
-					"value1": 0.6
+					"value1": 0.5
 				},
 				{
 					"constId": "FireIncPerTick",
@@ -67,11 +67,16 @@
 					"desc1": "ratio increase per tick"
 				},
 				{
-					"constId": "FirePropagation",
+					"constId": "FirePropagationChance",
 					"desc1": "success %",
-					"value1": 0.7,
-					"desc2": "cooldown (sec) if success ",
-					"value2": 5
+					"value1": 1
+				},
+				{
+					"constId": "FirePropagationCd",
+					"desc1": "cooldown if propagates",
+					"value1": 3,
+					"desc2": "offscreen cooldown",
+					"value2": 10
 				},
 				{
 					"constId": "FirePropagationRange",

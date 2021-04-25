@@ -487,17 +487,6 @@
 							}]
 						},
 						{
-							"__identifier": "Hero",
-							"__grid": [2,21],
-							"__pivot": [0.5,1],
-							"__tile": null,
-							"width": 16,
-							"height": 16,
-							"defUid": 1,
-							"px": [40,352],
-							"fieldInstances": [{ "__identifier": "startHP", "__value": 3, "__type": "Int", "defUid": 18, "realEditorValues": [] }]
-						},
-						{
 							"__identifier": "WaterSource",
 							"__grid": [36,21],
 							"__pivot": [0.5,1],
@@ -625,32 +614,6 @@
 						},
 						{
 							"__identifier": "FireStarter",
-							"__grid": [16,18],
-							"__pivot": [0.5,0.5],
-							"__tile": null,
-							"width": 16,
-							"height": 16,
-							"defUid": 14,
-							"px": [264,296],
-							"fieldInstances": [
-								{
-									"__identifier": "range",
-									"__value": 3,
-									"__type": "Int",
-									"defUid": 15,
-									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
-								},
-								{
-									"__identifier": "startFireLevel",
-									"__value": 2,
-									"__type": "Int",
-									"defUid": 16,
-									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
-								}
-							]
-						},
-						{
-							"__identifier": "FireStarter",
 							"__grid": [33,21],
 							"__pivot": [0.5,0.5],
 							"__tile": null,
@@ -672,32 +635,6 @@
 									"__type": "Int",
 									"defUid": 16,
 									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
-								}
-							]
-						},
-						{
-							"__identifier": "FireStarter",
-							"__grid": [9,21],
-							"__pivot": [0.5,0.5],
-							"__tile": null,
-							"width": 16,
-							"height": 16,
-							"defUid": 14,
-							"px": [152,344],
-							"fieldInstances": [
-								{
-									"__identifier": "range",
-									"__value": 3,
-									"__type": "Int",
-									"defUid": 15,
-									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
-								},
-								{
-									"__identifier": "startFireLevel",
-									"__value": 2,
-									"__type": "Int",
-									"defUid": 16,
-									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
 								}
 							]
 						},
@@ -726,6 +663,17 @@
 									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
 								}
 							]
+						},
+						{
+							"__identifier": "Hero",
+							"__grid": [39,21],
+							"__pivot": [0.5,1],
+							"__tile": null,
+							"width": 16,
+							"height": 16,
+							"defUid": 1,
+							"px": [632,352],
+							"fieldInstances": [{ "__identifier": "startHP", "__value": 3, "__type": "Int", "defUid": 18, "realEditorValues": [] }]
 						}
 					]
 				},

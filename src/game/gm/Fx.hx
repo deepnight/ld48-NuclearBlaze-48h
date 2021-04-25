@@ -248,14 +248,15 @@ class Fx extends dn.Process {
 	}
 
 	public inline function levelFlames(cx:Int,cy:Int, fs:FireState) {
+		final maxed = fs.level>=2;
 		var pow = fs.getPowerRatio(true);
-		var baseCol = fs.level<2 ? 0xff0000 : C.interpolateInt(0xff6200,0xffcc33,rnd(0,1));
+		var baseCol = !maxed ? 0xff0000 : C.interpolateInt(0xff6200,0xffcc33,rnd(0,1));
 		if( fs.quickFire )
 			baseCol = 0x7860e7;
 
 		for( i in 0...Std.int(1+pow*3) ) {
 			var p = allocTopAdd( getTile(dict.fxFlame), getFlameX(cx,cy), getFlameY(cx,cy) );
-			p.setFadeS(rnd(0.7,0.8), rnd(0.2,0.4), 0.3);
+			p.setFadeS(maxed ? rnd(0.9,1) : rnd(0.7,0.8), rnd(0.2,0.4), 0.3);
 			p.colorAnimS( baseCol, 0xb71919, rnd(0.3,0.6) );
 			p.setScale(rnd(0.9,2) * compressUp(pow,0.7));
 			p.scaleX *= rnd(0.7,1.4,true);
@@ -277,12 +278,14 @@ class Fx extends dn.Process {
 		return maxValue * rnd(1-pct, 1);
 	}
 
-	public function waterTail(lastX:Float, lastY:Float, curX:Float, curY:Float) {
+	public function waterTail(lastX:Float, lastY:Float, curX:Float, curY:Float, elapsed:Float) {
+		var alpha = compressUp( 1 - elapsed, 0.8 );
 		var d = M.dist(curX, curY, lastX, lastY);
 		var a = Math.atan2(curY-lastY, curX-lastX);
 
+		// Tail core
 		var p = allocTopAdd( getTile(dict.fxTail), lastX, lastY);
-		p.setFadeS(vary(0.3),0,0.1);
+		p.setFadeS(vary(0.3)*alpha, 0, 0.1);
 		p.colorize(0x1aabe7);
 		p.setCenterRatio(0.2,0.5);
 		p.rotation = a;
@@ -291,9 +294,10 @@ class Fx extends dn.Process {
 		p.scaleYMul = vary(0.96);
 		p.lifeS = rnd(0.2, 0.3);
 
+		// Dots
 		var off = rnd(0.5,2,true);
 		var p = allocTopAdd( getTile(dict.pixel), (lastX+curX)*0.5 + Math.cos(a+M.PIHALF)*off, (lastY+curY)*0.5+Math.sin(a+M.PIHALF)*off);
-		p.setFadeS( vary(0.7), 0, 0.1);
+		p.setFadeS( vary(0.7)*alpha, 0, 0.1);
 		p.colorize(0x1aabe7);
 		p.moveAng(a, rnd(1,3));
 		p.frict = vary(0.8);
@@ -301,6 +305,7 @@ class Fx extends dn.Process {
 		p.onUpdate = _waterPhysics;
 		p.lifeS = rnd(0.06,0.10);
 
+		// Line
 		var offX = rnd(0,5,true);
 		var offY = rnd(0.5,2,true);
 		var p = allocTopAdd(
@@ -308,7 +313,7 @@ class Fx extends dn.Process {
 			(lastX+curX)*0.5 + Math.cos(a+M.PIHALF)*offY + Math.cos(a)*offX,
 			(lastY+curY)*0.5+Math.sin(a+M.PIHALF)*offY + Math.sin(a)*offX
 		);
-		p.setFadeS( vary(0.7), 0, 0.1);
+		p.setFadeS( vary(0.7)*alpha, 0, 0.1);
 		p.colorize(0x1aabe7);
 		p.rotation = a;
 		p.scaleX = vary(0.4);
@@ -342,6 +347,19 @@ class Fx extends dn.Process {
 		}
 	}
 
+	public function waterVanish(x:Float, y:Float) {
+		for(i in 0...2) {
+			var p = allocTopAdd( getTile(dict.fxSmoke), x+rnd(0,3,true), y+rnd(0,3,true));
+			p.setFadeS( vary(0.1), 0.1, 0.2);
+			p.colorize(0x1aabe7);
+			p.rotation = rnd(0,M.PI2);
+			p.setScale(vary(0.6));
+			p.dr = rnd(0.01,0.02,true);
+			p.dy = -vary(0.5);
+			p.lifeS = 0.2;
+		}
+	}
+
 	public function fireSplash(x:Float, y:Float) {
 		var p = allocTopAdd( getTile(dict.fxSmoke), x,y);
 		p.colorize(0x1aabe7);
@@ -363,15 +381,17 @@ class Fx extends dn.Process {
 	}
 
 	public function oilIgnite(cx,cy) {
-		for(i in 0...7) {
-			var p = allocTopAdd(getTile(dict.pixel), getFlameX(cx,cy)+rnd(0,4,true), getFlameY(cx,cy)+rnd(0,4,true));
+		// Dots
+		for(i in 0...20) {
+			var p = allocTopAdd(getTile(dict.pixel), getFlameX(cx,cy)+rnd(0,8,true), getFlameY(cx,cy)+rnd(0,4,true));
 			p.colorize(0x7860e7);
 			p.alphaFlicker = 0.7;
 			p.dr = rnd(0.1,0.2,true);
 			p.delayS = i * rnd(0.1,0.2);
 			p.lifeS = rnd(0.1,0.2);
 		}
-		for(i in 0...3) {
+		// Stars
+		for(i in 0...4) {
 			var p = allocTopAdd(getTile(dict.fxStar), getFlameX(cx,cy)+rnd(0,4,true), getFlameY(cx,cy)+rnd(0,4,true));
 			p.colorize(0x7860e7);
 			p.alphaFlicker = 0.7;

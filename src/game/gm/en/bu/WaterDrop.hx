@@ -3,6 +3,7 @@ package gm.en.bu;
 class WaterDrop extends Bullet {
 	var lastTailX = 0.;
 	var lastTailY = 0.;
+	var elapsedDist = 0.;
 
 	public function new(xx:Float, yy:Float, ang:Float) {
 		super(xx,yy);
@@ -25,12 +26,15 @@ class WaterDrop extends Bullet {
 		spr.alpha = rnd(0.3,0.7);
 	}
 
+	function getElapsedFactor() {
+		return elapsedDist/180;
+	}
 
 	override function postUpdate() {
 		super.postUpdate();
 		spr.rotation = Math.atan2(dy,dx);
 		if( !cd.hasSetS("tail",0.03) ) {
-			fx.waterTail(lastTailX, lastTailY, sprX, sprY);
+			fx.waterTail(lastTailX, lastTailY, sprX, sprY, getElapsedFactor());
 			lastTailX = sprX;
 			lastTailY = sprY;
 		}
@@ -38,12 +42,24 @@ class WaterDrop extends Bullet {
 
 	override function onHitCollision() {
 		super.onHitCollision();
-		fx.waterTail(lastTailX, lastTailY, M.lerp(lastTailX,sprX,0.8), M.lerp(lastTailY,sprY,0.8));
+		fx.waterTail(lastTailX, lastTailY, M.lerp(lastTailX,sprX,0.8), M.lerp(lastTailY,sprY,0.8), getElapsedFactor());
 		fx.wallSplash(lastFixedUpdateX, lastFixedUpdateY);
 	}
 
 	override function fixedUpdate() {
+		var lastX = centerX;
+		var lastY = centerY;
+
 		super.fixedUpdate();
+
+		elapsedDist += M.dist(lastX, lastY, centerX, centerY);
+		if( getElapsedFactor()>=1 ) {
+			fx.waterTail(lastTailX, lastTailY, sprX, sprY, getElapsedFactor());
+			fx.waterVanish(centerX, centerY);
+			destroy();
+			return;
+		}
+
 
 		// Reduce fire
 		if( !cd.has("limit") ) {
@@ -57,9 +73,9 @@ class WaterDrop extends Bullet {
 					var before = fs.level;
 					fs.decrease( Const.db.WaterFireDecrease_1 );
 					if( fs.level<=0 ) {
-						if( level.hasCollision(x,y+1) && x%3==0 )
-							fs.setToMin();
-						else
+						// if( level.hasCollision(x,y+1) && x%3==0 )
+						// 	fs.setToMin();
+						// else
 							fs.clear();
 						if( before>0 )
 							fx.fireVanish(x,y);
