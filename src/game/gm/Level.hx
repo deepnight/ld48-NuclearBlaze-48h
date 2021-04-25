@@ -1,5 +1,10 @@
 package gm;
 
+@:enum abstract Prop(Int) {
+	var Oil = 1;
+	var StopFire = 2;
+}
+
 class Level extends dn.Process {
 	var game(get,never) : Game; inline function get_game() return Game.ME;
 	var fx(get,never) : Fx; inline function get_fx() return Game.ME.fx;
@@ -55,16 +60,16 @@ class Level extends dn.Process {
 				if( cx<=0 || cy<=0 || cx>=cWid-1 || cy>=cHei-1 )
 					continue;
 
-				if( hasCollision(cx,cy+1) )
+				if( hasCollision(cx,cy+1) && !hasProperty(cx,cy+1,StopFire) )
 					fireStates.set( coordId(cx,cy), new FireState() );
 				// else if( hasCollision(cx,cy-1) )
 				// 	fireStates.set( coordId(cx,cy), new FireState() );
-				else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) )
+				else if( ( hasCollision(cx-1,cy) && !hasProperty(cx-1,cy,StopFire) || hasCollision(cx+1,cy) && !hasProperty(cx+1,cy,StopFire) ) )
 					fireStates.set( coordId(cx,cy), new FireState() );
 
 				// Properties
 				if( hasFireState(cx,cy) ) {
-					if( data.l_Properties.hasValue(cx, cy+1, 1) )
+					if( hasProperty(cx, cy+1, Oil) )
 						getFireState(cx,cy).quickFire = true;
 				}
 			}
@@ -73,6 +78,10 @@ class Level extends dn.Process {
 		fogRender = new h2d.SpriteBatch(Assets.tiles.tile);
 		game.scroller.add(fogRender, Const.DP_TOP);
 		buildFog();
+	}
+
+	public function hasProperty(cx:Int, cy:Int, prop:Prop) {
+		return isValid(cx,cy) ? data.l_Properties.hasValue(cx,cy, cast prop) : false;
 	}
 
 	override function onDispose() {
@@ -290,8 +299,9 @@ class Level extends dn.Process {
 		fogRender.y = fogCy*Const.GRID;
 
 		if( !cd.hasSetS("fogPierce",0.3) ) {
+			var h = game.hero;
 			dn.Bresenham.iterateDisc(game.hero.cx, game.hero.cy, 8, (x,y)->{
-				if( !isFogRevealed(x,y) && game.hero.sightCheck(x,y) )
+				if( !isFogRevealed(x,y) && ( h.sightCheck(x,y) || h.sightCheckFree(h.cx+h.dir, h.cy, x,y) ) )
 					revealFog(x,y);
 			});
 		}

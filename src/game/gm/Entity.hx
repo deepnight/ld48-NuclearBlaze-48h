@@ -366,6 +366,11 @@ class Entity {
 			return dn.Bresenham.checkThinLine(cx, cy, tcx, tcy, canSeeThrough);
 	}
 
+	/** Check if the grid-based line between this and given target isn't blocked by some obstacle **/
+	public inline function sightCheckFree(x:Int, y:Int, tcx:Int, tcy:Int) {
+		return dn.Bresenham.checkThinLine(x, y, tcx, tcy, canSeeThrough);
+	}
+
 	/** Create a LPoint instance from current coordinates **/
 	public inline function createPoint() return LPoint.fromCase(cx+xr,cy+yr);
 
