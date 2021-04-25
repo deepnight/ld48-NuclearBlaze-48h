@@ -504,7 +504,13 @@
 							"px": [536,352],
 							"fieldInstances": [
 								{ "__identifier": "opened", "__value": false, "__type": "Bool", "defUid": 17, "realEditorValues": [] },
-								{ "__identifier": "kicks", "__value": 3, "__type": "Int", "defUid": 21, "realEditorValues": [] }
+								{
+									"__identifier": "kicks",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 21,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								}
 							]
 						},
 						{
@@ -683,8 +689,20 @@
 							"defUid": 5,
 							"px": [392,352],
 							"fieldInstances": [
-								{ "__identifier": "opened", "__value": false, "__type": "Bool", "defUid": 17, "realEditorValues": [] },
-								{ "__identifier": "kicks", "__value": 3, "__type": "Int", "defUid": 21, "realEditorValues": [] }
+								{
+									"__identifier": "opened",
+									"__value": false,
+									"__type": "Bool",
+									"defUid": 17,
+									"realEditorValues": [null]
+								},
+								{
+									"__identifier": "kicks",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 21,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								}
 							]
 						}
 					]

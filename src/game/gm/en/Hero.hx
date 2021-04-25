@@ -90,25 +90,36 @@ class Hero extends gm.Entity {
 		super.onTouchWall(wallDir);
 		dx*=0.66;
 
-		if( !controlsLocked() && !cd.has("doorKickLimit") ) {
+		if( onGround && !controlsLocked() && !cd.has("doorKickLimit") ) {
 			var d = gm.en.int.Door.getAt(cx+wallDir,cy);
-			if( d!=null && d.closed )
-				chargeAction("kickDoor", 0.25, ()->{
-					spr.anim.play(anims.kick);
-					if( --d.resist<=0 ) {
-						camera.bump(wallDir, 10);
-						camera.shakeS(1, 0.3);
+			if( d!=null && d.closed ) {
+				if( d.kicks==0 ) {
+					spr.anim.play(anims.useStart);
+					xr = dirTo(d)==1 ? 0.3 : 0.7;
+					chargeAction("openDoor", 0.5, ()->{
+						spr.anim.play(anims.useEnd);
 						d.open(wallDir);
 						d.setSquashX(0.8);
-						bump(-wallDir*0.2, -0.1);
-					}
-					else {
-						camera.shakeS(1, 0.1);
-						camera.bump(wallDir, 3);
-						cd.setS("doorKickLimit",0.3);
-						d.setSquashX(0.5);
-					}
-				});
+					});
+				}
+				else
+					chargeAction("kickDoor", 0.25, ()->{
+						spr.anim.play(anims.kick);
+						if( --d.kicks<=0 ) {
+							camera.bump(wallDir, 10);
+							camera.shakeS(1, 0.3);
+							d.open(wallDir);
+							d.setSquashX(0.8);
+							bump(-wallDir*0.2, -0.1);
+						}
+						else {
+							camera.shakeS(1, 0.1);
+							camera.bump(wallDir, 3);
+							cd.setS("doorKickLimit",0.3);
+							d.setSquashX(0.5);
+						}
+					});
+			}
 		}
 	}
 
@@ -139,6 +150,8 @@ class Hero extends gm.Entity {
 		// Control queueing
 		if( ca.xDown() && !isWatering() ) {
 			cancelAction("jump");
+			cancelAction("kickDoor");
+			cancelAction("openDoor");
 			queueCommand(Use);
 		}
 
@@ -243,7 +256,7 @@ class Hero extends gm.Entity {
 
 
 		// Fire damage
-		dn.Bresenham.iterateDisc(cx,cy,1, (x,y)->{
+		dn.Bresenham.iterateDisc(cx,cy,0, (x,y)->{
 			if( level.getFireLevel(x,y)>=1 ) {
 				cd.setS("burning",2);
 				if( level.getFireLevel(x,y)>=2 && !cd.has("shield") )

@@ -5,12 +5,14 @@ class Door extends Interactive {
 	public var closed(default,null) = true;
 	var cHei = 0;
 
-	public var resist = 0;
+	public var kicks = 0;
 
 	public function new(d:Entity_Door) {
 		super(d.cx,d.cy);
 		ALL.push(this);
-		resist = d.f_kicks;
+		Game.ME.scroller.add(spr, Const.DP_BG);
+
+		kicks = d.f_kicks;
 		cHei = M.round(d.height / Const.GRID);
 		hei = cHei*Const.GRID;
 		closed = !d.f_opened;
@@ -52,6 +54,8 @@ class Door extends Interactive {
 		level.clearFogUpdateDelay();
 		updateCollisions();
 
+
+		// Check if there are fires behind
 		var bigFires = 0;
 		dn.Bresenham.iterateDisc(cx,cy,4, (x,y)->{
 			if( openDir==1 && x<=cx || openDir==-1 && x>=cx )
@@ -59,8 +63,9 @@ class Door extends Interactive {
 			if( level.getFireLevel(x,y)==2 && sightCheck(x,y) )
 				bigFires++;
 		});
+
+		// Explodes!
 		if( bigFires>=2 ) {
-			// Boom
 			fx.explosion(centerX, centerY);
 			// hero.bump( dirTo(hero)*rnd(0.15,0.2), -0.1 );
 			dn.Bresenham.iterateDisc(cx,cy,6, (x,y)->{
