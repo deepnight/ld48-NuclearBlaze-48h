@@ -29,6 +29,7 @@ class Hero extends gm.Entity {
 
 		spr.filter = new dn.heaps.filter.PixelOutline(0x330000, 0.4);
 		spr.set(Assets.hero);
+		spr.anim.registerStateAnim(anims.run, 5, ()->onGround && M.fabs(dxTotal)>0.05 );
 		spr.anim.registerStateAnim(anims.shootUp, 4, ()->isWatering() && aimingUp );
 		spr.anim.registerStateAnim(anims.shoot, 3, ()->isWatering() && !aimingUp );
 		spr.anim.registerStateAnim(anims.shootCharge, 2, ()->isChargingAction("water") );
