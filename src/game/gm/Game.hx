@@ -259,6 +259,12 @@ class Game extends Process {
 				new DebugDrone(); // <-- HERE: provide an Entity as argument to attach Drone near it
 			#end
 
+			// Fog
+			#if debug
+			if( ca.isKeyboardPressed(K.F) )
+				level.fogRender.visible = !level.fogRender.visible;
+			#end
+
 			// Restart whole game
 			if( ca.selectPressed() )
 				App.ME.startGame();

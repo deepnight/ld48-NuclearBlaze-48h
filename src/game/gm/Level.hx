@@ -25,7 +25,10 @@ class Level extends dn.Process {
 	var invalidated = true;
 
 	public var fogRender : h2d.SpriteBatch;
-	public var fogState : Map<Int,Bool> = new Map();
+	var fogRevealed : Map<Int,Bool> = new Map();
+	var fogElements : Map<Int, h2d.SpriteBatch.BatchElement> = new Map();
+	var fogCx = 0;
+	var fogCy = 0;
 	var fogWid : Int;
 	var fogHei : Int;
 
@@ -36,26 +39,34 @@ class Level extends dn.Process {
 		data = ldtkLevel;
 		tilesetSource = hxd.Res.atlas.world.toAseprite().toTile();
 
-		// Init fire spots
+
 		for(cy in 0...data.l_Collisions.cHei)
 		for(cx in 0...data.l_Collisions.cWid) {
-			if( hasCollision(cx,cy) )
-				continue;
+			// Init marks
+			if( hc(cx,cy) ) {
+				if( !hc(cx,cy+1) || !hc(cx,cy-1) || !hc(cx-1,cy) || !hc(cx+1,cy) )
+					setMark(WallEdge, cx,cy);
+				if( !hc(cx+1,cy+1) || !hc(cx+1,cy-1) || !hc(cx-1,cy-1) || !hc(cx-1,cy+1) )
+					setMark(WallEdge, cx,cy);
+			}
 
-			if( cx<=0 || cy<=0 || cx>=cWid-1 || cy>=cHei-1 )
-				continue;
+			// Init fire spots
+			if( !hasCollision(cx,cy) ) {
+				if( cx<=0 || cy<=0 || cx>=cWid-1 || cy>=cHei-1 )
+					continue;
 
-			if( hasCollision(cx,cy+1) )
-				fireStates.set( coordId(cx,cy), new FireState() );
-			// else if( hasCollision(cx,cy-1) )
-			// 	fireStates.set( coordId(cx,cy), new FireState() );
-			else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) )
-				fireStates.set( coordId(cx,cy), new FireState() );
+				if( hasCollision(cx,cy+1) )
+					fireStates.set( coordId(cx,cy), new FireState() );
+				// else if( hasCollision(cx,cy-1) )
+				// 	fireStates.set( coordId(cx,cy), new FireState() );
+				else if( ( hasCollision(cx-1,cy) || hasCollision(cx+1,cy) ) )
+					fireStates.set( coordId(cx,cy), new FireState() );
 
-			// Properties
-			if( hasFireState(cx,cy) ) {
-				if( data.l_Properties.hasValue(cx, cy+1, 1) )
-					getFireState(cx,cy).quickFire = true;
+				// Properties
+				if( hasFireState(cx,cy) ) {
+					if( data.l_Properties.hasValue(cx, cy+1, 1) )
+						getFireState(cx,cy).quickFire = true;
+				}
 			}
 		}
 
@@ -69,7 +80,7 @@ class Level extends dn.Process {
 
 		fogRender.remove();
 		fogRender = null;
-		fogState = null;
+		// fogState = null;
 
 		for(fs in fireStates)
 			fs.dispose();
@@ -81,9 +92,27 @@ class Level extends dn.Process {
 	}
 
 	function buildFog() {
+		fogElements = new Map();
 		fogRender.clear();
-		fogWid = M.ceil( game.camera.pxWid/Const.GRID );
-		fogHei = M.ceil( game.camera.pxHei/Const.GRID );
+		fogWid = M.ceil( game.camera.pxWid/Const.GRID ) + 1;
+		fogHei = M.ceil( game.camera.pxHei/Const.GRID ) + 1;
+		var t = Assets.tiles.getTile( Assets.tilesDict.fxFog );
+		// var t = Assets.tiles.getTile( Assets.tilesDict.fxCircle7);
+		t.setCenterRatio();
+		for(cy in 0...fogHei)
+		for(cx in 0...fogWid) {
+			var be = new h2d.SpriteBatch.BatchElement(t);
+			fogElements.set( fogCoordId(cx,cy), be );
+			fogRender.add(be);
+			be.x = (cx+0.5)*Const.GRID;
+			be.y = (cy+0.5)*Const.GRID;
+			C.colorizeBatchElement(be, 0x0);
+		}
+	}
+
+
+	inline function fogCoordId(cx,cy) {
+		return cx + cy*fogWid;
 	}
 
 	/** TRUE if given coords are in level bounds **/
@@ -124,6 +153,9 @@ class Level extends dn.Process {
 			else
 				collOverride.remove( coordId(cx,cy) );
 	}
+
+	// Alias
+	inline function hc(x,y) return hasCollision(x,y);
 
 	/** Return TRUE if "Collisions" layer contains a collision value **/
 	public inline function hasCollision(cx,cy) : Bool {
@@ -206,12 +238,63 @@ class Level extends dn.Process {
 				if( Game.ME.camera.isOnScreenCase(cx,cy,64) && isBurning(cx,cy) ) {
 					fs = getFireState(cx,cy);
 					fx.levelFlames(cx, cy, fs);
-					if( !hasCollision(cx,cy-1) )
+					if( isFogRevealed(cx,cy) && !hasCollision(cx,cy-1) )
 						fx.levelFireSparks(cx, cy, fs);
+
 
 					if( smoke && hasCollision(cx,cy+1) )
 						fx.levelFireSmoke(cx, cy, fs);
 				}
+		}
+
+		updateFog();
+	}
+
+	public inline function isFogRevealed(cx,cy) {
+		return fogRevealed.exists( coordId(cx,cy) );
+	}
+
+	public inline function revealFog(cx,cy, allowRecursion=true) {
+		if( !isFogRevealed(cx,cy) ) {
+			fogRevealed.set( coordId(cx,cy), true );
+
+			if( allowRecursion ) {
+				// Wall edges
+				for(oy in -1...2)
+				for(ox in -1...2)
+					if( hasMark(WallEdge, cx+ox,cy+oy) && !isFogRevealed(cx+ox,cy+oy) )
+						revealFog(cx+ox,cy+oy, false);
+
+				// Doors
+				if( hasMark(DoorZone,cx+1,cy) ) revealFog(cx+1,cy, false);
+				if( hasMark(DoorZone,cx-1,cy) ) revealFog(cx-1,cy, false);
+			}
+		}
+	}
+
+	public inline function clearFogUpdateDelay() {
+		cd.unset("fogPierce");
+	}
+
+	function updateFog() {
+		// Position fog
+		fogCx = Std.int(game.camera.left/Const.GRID);
+		fogCy = Std.int(game.camera.top/Const.GRID);
+		fogRender.x = fogCx*Const.GRID;
+		fogRender.y = fogCy*Const.GRID;
+
+		if( !cd.hasSetS("fogPierce",0.3) ) {
+			dn.Bresenham.iterateDisc(game.hero.cx, game.hero.cy, 8, (x,y)->{
+				if( !isFogRevealed(x,y) && game.hero.sightCheck(x,y) )
+					revealFog(x,y);
+			});
+		}
+
+		// Pierce
+		for(oy in 0...fogHei)
+		for(ox in 0...fogWid) {
+			var be = fogElements.get( fogCoordId(ox,oy) );
+			be.visible = !isFogRevealed( fogCx+ox, fogCy+oy );
 		}
 	}
 

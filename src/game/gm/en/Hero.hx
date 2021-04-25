@@ -29,6 +29,7 @@ class Hero extends gm.Entity {
 
 		spr.filter = new dn.heaps.filter.PixelOutline(0x330000, 0.4);
 		spr.set(Assets.hero);
+		spr.anim.registerStateAnim(anims.kickCharge, 8, ()->isChargingAction("kickDoor") );
 		spr.anim.registerStateAnim(anims.jumpUp, 7, ()->!onGround && dy<0.1 );
 		spr.anim.registerStateAnim(anims.jumpDown, 6, ()->!onGround );
 		spr.anim.registerStateAnim(anims.run, 5, 1.3, ()->onGround && M.fabs(dxTotal)>0.05 );
@@ -78,7 +79,10 @@ class Hero extends gm.Entity {
 
 	override function onLand(cHei:Float) {
 		super.onLand(cHei);
-		setSquashY(0.8);
+		if( cHei>=4 )
+			setSquashY(0.6);
+		else if( cHei>=2 )
+			setSquashY(0.8);
 		spr.anim.play(anims.land);
 	}
 
@@ -86,14 +90,24 @@ class Hero extends gm.Entity {
 		super.onTouchWall(wallDir);
 		dx*=0.66;
 
-		if( !controlsLocked() ) {
+		if( !controlsLocked() && !cd.has("doorKickLimit") ) {
 			var d = gm.en.int.Door.getAt(cx+wallDir,cy);
 			if( d!=null && d.closed )
-				chargeAction("door", 0.25, ()->{
-					camera.shakeS(1, 0.3);
-					camera.bump(wallDir, 10);
-					d.open(wallDir);
-					d.setSquashX(0.8);
+				chargeAction("kickDoor", 0.25, ()->{
+					spr.anim.play(anims.kick);
+					if( --d.resist<=0 ) {
+						camera.bump(wallDir, 10);
+						camera.shakeS(1, 0.3);
+						d.open(wallDir);
+						d.setSquashX(0.8);
+						bump(-wallDir*0.2, -0.1);
+					}
+					else {
+						camera.shakeS(1, 0.1);
+						camera.bump(wallDir, 3);
+						cd.setS("doorKickLimit",0.3);
+						d.setSquashX(0.5);
+					}
 				});
 		}
 	}

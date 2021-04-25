@@ -683,9 +683,7 @@ class Entity {
 	}
 
 
-	function onLand(cHei:Float) {
-	}
-
+	function onLand(cHei:Float) {}
 	function onTouchCeiling() {}
 	function onTouchWall(wallDir:Int) {}
 
@@ -714,6 +712,8 @@ class Entity {
 			if( yr>1 && level.hasCollision(cx,cy+1) ) {
 				dy = 0;
 				yr = 1;
+				bdx*=0.5;
+				bdy = 0;
 				var cHei = M.fmax(0, cy+yr-fallStartCy);
 				onPosManuallyChanged();
 				onLand(cHei);

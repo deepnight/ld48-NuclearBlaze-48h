@@ -5,12 +5,18 @@ class Door extends Interactive {
 	public var closed(default,null) = true;
 	var cHei = 0;
 
+	public var resist = 0;
+
 	public function new(d:Entity_Door) {
 		super(d.cx,d.cy);
 		ALL.push(this);
+		resist = d.f_kicks;
 		cHei = M.round(d.height / Const.GRID);
+		hei = cHei*Const.GRID;
 		closed = !d.f_opened;
 		updateCollisions();
+		for(y in cy-cHei+1...cy+1)
+			level.setMark(DoorZone, cx,y);
 	}
 
 	public static function getAt(cx,cy) {
@@ -43,7 +49,28 @@ class Door extends Interactive {
 	public function open(openDir=1) {
 		closed = false;
 		dir = openDir;
+		level.clearFogUpdateDelay();
 		updateCollisions();
+
+		var bigFires = 0;
+		dn.Bresenham.iterateDisc(cx,cy,4, (x,y)->{
+			if( openDir==1 && x<=cx || openDir==-1 && x>=cx )
+				return;
+			if( level.getFireLevel(x,y)==2 && sightCheck(x,y) )
+				bigFires++;
+		});
+		if( bigFires>=2 ) {
+			// Boom
+			fx.explosion(centerX, centerY);
+			// hero.bump( dirTo(hero)*rnd(0.15,0.2), -0.1 );
+			dn.Bresenham.iterateDisc(cx,cy,6, (x,y)->{
+				if( level.hasFireState(x,y) && !level.isBurning(x,y) && sightCheck(x,y) ) {
+					var fs = level.getFireState(x,y);
+					fs.underControlS = 0;
+					level.ignite(x,y, irnd(0,1));
+				}
+			});
+		}
 	}
 
 	public function close() {

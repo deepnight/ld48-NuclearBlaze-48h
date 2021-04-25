@@ -63,7 +63,7 @@
 				},
 				{
 					"constId": "FireIncPerTick",
-					"value1": 0.3,
+					"value1": 0.2,
 					"desc1": "ratio increase per tick"
 				},
 				{
