@@ -92,7 +92,7 @@ class DebugDrone extends Entity {
 		cancelVelocities();
 
 		// Movement controls
-		var spd = 0.02 * ( ca.xDown() ? 3 : 1 ); // turbo by holding pad-X
+		var spd = 0.04 * ( ca.xDown() ? 5 : 1 ); // turbo by holding pad-X
 
 		if( !App.ME.anyInputHasFocus() ) {
 			if( ca.leftDist()>0 ) {
