@@ -104,8 +104,8 @@ class Level extends dn.Process {
 	function buildFog() {
 		fogElements = new Map();
 		fogRender.clear();
-		fogWid = M.ceil( game.camera.pxWid/Const.GRID ) + 1;
-		fogHei = M.ceil( game.camera.pxHei/Const.GRID ) + 1;
+		fogWid = M.ceil( game.camera.pxWid/Const.GRID ) + 3;
+		fogHei = M.ceil( game.camera.pxHei/Const.GRID ) + 3;
 		var t = Assets.tiles.getTile( Assets.tilesDict.fxFog );
 		// var t = Assets.tiles.getTile( Assets.tilesDict.fxCircle7);
 		t.setCenterRatio();
@@ -313,8 +313,8 @@ class Level extends dn.Process {
 
 	function updateFog() {
 		// Position fog
-		fogCx = Std.int(game.camera.left/Const.GRID);
-		fogCy = Std.int(game.camera.top/Const.GRID);
+		fogCx = Std.int(game.camera.left/Const.GRID)-1;
+		fogCy = Std.int(game.camera.top/Const.GRID)-1;
 		fogRender.x = fogCx*Const.GRID;
 		fogRender.y = fogCy*Const.GRID;
 
@@ -336,7 +336,6 @@ class Level extends dn.Process {
 		for(oy in 0...fogHei)
 		for(ox in 0...fogWid) {
 			var be = fogElements.get( fogCoordId(ox,oy) );
-			// be.visible = !isFogRevealed( fogCx+ox, fogCy+oy );
 			if( isFogRevealed( fogCx+ox, fogCy+oy ) ) {
 				r = fogReveals.get( coordId(fogCx+ox, fogCy+oy) );
 				r = M.fmin( r+Const.db.FogRevealAnimSpeed_1*tmod, 1 );
