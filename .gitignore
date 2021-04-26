@@ -1,6 +1,7 @@
 bin/
 dump/
 docs/
+backups/
 res/.tmp/
 *.zip
 
