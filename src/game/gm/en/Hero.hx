@@ -84,6 +84,8 @@ class Hero extends gm.Entity {
 		bump(-dir*0.4, -0.15);
 		game.addSlowMo("death", 1, 0.3);
 		game.stopFrame();
+
+		game.delayer.addS(say.bind(L.t._("Ouch."), 0x8093AA), 2);
 	}
 
 	public function addItem(k:Enum_Items) {

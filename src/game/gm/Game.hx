@@ -60,8 +60,10 @@ class Game extends Process {
 		// 	mask.colorize(0x0);
 		// }
 
+		#if debug
+		curLevelIdx = Assets.worldData.all_levels.Lab.arrayIndex;
+		#end
 		startCurrentLevel();
-		// startLevel(Assets.worldData.all_levels.Lab);
 
 
 		#if debug
