@@ -74,6 +74,9 @@ class Hud extends dn.Process {
 		notifications.insert(0,f);
 		p.tw.createS(f.x, -f.outerWidth>-2, TEaseOut, 0.1);
 		p.onUpdateCb = ()->{
+			if( f.parent==null )
+				p.destroy();
+
 			if( p.stime>=durationS && !p.cd.hasSetS("done",Const.INFINITE) )
 				p.tw.createS(f.x, -f.outerWidth, 0.2).end( p.destroy );
 		}
@@ -90,6 +93,12 @@ class Hud extends dn.Process {
 			y+=f.outerHeight+1;
 		}
 
+	}
+
+	public function clearNotifications() {
+		for(e in notifications)
+			e.remove();
+		notifications = [];
 	}
 
 	public function setInventory(items:Array<Enum_Items>) {

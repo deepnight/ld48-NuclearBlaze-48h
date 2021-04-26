@@ -102,6 +102,8 @@ class Assets {
 	public static function update(tmod) {
 		tiles.tmod = tmod;
 		hero.tmod = tmod;
+		if( Game.exists() && Game.ME.isPaused() )
+			hero.tmod = 0;
 		// <-- add other atlas TMOD updates here
 	}
 

@@ -61,7 +61,7 @@ class Game extends Process {
 		// }
 
 		#if debug
-		curLevelIdx = Assets.worldData.all_levels.Lab.arrayIndex;
+		// curLevelIdx = Assets.worldData.all_levels.Lab.arrayIndex;
 		#end
 		startCurrentLevel();
 
@@ -101,6 +101,7 @@ class Game extends Process {
 		for(e in Entity.ALL) // <---- Replace this with more adapted entity destruction (eg. keep the player alive)
 			e.destroy();
 		garbageCollectEntities();
+		delayer.cancelById("deathMsg");
 
 		cd.unset("successMsg");
 
@@ -292,6 +293,22 @@ class Game extends Process {
 	}
 
 
+	public function setScreenshotMode(active:Bool) {
+		if( active ) {
+			scroller.add(hero.spr, Const.DP_FX_FRONT);
+			hud.clearNotifications();
+			for(e in Entity.ALL) {
+				e.disableDebugBounds();
+				e.debug();
+			}
+			Console.ME.disableStats();
+		}
+		else {
+			scroller.add(hero.spr, Const.DP_MAIN);
+		}
+	}
+
+
 	/** Main loop **/
 	var successTimerS = 0.;
 	override function update() {
@@ -343,7 +360,6 @@ class Game extends Process {
 				App.ME.startGame();
 			else if( ca.selectPressed() )
 				startCurrentLevel();
-
 
 		}
 	}

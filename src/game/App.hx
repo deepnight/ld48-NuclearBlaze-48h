@@ -141,5 +141,12 @@ class App extends dn.Process {
     override function update() {
 		Assets.update(tmod);
         super.update();
+
+
+		// Screenshot pause
+		if( ca.isKeyboardPressed(K.BACKSPACE) && Game.exists() ) {
+			Game.ME.togglePause();
+			Game.ME.setScreenshotMode( Game.ME.isPaused() );
+		}
     }
 }

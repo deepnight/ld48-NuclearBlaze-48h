@@ -85,7 +85,7 @@ class Hero extends gm.Entity {
 		game.addSlowMo("death", 1, 0.3);
 		game.stopFrame();
 
-		game.delayer.addS(say.bind(L.t._("Ouch."), 0x8093AA), 2);
+		game.delayer.addS("deathMsg", say.bind(L.t._("Ouch."), 0x8093AA), 2);
 	}
 
 	public function addItem(k:Enum_Items) {
@@ -306,8 +306,11 @@ class Hero extends gm.Entity {
 		if( cd.has("burning") && !cd.hasSetS("flame",0.2) )
 			fx.flame(centerX, centerY);
 
-		if( cd.has("shield") && !cd.hasSetS("shieldBlink",0.2) )
+		if( isAlive() && cd.has("shield") && !cd.hasSetS("shieldBlink",0.2) )
 			blink(0xffffff);
+
+		if( !isAlive() && !onGround && !cd.hasSetS("deathBlink",0.15) )
+			blink(0xffaa00);
 
 		if( bubble!=null ) {
 			bubble.x = sprX;
