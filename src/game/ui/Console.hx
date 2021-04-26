@@ -40,6 +40,11 @@ class Console extends h2d.Console {
 			for(k in flags.keys())
 				log(k, 0x80ff00);
 		});
+		this.addCommand("god", [], function() {
+			setFlag("god",true);
+			Game.ME.hud.notify("god mode");
+			Game.ME.hero.initLife(9999);
+		});
 		this.addAlias("+","set");
 		this.addAlias("-","unset");
 		#end

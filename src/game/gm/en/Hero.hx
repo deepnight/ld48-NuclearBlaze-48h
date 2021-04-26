@@ -29,6 +29,8 @@ class Hero extends gm.Entity {
 		dir = data.f_lookRight ? 1 : -1;
 
 		initLife( Std.int(Const.db.HeroHP_1) );
+		if( Console.ME.hasFlag("god") )
+			initLife(9999);
 
 		camera.trackEntity(this, true);
 
