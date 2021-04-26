@@ -120,6 +120,9 @@ class Game extends Process {
 		for(d in level.data.l_Entities.all_Exit)
 			new gm.en.Exit(d);
 
+		for(d in level.data.l_Entities.all_Title)
+			new gm.en.Title(d);
+
 		for(d in level.data.l_Entities.all_Smoker)
 			dn.Bresenham.iterateDisc(d.cx, d.cy, d.f_radius, (x,y)->{
 				if( level.hasFireState(x,y) )
