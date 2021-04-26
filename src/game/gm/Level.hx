@@ -81,6 +81,11 @@ class Level extends dn.Process {
 		buildFog();
 	}
 
+	override function onResize() {
+		super.onResize();
+		buildFog();
+	}
+
 	public function hasProperty(cx:Int, cy:Int, prop:Prop) {
 		return isValid(cx,cy) ? data.l_Properties.hasValue(cx,cy, cast prop) : false;
 	}
@@ -118,6 +123,7 @@ class Level extends dn.Process {
 			be.y = (cy+0.5)*Const.GRID;
 			C.colorizeBatchElement(be, 0x0);
 		}
+		clearFogUpdateDelay();
 	}
 
 
