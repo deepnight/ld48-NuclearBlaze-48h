@@ -7,6 +7,7 @@ These are notes taken during Ludum Dare for future improvements & bug fixes.
  - move macros to src/game/tools/macros
  - automate ALL arrays creation using build macro
  - Entity.hit "from" should be optional?
+ - Entity.kill "from" should be optional?
  - Macro to automate color conversion (eg. `"#ffcc00".int()`)
  - Add helper methods to Fx to create random variations on values (eg. `vary(v,0.1)`)
 	- rnd rotation
