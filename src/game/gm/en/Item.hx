@@ -6,6 +6,7 @@ class Item extends Entity {
 		data = d;
 		super(d.cx, d.cy);
 
+		gravityMul = 0.6;
 		spr.set("item"+data.f_type.getName());
 	}
 
@@ -19,7 +20,9 @@ class Item extends Entity {
 			return;
 		}
 
-		if( onGround && !cd.hasSetS("jump",1) )
+		if( onGround && !cd.hasSetS("jump",1) ) {
+			blink(0xffcc00);
 			dy = -0.3;
+		}
 	}
 }

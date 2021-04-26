@@ -305,6 +305,8 @@ class Game extends Process {
 			for(e in gm.en.Tutorial.ALL)
 				e.dispose();
 			Console.ME.disableStats();
+			hero.clearBlink();
+			hero.postUpdate();
 		}
 		else {
 			cd.unset("screenshot");

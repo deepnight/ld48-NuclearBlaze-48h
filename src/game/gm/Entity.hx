@@ -608,6 +608,11 @@ class Entity {
 		cd.setS("keepBlink",0.06);
 	}
 
+	public inline function clearBlink() {
+		blinkColor = new h3d.Vector();
+		cd.unset("keepBlink");
+	}
+
 	/** Briefly squash sprite on X (Y changes accordingly). "1.0" means no distorsion. **/
 	public function setSquashX(scaleX:Float) {
 		sprSquashX = scaleX;
