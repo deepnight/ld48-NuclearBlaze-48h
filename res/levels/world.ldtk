@@ -10,7 +10,7 @@
 	},
 	"jsonVersion": "0.9.3",
 	"nextUid": 127,
-	"worldLayout": "LinearVertical",
+	"worldLayout": "LinearHorizontal",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
 	"defaultPivotX": 0.5,
@@ -1836,7 +1836,7 @@
 	] },
 	"levels": [
 		{
-			"identifier": "Level_0",
+			"identifier": "Intro",
 			"uid": 97,
 			"worldX": 0,
 			"worldY": 0,
@@ -1844,7 +1844,7 @@
 			"pxHei": 480,
 			"__bgColor": "#111330",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
@@ -4723,18 +4723,18 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [{ "levelUid": 85, "dir": "s" }]
+			"__neighbours": [{ "levelUid": 85, "dir": "e" }]
 		},
 		{
-			"identifier": "Level_1",
+			"identifier": "Title",
 			"uid": 85,
-			"worldX": 0,
-			"worldY": 512,
+			"worldX": 720,
+			"worldY": 0,
 			"pxWid": 400,
 			"pxHei": 256,
 			"__bgColor": "#111330",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
@@ -5995,13 +5995,13 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [ { "levelUid": 123, "dir": "s" }, { "levelUid": 97, "dir": "n" } ]
+			"__neighbours": [ { "levelUid": 123, "dir": "e" }, { "levelUid": 97, "dir": "w" } ]
 		},
 		{
 			"identifier": "Level_2",
 			"uid": 123,
-			"worldX": 0,
-			"worldY": 800,
+			"worldX": 1152,
+			"worldY": 0,
 			"pxWid": 400,
 			"pxHei": 256,
 			"__bgColor": "#111330",
@@ -7123,13 +7123,13 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [ { "levelUid": 56, "dir": "s" }, { "levelUid": 85, "dir": "n" } ]
+			"__neighbours": [ { "levelUid": 56, "dir": "e" }, { "levelUid": 85, "dir": "w" } ]
 		},
 		{
 			"identifier": "Level_3",
 			"uid": 56,
-			"worldX": 0,
-			"worldY": 1088,
+			"worldX": 1584,
+			"worldY": 0,
 			"pxWid": 1104,
 			"pxHei": 384,
 			"__bgColor": "#111330",
@@ -11148,13 +11148,13 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [ { "levelUid": 30, "dir": "s" }, { "levelUid": 123, "dir": "n" } ]
+			"__neighbours": [ { "levelUid": 30, "dir": "e" }, { "levelUid": 123, "dir": "w" } ]
 		},
 		{
 			"identifier": "Level_4",
 			"uid": 30,
-			"worldX": 0,
-			"worldY": 1504,
+			"worldX": 2720,
+			"worldY": 0,
 			"pxWid": 416,
 			"pxHei": 272,
 			"__bgColor": "#111330",
@@ -12548,13 +12548,13 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [ { "levelUid": 57, "dir": "s" }, { "levelUid": 56, "dir": "n" } ]
+			"__neighbours": [ { "levelUid": 57, "dir": "e" }, { "levelUid": 56, "dir": "w" } ]
 		},
 		{
 			"identifier": "Level_5",
 			"uid": 57,
-			"worldX": 0,
-			"worldY": 1808,
+			"worldX": 3168,
+			"worldY": 0,
 			"pxWid": 512,
 			"pxHei": 352,
 			"__bgColor": "#111330",
@@ -14665,13 +14665,13 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [ { "levelUid": 70, "dir": "s" }, { "levelUid": 30, "dir": "n" } ]
+			"__neighbours": [ { "levelUid": 70, "dir": "e" }, { "levelUid": 30, "dir": "w" } ]
 		},
 		{
 			"identifier": "Level_6",
 			"uid": 70,
-			"worldX": 0,
-			"worldY": 2192,
+			"worldX": 3712,
+			"worldY": 0,
 			"pxWid": 928,
 			"pxHei": 496,
 			"__bgColor": "#111330",
@@ -19421,13 +19421,13 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [ { "levelUid": 89, "dir": "s" }, { "levelUid": 57, "dir": "n" } ]
+			"__neighbours": [ { "levelUid": 89, "dir": "e" }, { "levelUid": 57, "dir": "w" } ]
 		},
 		{
 			"identifier": "Level_7",
 			"uid": 89,
-			"worldX": 0,
-			"worldY": 2720,
+			"worldX": 4672,
+			"worldY": 0,
 			"pxWid": 704,
 			"pxHei": 608,
 			"__bgColor": "#111330",
@@ -24120,13 +24120,13 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [ { "levelUid": 0, "dir": "s" }, { "levelUid": 70, "dir": "n" } ]
+			"__neighbours": [ { "levelUid": 0, "dir": "e" }, { "levelUid": 70, "dir": "w" } ]
 		},
 		{
 			"identifier": "Level_8",
 			"uid": 0,
-			"worldX": 0,
-			"worldY": 3360,
+			"worldX": 5408,
+			"worldY": 0,
 			"pxWid": 1056,
 			"pxHei": 560,
 			"__bgColor": "#111330",
@@ -29554,18 +29554,18 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [ { "levelUid": 118, "dir": "s" }, { "levelUid": 89, "dir": "n" } ]
+			"__neighbours": [ { "levelUid": 118, "dir": "e" }, { "levelUid": 89, "dir": "w" } ]
 		},
 		{
-			"identifier": "Level_9",
+			"identifier": "Thank_you_for_playing",
 			"uid": 118,
-			"worldX": 0,
-			"worldY": 3952,
+			"worldX": 6496,
+			"worldY": 0,
 			"pxWid": 576,
 			"pxHei": 400,
 			"__bgColor": "#111330",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
@@ -32185,13 +32185,13 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [ { "levelUid": 126, "dir": "s" }, { "levelUid": 0, "dir": "n" } ]
+			"__neighbours": [ { "levelUid": 126, "dir": "e" }, { "levelUid": 0, "dir": "w" } ]
 		},
 		{
 			"identifier": "Screenshot",
 			"uid": 126,
-			"worldX": 0,
-			"worldY": 4384,
+			"worldX": 7104,
+			"worldY": 0,
 			"pxWid": 512,
 			"pxHei": 352,
 			"__bgColor": "#111330",
@@ -34136,7 +34136,7 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [{ "levelUid": 118, "dir": "n" }]
+			"__neighbours": [{ "levelUid": 118, "dir": "w" }]
 		}
 	]
 }
