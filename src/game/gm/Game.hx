@@ -120,6 +120,12 @@ class Game extends Process {
 		for(d in level.data.l_Entities.all_Exit)
 			new gm.en.Exit(d);
 
+		for(d in level.data.l_Entities.all_Smoker)
+			dn.Bresenham.iterateDisc(d.cx, d.cy, d.f_radius, (x,y)->{
+				if( level.hasFireState(x,y) )
+					level.getFireState(x,y).extinguished = true;
+			});
+
 
 		for(e in level.data.l_Entities.all_FireStarter)
 			dn.Bresenham.iterateDisc(
@@ -277,7 +283,7 @@ class Game extends Process {
 	}
 
 	public function levelComplete() {
-		return level.fireCount==0 && successTimerS>=1;
+		return level.fireCount==0 && successTimerS>=1 || level.data.f_ignoreFires;
 	}
 
 
@@ -292,7 +298,7 @@ class Game extends Process {
 		// Victory
 		if( level.fireCount==0 ) {
 			successTimerS+=1/Const.FPS * tmod;
-			if( successTimerS>=0.3 && !cd.hasSetS("successMsg",Const.INFINITE) )
+			if( successTimerS>=0.3 && !cd.hasSetS("successMsg",Const.INFINITE) && !level.data.f_disableCompleteAnnounce )
 				hero.say(L.t._("Clear! Proceeding deeper..."), 0xccff00);
 			// if( successTimerS>=3 )
 			// 	nextLevel();

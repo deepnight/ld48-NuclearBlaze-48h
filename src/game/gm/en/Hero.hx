@@ -34,6 +34,7 @@ class Hero extends gm.Entity {
 
 		spr.filter = new dn.heaps.filter.PixelOutline(0x330000, 0.4);
 		spr.set(Assets.hero);
+		spr.anim.registerStateAnim(anims.cineFall, 99, ()->cd.has("cineFalling") && !onGround );
 		spr.anim.registerStateAnim(anims.deathJump, 99, ()->life<=0 && !onGround );
 		spr.anim.registerStateAnim(anims.deathLand, 99, ()->life<=0 && onGround);
 		spr.anim.registerStateAnim(anims.kickCharge, 8, ()->isChargingAction("kickDoor") );
@@ -49,7 +50,14 @@ class Hero extends gm.Entity {
 		spr.anim.registerStateAnim(anims.idleCrouch, 1, ()->!cd.has("recentMove"));
 		spr.anim.registerStateAnim(anims.idle, 0);
 
+		if( level.data.f_cinematicFall )
+			cd.setS("cineFalling",Const.INFINITE);
+
 		clearInventory();
+	}
+
+	override function getGravity():Float {
+		return super.getGravity() * ( cd.has("cineFalling") ? 1.5 : 1 );
 	}
 
 	public function hasItem(k:Enum_Items) {
@@ -133,7 +141,7 @@ class Hero extends gm.Entity {
 	}
 
 	public function controlsLocked() {
-		return life<=0 || ca.locked() || Console.ME.isActive() || isChargingAction();
+		return life<=0 || ca.locked() || Console.ME.isActive() || isChargingAction() || cd.has("cineFalling") || cd.has("lockControls");
 	}
 
 
@@ -146,6 +154,14 @@ class Hero extends gm.Entity {
 
 		if( isAlive() )
 			spr.anim.play(anims.land);
+
+		if( cd.has("cineFalling") )  {
+			cd.unset("cineFalling");
+			spr.anim.play(anims.cineFallLand);
+			cd.setS("lockControls", 1);
+			camera.shakeS(2,0.4);
+			cd.unset("recentMove");
+		}
 	}
 
 	public function say(str:String, c=0xffffff) {

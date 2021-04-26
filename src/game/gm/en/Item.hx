@@ -20,6 +20,6 @@ class Item extends Entity {
 		}
 
 		if( onGround && !cd.hasSetS("jump",1) )
-			dy = -0.1;
+			dy = -0.3;
 	}
 }
