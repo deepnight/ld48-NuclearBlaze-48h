@@ -35,7 +35,7 @@ class Tutorial extends Entity {
 	public function updatePos() {
 		var p : Float = data.f_padding;
 
-		tf.visible = entityVisible;
+		tf.visible = entityVisible && !game.cd.has("screenshot");
 
 		tf.setScale( M.imax(1,Std.int(Const.SCALE*0.5)) );
 		tf.x = Std.int( sprX*Const.SCALE + game.scroller.x + p*Const.SCALE );

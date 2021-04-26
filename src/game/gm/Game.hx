@@ -296,14 +296,18 @@ class Game extends Process {
 	public function setScreenshotMode(active:Bool) {
 		if( active ) {
 			scroller.add(hero.spr, Const.DP_FX_FRONT);
+			cd.setS("screenshot", Const.INFINITE);
 			hud.clearNotifications();
 			for(e in Entity.ALL) {
 				e.disableDebugBounds();
 				e.debug();
 			}
+			for(e in gm.en.Tutorial.ALL)
+				e.dispose();
 			Console.ME.disableStats();
 		}
 		else {
+			cd.unset("screenshot");
 			scroller.add(hero.spr, Const.DP_MAIN);
 		}
 	}
