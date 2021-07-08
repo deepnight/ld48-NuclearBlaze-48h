@@ -54,7 +54,7 @@ class Fx extends dn.Process {
 
 	/** Clear all particles **/
 	public function clear() {
-		pool.killAll();
+		pool.clear();
 	}
 
 	/** Create a HParticle instance in the TOP layer, using Additive blendmode **/
