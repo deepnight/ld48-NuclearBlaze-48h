@@ -9,10 +9,10 @@ class App extends dn.Process {
 	public var scene(default,null) : h2d.Scene;
 
 	/** Used to create "ControllerAccess" instances that will grant controller usage (keyboard or gamepad) **/
-	public var controller : dn.heaps.Controller;
+	public var controller : Controller;
 
 	/** Controller Access created for Main & Boot **/
-	public var ca : dn.heaps.Controller.ControllerAccess;
+	public var ca : ControllerAccess;
 
 	public function new(s:h2d.Scene) {
 		super();
@@ -109,7 +109,7 @@ class App extends dn.Process {
 
 	/** Init game controller and default key bindings **/
 	function initController() {
-		controller = new dn.heaps.Controller(scene);
+		controller = new Controller(scene);
 		ca = controller.createAccess("main");
 		controller.bind(AXIS_LEFT_X_NEG, K.LEFT, K.Q, K.A);
 		controller.bind(AXIS_LEFT_X_POS, K.RIGHT, K.D);
