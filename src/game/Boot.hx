@@ -9,7 +9,7 @@ class Boot extends hxd.App {
 	var tmodSpeedMul = 1.0;
 
 	// Shortcut to controller
-	var ca(get,never) : ControllerAccess;
+	var ca(get,never) : ControllerAccess<ControlActions>;
 		inline function get_ca() return App.ME.ca;
 	#end
 
@@ -40,21 +40,18 @@ class Boot extends hxd.App {
 	override function update(deltaTime:Float) {
 		super.update(deltaTime);
 
-		// Controller update
-		Controller.beforeUpdate();
-
 
 		// Debug controls over app speed
 		var adjustedTmod = hxd.Timer.tmod;
 		#if debug
 		if( App.exists() ) {
 			// Slow down (toggle)
-			if( ca.isKeyboardPressed(K.NUMPAD_SUB) || ca.isKeyboardPressed(K.HOME) || ca.dpadDownPressed()  )
+			if( ca.isKeyboardPressed(K.NUMPAD_SUB) || ca.isKeyboardPressed(K.HOME) || ca.isPadPressed(DPAD_DOWN)  )
 				tmodSpeedMul = tmodSpeedMul>=1 ? 0.2 : 1;
 			adjustedTmod *= tmodSpeedMul;
 
 			// Turbo (by holding a key)
-			adjustedTmod *= ca.isKeyboardDown(K.NUMPAD_ADD) || ca.isKeyboardDown(K.END) || ca.ltDown() ? 5 : 1;
+			adjustedTmod *= ca.isKeyboardDown(K.NUMPAD_ADD) || ca.isKeyboardDown(K.END) || ca.isPadDown(LT) ? 5 : 1;
 		}
 		#end
 

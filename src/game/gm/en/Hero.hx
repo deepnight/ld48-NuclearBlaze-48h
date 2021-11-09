@@ -9,7 +9,7 @@ class Hero extends gm.Entity {
 	var anims = dn.heaps.assets.Aseprite.getDict( hxd.Res.atlas.hero );
 
 	var data : Entity_Hero;
-	var ca : ControllerAccess;
+	var ca : ControllerAccess<ControlActions>;
 	var walkSpeed = 0.;
 	var climbSpeed = 0.;
 	var cmdQueue : Map<CtrlCommand,Float> = new Map();
@@ -24,8 +24,8 @@ class Hero extends gm.Entity {
 
 		super(data.cx, data.cy);
 
-		ca = App.ME.controller.createAccess("hero");
-		ca.setLeftDeadZone(0.3);
+		ca = App.ME.controller.createAccess();
+		// ca.setLeftDeadZone(0.3);
 		dir = data.f_lookRight ? 1 : -1;
 
 		initLife( Std.int(Const.db.HeroHP_1) );
@@ -146,7 +146,7 @@ class Hero extends gm.Entity {
 	}
 
 	public function controlsLocked() {
-		return life<=0 || ca.locked() || Console.ME.isActive() || isChargingAction() || cd.has("cineFalling") || cd.has("lockControls");
+		return life<=0 || ca.lockCondition() || Console.ME.isActive() || isChargingAction() || cd.has("cineFalling") || cd.has("lockControls");
 	}
 
 
@@ -362,14 +362,14 @@ class Hero extends gm.Entity {
 		}
 
 		// Control queueing
-		if( ca.xDown() && !isWatering() ) {
+		if( ca.isDown(Water) && !isWatering() ) {
 			cancelAction("jump");
 			cancelAction("kickDoor");
 			cancelAction("openDoor");
 			stopClimbing();
 			queueCommand(Use);
 		}
-		if( ca.aPressed() ) {
+		if( ca.isPressed(Jump) ) {
 			queueCommand(Jump);
 			if( climbing && ( ca.isKeyboardDown(K.UP) || ca.isKeyboardDown(K.Z) || ca.isKeyboardDown(K.W) ) )
 				clearCommandQueue(Jump);
@@ -377,18 +377,18 @@ class Hero extends gm.Entity {
 
 
 		// Dir control
-		if( isAlive() && ca.leftDist()>0 && !isChargingDirLockAction())
-			dir = M.radDistance(0,ca.leftAngle()) <= M.PIHALF ? 1 : -1;
+		if( isAlive() && ca.getAnalogDist(MoveX,MoveY)>0 && !isChargingDirLockAction())
+			dir = M.radDistance(0,ca.getAnalogAngle(MoveX,MoveY)) <= M.PIHALF ? 1 : -1;
 
 
 		// Vertical aiming control
 		verticalAiming = 0;
-		if( ca.leftDist()>0 && M.radDistance(ca.leftAngle(),-M.PIHALF) <= M.PIHALF*0.65 )
+		if( ca.getAnalogDist(MoveX,MoveY)>0 && M.radDistance(ca.getAnalogAngle(MoveX,MoveY),-M.PIHALF) <= M.PIHALF*0.65 )
 			verticalAiming = -1;
 		else if( ca.isKeyboardDown(K.UP) || ca.isKeyboardDown(K.Z) || ca.isKeyboardDown(K.W) )
 			verticalAiming = -1;
 
-		if( ca.leftDist()>0 && M.radDistance(ca.leftAngle(),M.PIHALF) <= M.PIHALF*0.65 )
+		if( ca.getAnalogDist(MoveX,MoveY)>0 && M.radDistance(ca.getAnalogAngle(MoveX,MoveY),M.PIHALF) <= M.PIHALF*0.65 )
 			verticalAiming = 1;
 		else if( ca.isKeyboardDown(K.DOWN) || ca.isKeyboardDown(K.S) )
 			verticalAiming = 1;
@@ -397,7 +397,7 @@ class Hero extends gm.Entity {
 		// Climb start management (complicated stuff to avoid confusions with "aiming up/down")
 		var tryToClimbUp = false;
 		var tryToClimbDown = false;
-		if( isAlive() && !climbing && !ca.xDown() && !isWatering() && !cd.has("climbLock") ) {
+		if( isAlive() && !climbing && !ca.isDown(Water) && !isWatering() && !cd.has("climbLock") ) {
 			// Up
 			if( level.hasLadder(cx,cy) && verticalAiming==-1 )
 				tryToClimbUp = true;
@@ -435,9 +435,9 @@ class Hero extends gm.Entity {
 			}
 
 			// Walk
-			if( ca.leftDist()>0 && !climbing ) {
-				walkSpeed = Math.cos(ca.leftAngle()) * ca.leftDist();
-				dir = M.radDistance(0,ca.leftAngle()) <= M.PIHALF ? 1 : -1;
+			if( ca.getAnalogDist(MoveX,MoveY)>0 && !climbing ) {
+				walkSpeed = Math.cos(ca.getAnalogAngle(MoveX,MoveY)) * ca.getAnalogDist(MoveX,MoveY);
+				dir = M.radDistance(0,ca.getAnalogAngle(MoveX,MoveY)) <= M.PIHALF ? 1 : -1;
 			}
 
 			// Jump
@@ -471,8 +471,8 @@ class Hero extends gm.Entity {
 				dx = 0;
 				chargeAction("water", 0.1, ()->{
 					cd.setS("watering",0.2);
-					if( ca.leftDist()>0 )
-						waterAng = ca.leftAngle();
+					if( ca.getAnalogDist(MoveX,MoveY)>0 )
+						waterAng = ca.getAnalogAngle(MoveX,MoveY);
 					else
 						waterAng = dirToAng();
 				});
@@ -547,12 +547,12 @@ class Hero extends gm.Entity {
 		if( isWatering() ) {
 			dx*=0.5;
 
-			if( ca.xDown() )
+			if( ca.isDown(Water) )
 				cd.setS("watering",0.2);
 			camera.shakeS(0.1, 0.1);
 
-			// if( ca.leftDist()>0 )
-				// waterAng += M.sign(M.radSubstract(ca.leftAngle(), waterAng)) * 0.1;
+			// if( ca.getAnalogDist(MoveX,MoveY)>0 )
+				// waterAng += M.sign(M.radSubstract(ca.getAnalogAngle(MoveX,MoveY), waterAng)) * 0.1;
 
 			// waterAng += M.radSubstract(dirToAng(), waterAng) * 0.2;
 			waterAng = dirToAng();

@@ -9,7 +9,7 @@ class DebugDrone extends Entity {
 	public static var ME : DebugDrone;
 	static var DEFAULT_COLOR = 0x00ff00;
 
-	var ca : ControllerAccess;
+	var ca : ControllerAccess<ControlActions>;
 	var prevCamTarget : Null<Entity>;
 	var prevCamZoom : Float;
 
@@ -33,8 +33,9 @@ class DebugDrone extends Entity {
 		gravityMul = 0;
 
 		// Controller
-		ca = App.ME.controller.createAccess("drone", true);
-		ca.setLeftDeadZone(0.3);
+		ca = App.ME.controller.createAccess();
+		ca.takeExclusivity();
+		// ca.setLeftDeadZone(0.3);
 
 		// Take control of camera
 		if( camera.target!=null && camera.target.isAlive() )
@@ -92,12 +93,12 @@ class DebugDrone extends Entity {
 		cancelVelocities();
 
 		// Movement controls
-		var spd = 0.04 * ( ca.xDown() ? 5 : 1 ); // turbo by holding pad-X
+		var spd = 0.04 * ( ca.isDown(Water) ? 5 : 1 ); // turbo by holding pad-X
 
 		if( !App.ME.anyInputHasFocus() ) {
-			if( ca.leftDist()>0 ) {
-				var a = ca.leftAngle();
-				var d = ca.leftDist();
+			if( ca.getAnalogDist(MoveX,MoveY)>0 ) {
+				var a = ca.getAnalogAngle(MoveX,MoveY);
+				var d = ca.getAnalogDist(MoveX,MoveY);
 				droneDx+=Math.cos(a) * d*spd * tmod;
 				droneDy+=Math.sin(a) * d*spd * tmod;
 			}
