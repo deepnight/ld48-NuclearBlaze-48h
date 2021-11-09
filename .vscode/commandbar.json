@@ -61,6 +61,14 @@
 			"alignment": "right",
 			"skipTerminateQuickPick": false,
 			"priority": -50
+		},
+		{
+			"text": "📦 Steam",
+			"color": "lightgreen",
+			"command": "haxelib run redistHelper steamBundle.hxml -o redist/steam -p NuclearBlaze_48h steam_appid.txt",
+			"alignment": "right",
+			"skipTerminateQuickPick": false,
+			"priority": -51
 		}
 	]
 }
