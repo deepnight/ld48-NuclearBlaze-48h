@@ -21,6 +21,9 @@ class App extends dn.Process {
         createRoot(scene);
 
 		initEngine();
+		#if steamBundle
+		initSteam();
+		#end
 		initAssets();
 		initController();
 
@@ -35,7 +38,17 @@ class App extends dn.Process {
 		startGame();
 	}
 
-
+	#if steamBundle
+	function initSteam() {
+		if( !steam.Api.active ) {
+			// Failed
+			#if !debug
+			throw "Steam is not running!";
+			return;
+			#end
+		}
+	}
+	#end
 
 	/** Start game process **/
 	public function startGame() {

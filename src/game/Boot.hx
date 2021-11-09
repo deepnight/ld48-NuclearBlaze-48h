@@ -18,6 +18,10 @@ class Boot extends hxd.App {
 		App entry point: everything starts here
 	**/
 	static function main() {
+		#if steamBundle
+		steam.Api.init( Std.parseInt( sys.io.File.getContent("steam_appid.txt") ) );
+		#end
+
 		new Boot();
 	}
 
