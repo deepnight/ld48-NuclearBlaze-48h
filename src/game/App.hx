@@ -9,10 +9,10 @@ class App extends dn.Process {
 	public var scene(default,null) : h2d.Scene;
 
 	/** Used to create "ControllerAccess" instances that will grant controller usage (keyboard or gamepad) **/
-	public var controller : Controller;
+	public var controller : Controller<ControlActions>;
 
 	/** Controller Access created for Main & Boot **/
-	public var ca : ControllerAccess;
+	public var ca : ControllerAccess<ControlActions>;
 
 	public function new(s:h2d.Scene) {
 		super();
@@ -122,15 +122,35 @@ class App extends dn.Process {
 
 	/** Init game controller and default key bindings **/
 	function initController() {
-		controller = new Controller(scene);
-		ca = controller.createAccess("main");
-		controller.bind(AXIS_LEFT_X_NEG, K.LEFT, K.Q, K.A);
-		controller.bind(AXIS_LEFT_X_POS, K.RIGHT, K.D);
-		controller.bind(X, K.SPACE, K.F, K.E);
-		controller.bind(A, K.UP, K.Z, K.W);
-		controller.bind(B, K.ENTER, K.NUMPAD_ENTER);
-		controller.bind(SELECT, K.R);
-		controller.bind(START, K.N);
+		controller = new Controller(ControlActions);
+		controller.setGlobalAxisDeadZone(0.4);
+
+		// Keyboard
+		controller.bindKeyboardAsStick(MoveX, MoveY, K.UP, K.LEFT, K.DOWN, K.RIGHT);
+		controller.bindKeyboardAsStick(MoveX, MoveY, K.W, K.A, K.S, K.D);
+		controller.bindKeyboardAsStick(MoveX, MoveY, K.Z, K.Q, K.S, K.D);
+		controller.bindKeyboard(Water, [K.F, K.E, K.X, K.SHIFT, K.CTRL, K.ENTER, K.NUMPAD_ENTER]);
+		controller.bindKeyboard(Jump, [K.SPACE]);
+		controller.bindKeyboard(Restart, [K.R]);
+		controller.bindKeyboard(Cancel, [K.ESCAPE]);
+		controller.bindKeyboard(Exit, [K.ESCAPE]);
+		controller.bindKeyboard(Pause, [K.PAUSE_BREAK,K.P]);
+
+		controller.bindPadLStick(MoveX, MoveY);
+		controller.bindPadButtonsAsStick(MoveX, MoveY, DPAD_UP, DPAD_LEFT, DPAD_DOWN, DPAD_RIGHT);
+		controller.bindPad(Jump, A);
+		controller.bindPad(Water, [X,Y]);
+		controller.bindPad(Pause, START);
+		controller.bindPad(Restart, SELECT);
+
+
+		// controller.bind(X, K.SPACE, K.F, K.E);
+		// controller.bind(A, K.UP, K.Z, K.W);
+		// controller.bind(B, K.ENTER, K.NUMPAD_ENTER);
+		// controller.bind(SELECT, K.R);
+		// controller.bind(START, K.N);
+
+		ca = controller.createAccess();
 	}
 
 
@@ -156,10 +176,18 @@ class App extends dn.Process {
         super.update();
 
 
-		// Screenshot pause
-		if( ca.isKeyboardPressed(K.BACKSPACE) && Game.exists() ) {
-			Game.ME.togglePause();
-			Game.ME.setScreenshotMode( Game.ME.isPaused() );
+		if( Game.ME!=null ) {
+			// Screenshot pause
+			if( ca.isKeyboardPressed(K.BACKSPACE) && Game.exists() ) {
+				Game.ME.togglePause();
+				Game.ME.setScreenshotMode( Game.ME.isPaused() );
+			}
+
+			// Game pause
+			if( ca.isPressed(Pause) )
+				Game.ME.togglePause();
+			else if( Game.ME.isPaused() && ca.isPressed(Cancel) )
+				Game.ME.resume();
 		}
     }
 }

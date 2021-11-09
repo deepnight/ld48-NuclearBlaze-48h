@@ -8,7 +8,7 @@ class Game extends Process {
 	public var app(get,never) : App; inline function get_app() return App.ME;
 
 	/** Game controller (pad or keyboard) **/
-	public var ca : ControllerAccess;
+	public var ca : ControllerAccess<ControlActions>;
 
 	/** Particles **/
 	public var fx : Fx;
@@ -40,9 +40,9 @@ class Game extends Process {
 		super(App.ME);
 
 		ME = this;
-		ca = App.ME.controller.createAccess("game");
-		ca.setLeftDeadZone(0.2);
-		ca.setRightDeadZone(0.2);
+		ca = App.ME.controller.createAccess();
+		// ca.setLeftDeadZone(0.2);
+		// ca.setRightDeadZone(0.2);
 		createRootInLayers(App.ME.root, Const.DP_BG);
 
 		scroller = new h2d.Layers();
@@ -102,6 +102,7 @@ class Game extends Process {
 			e.destroy();
 		garbageCollectEntities();
 		delayer.cancelById("deathMsg");
+		hud.clearNotifications();
 
 		cd.unset("successMsg");
 
@@ -317,6 +318,11 @@ class Game extends Process {
 		}
 	}
 
+	override function resume() {
+		super.resume();
+		cd.setS("exitLock",0.1);
+		cd.unset("exitWarn");
+	}
 
 	/** Main loop **/
 	var successTimerS = 0.;
@@ -339,13 +345,13 @@ class Game extends Process {
 
 
 		// Global key shortcuts
-		if( !App.ME.anyInputHasFocus() && !ui.Modal.hasAny() && !ca.locked() ) {
+		if( !App.ME.anyInputHasFocus() && !ui.Modal.hasAny() && !ca.lockCondition() ) {
 
 			// Exit by pressing ESC twice
 			#if hl
-			if( ca.isKeyboardPressed(K.ESCAPE) )
+			if( ca.isPressed(Exit) && !cd.has("exitLock") )
 				if( !cd.hasSetS("exitWarn",3) )
-					hud.notify(Lang.t._("Press ESCAPE again to exit."));
+					hud.notify(Lang.t._("Press again to EXIT the game."), 0xff0000);
 				else
 					App.ME.exit();
 			#end
@@ -365,11 +371,12 @@ class Game extends Process {
 			#end
 
 			// Restart
-			if( ca.isKeyboardPressed(K.R) && ca.isKeyboardDown(K.SHIFT) )
-				App.ME.startGame();
-			else if( ca.selectPressed() )
-				startCurrentLevel();
-
+			if( ca.isPressed(Restart) ) {
+				if( !cd.hasSetS("restartWarn",3) )
+					hud.notify(Lang.t._("Press again to restart."));
+				else
+					startCurrentLevel();
+			}
 		}
 	}
 }

@@ -69,7 +69,7 @@ class Hud extends dn.Process {
 		tf.textColor = 0xffffff;
 
 		// Notification lifetime
-		var durationS = 2 + str.length*0.04;
+		var durationS = 1.5 + str.length*0.04;
 		var p = createChildProcess();
 		notifications.insert(0,f);
 		p.tw.createS(f.x, -f.outerWidth>-2, TEaseOut, 0.1);
