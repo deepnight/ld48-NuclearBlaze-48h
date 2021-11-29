@@ -378,7 +378,7 @@ class Hero extends gm.Entity {
 
 		// Dir control
 		if( isAlive() && ca.getAnalogDist(MoveX,MoveY)>0 && !isChargingDirLockAction())
-			dir = M.radDistance(0,ca.getAnalogAngle(MoveX,MoveY)) <= M.PIHALF ? 1 : -1;
+			dir = ca.getAnalogValue(MoveX)>0 ? 1 : ca.getAnalogValue(MoveX)<0 ? -1 : dir;
 
 
 		// Vertical aiming control
