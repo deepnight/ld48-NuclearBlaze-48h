@@ -55,9 +55,9 @@
 			"priority": -41
 		},
 		{
-			"text": "📦 Jam redist",
+			"text": "📦 Web redist",
 			"color": "lightgreen",
-			"command": "haxelib run redistHelper hl.dx.hxml js.hxml -o redist/jam -p NuclearBlaze -zip",
+			"command": "haxelib run redistHelper hl.dx.hxml js.hxml -o redist/web -p NuclearBlaze -zip",
 			"alignment": "right",
 			"skipTerminateQuickPick": false,
 			"priority": -50
