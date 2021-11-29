@@ -63,7 +63,7 @@
 			"priority": -50
 		},
 		{
-			"text": "📦 Steam",
+			"text": "📦 Steam redist",
 			"color": "lightgreen",
 			"command": "haxelib run redistHelper steamBundle.hxml -o redist/steam -p NuclearBlaze_48h steam_appid.txt",
 			"alignment": "right",
