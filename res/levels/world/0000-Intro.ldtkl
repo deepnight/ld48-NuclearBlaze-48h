@@ -163,58 +163,6 @@
 						},
 						{ "__identifier": "needSight", "__value": true, "__type": "Bool", "defUid": 68, "realEditorValues": [] }
 					]
-				},
-				{
-					"__identifier": "WallText",
-					"__grid": [14,15],
-					"__pivot": [0,0],
-					"__tile": null,
-					"width": 192,
-					"height": 16,
-					"defUid": 128,
-					"px": [224,240],
-					"fieldInstances": [
-						{
-							"__identifier": "lines",
-							"__value": "This is the original \"jam\" version of Nuclear Blaze created in 48h.",
-							"__type": "String",
-							"defUid": 130,
-							"realEditorValues": [{
-								"id": "V_String",
-								"params": ["This is the original \"jam\" version of Nuclear Blaze created in 48h."]
-							}]
-						},
-						{ "__identifier": "color", "__value": "#FFFFFF", "__type": "Color", "defUid": 131, "realEditorValues": [] }
-					]
-				},
-				{
-					"__identifier": "WallText",
-					"__grid": [14,17],
-					"__pivot": [0,0],
-					"__tile": null,
-					"width": 192,
-					"height": 16,
-					"defUid": 128,
-					"px": [224,272],
-					"fieldInstances": [
-						{
-							"__identifier": "lines",
-							"__value": "This version has no sound. Yep. Totally silent. I ran out of time :)",
-							"__type": "String",
-							"defUid": 130,
-							"realEditorValues": [{
-								"id": "V_String",
-								"params": ["This version has no sound. Yep. Totally silent. I ran out of time :)"]
-							}]
-						},
-						{
-							"__identifier": "color",
-							"__value": "#6C7988",
-							"__type": "Color",
-							"defUid": 131,
-							"realEditorValues": [{ "id": "V_Int", "params": [7109000] }]
-						}
-					]
 				}
 			]
 		},
