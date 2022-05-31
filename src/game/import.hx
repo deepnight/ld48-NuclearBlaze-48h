@@ -3,7 +3,7 @@
 // Libs
 import dn.M;
 import dn.Lib;
-import dn.Color;
+import dn.legacy.Color;
 import dn.Tweenie;
 import dn.legacy.GetText;
 import dn.heaps.input.*;
@@ -25,7 +25,7 @@ import assets.World;
 
 // Aliases
 import assets.Lang as L;
-import dn.Color as C;
+import dn.legacy.Color as C;
 import hxd.Key as K;
 import tools.LPoint as P;
 

@@ -96,9 +96,9 @@ class DebugDrone extends Entity {
 		var spd = 0.04 * ( ca.isDown(Water) ? 5 : 1 ); // turbo by holding pad-X
 
 		if( !App.ME.anyInputHasFocus() ) {
-			if( ca.getAnalogDist(MoveX,MoveY)>0 ) {
-				var a = ca.getAnalogAngle(MoveX,MoveY);
-				var d = ca.getAnalogDist(MoveX,MoveY);
+			if( ca.getAnalogDistXY(MoveX,MoveY)>0 ) {
+				var a = ca.getAnalogAngleXY(MoveX,MoveY);
+				var d = ca.getAnalogDistXY(MoveX,MoveY);
 				droneDx+=Math.cos(a) * d*spd * tmod;
 				droneDy+=Math.sin(a) * d*spd * tmod;
 			}

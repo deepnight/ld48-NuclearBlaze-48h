@@ -377,18 +377,18 @@ class Hero extends gm.Entity {
 
 
 		// Dir control
-		if( isAlive() && ca.getAnalogDist(MoveX,MoveY)>0 && !isChargingDirLockAction())
+		if( isAlive() && ca.getAnalogDistXY(MoveX,MoveY)>0 && !isChargingDirLockAction())
 			dir = ca.getAnalogValue(MoveX)>0 ? 1 : ca.getAnalogValue(MoveX)<0 ? -1 : dir;
 
 
 		// Vertical aiming control
 		verticalAiming = 0;
-		if( ca.getAnalogDist(MoveX,MoveY)>0 && M.radDistance(ca.getAnalogAngle(MoveX,MoveY),-M.PIHALF) <= M.PIHALF*0.65 )
+		if( ca.getAnalogDistXY(MoveX,MoveY)>0 && M.radDistance(ca.getAnalogAngleXY(MoveX,MoveY),-M.PIHALF) <= M.PIHALF*0.65 )
 			verticalAiming = -1;
 		else if( ca.isKeyboardDown(K.UP) || ca.isKeyboardDown(K.Z) || ca.isKeyboardDown(K.W) )
 			verticalAiming = -1;
 
-		if( ca.getAnalogDist(MoveX,MoveY)>0 && M.radDistance(ca.getAnalogAngle(MoveX,MoveY),M.PIHALF) <= M.PIHALF*0.65 )
+		if( ca.getAnalogDistXY(MoveX,MoveY)>0 && M.radDistance(ca.getAnalogAngleXY(MoveX,MoveY),M.PIHALF) <= M.PIHALF*0.65 )
 			verticalAiming = 1;
 		else if( ca.isKeyboardDown(K.DOWN) || ca.isKeyboardDown(K.S) )
 			verticalAiming = 1;
@@ -435,9 +435,9 @@ class Hero extends gm.Entity {
 			}
 
 			// Walk
-			if( ca.getAnalogDist(MoveX,MoveY)>0 && !climbing ) {
-				walkSpeed = Math.cos(ca.getAnalogAngle(MoveX,MoveY)) * ca.getAnalogDist(MoveX,MoveY);
-				dir = M.radDistance(0,ca.getAnalogAngle(MoveX,MoveY)) <= M.PIHALF ? 1 : -1;
+			if( ca.getAnalogDistXY(MoveX,MoveY)>0 && !climbing ) {
+				walkSpeed = Math.cos(ca.getAnalogAngleXY(MoveX,MoveY)) * ca.getAnalogDistXY(MoveX,MoveY);
+				dir = M.radDistance(0,ca.getAnalogAngleXY(MoveX,MoveY)) <= M.PIHALF ? 1 : -1;
 			}
 
 			// Jump
@@ -471,8 +471,8 @@ class Hero extends gm.Entity {
 				dx = 0;
 				chargeAction("water", 0.1, ()->{
 					cd.setS("watering",0.2);
-					if( ca.getAnalogDist(MoveX,MoveY)>0 )
-						waterAng = ca.getAnalogAngle(MoveX,MoveY);
+					if( ca.getAnalogDistXY(MoveX,MoveY)>0 )
+						waterAng = ca.getAnalogAngleXY(MoveX,MoveY);
 					else
 						waterAng = dirToAng();
 				});

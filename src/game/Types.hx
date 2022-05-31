@@ -7,14 +7,14 @@ enum LevelMark {
 	DoorZone;
 }
 
-enum ControlActions {
-	MoveX;
-	MoveY;
-	Jump;
-	Water;
+enum abstract ControlActions(Int) to Int {
+	var MoveX;
+	var MoveY;
+	var Jump;
+	var Water;
 
-	Pause;
-	Restart;
-	Cancel;
-	Exit;
+	var Pause;
+	var Restart;
+	var Cancel;
+	var Exit;
 }

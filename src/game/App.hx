@@ -122,13 +122,13 @@ class App extends dn.Process {
 
 	/** Init game controller and default key bindings **/
 	function initController() {
-		controller = new Controller(ControlActions);
+		controller = Controller.createFromAbstractEnum(ControlActions);
 		controller.setGlobalAxisDeadZone(0.4);
 
 		// Keyboard
-		controller.bindKeyboardAsStick(MoveX, MoveY, K.UP, K.LEFT, K.DOWN, K.RIGHT);
-		controller.bindKeyboardAsStick(MoveX, MoveY, K.W, K.A, K.S, K.D);
-		controller.bindKeyboardAsStick(MoveX, MoveY, K.Z, K.Q, K.S, K.D);
+		controller.bindKeyboardAsStickXY(MoveX, MoveY, K.UP, K.LEFT, K.DOWN, K.RIGHT);
+		controller.bindKeyboardAsStickXY(MoveX, MoveY, K.W, K.A, K.S, K.D);
+		controller.bindKeyboardAsStickXY(MoveX, MoveY, K.Z, K.Q, K.S, K.D);
 		controller.bindKeyboard(Water, [K.F, K.E, K.X, K.SHIFT, K.CTRL, K.ENTER, K.NUMPAD_ENTER]);
 		controller.bindKeyboard(Jump, [K.SPACE]);
 		controller.bindKeyboard(Restart, [K.R]);
@@ -136,8 +136,8 @@ class App extends dn.Process {
 		controller.bindKeyboard(Exit, [K.ESCAPE]);
 		controller.bindKeyboard(Pause, [K.PAUSE_BREAK,K.P]);
 
-		controller.bindPadLStick(MoveX, MoveY);
-		controller.bindPadButtonsAsStick(MoveX, MoveY, DPAD_UP, DPAD_LEFT, DPAD_DOWN, DPAD_RIGHT);
+		controller.bindPadLStickXY(MoveX, MoveY);
+		controller.bindPadButtonsAsStickXY(MoveX, MoveY, DPAD_UP, DPAD_LEFT, DPAD_DOWN, DPAD_RIGHT);
 		controller.bindPad(Jump, A);
 		controller.bindPad(Water, [X,Y]);
 		controller.bindPad(Pause, START);
