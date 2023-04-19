@@ -146,7 +146,7 @@ class DebugDrone extends Entity {
 			prevCamTarget = camera.target;
 
 		// Display FPS
-		debug( M.round(hxd.Timer.fps()) + " FPS, fx="+@:privateAccess fx.pool.count() );
+		debug( M.round(hxd.Timer.fps()) + " FPS, fx="+@:privateAccess fx.pool.allocated );
 
 		// Collisions
 		if( level.hasAnyCollision(cx,cy) )

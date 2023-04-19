@@ -72,7 +72,7 @@ class Game extends Process {
 		Console.ME.stats.addComponent( (f)->{
 			if( tf==null )
 				tf = new h2d.Text(Assets.fontSmall, f);
-			tf.text = Std.string( @:privateAccess fx.pool.count() + " fx" );
+			tf.text = Std.string( @:privateAccess fx.pool.allocated + " fx" );
 		});
 		#end
 	}
